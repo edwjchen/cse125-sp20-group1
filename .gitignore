@@ -34,5 +34,7 @@
 src
 include
 glm-*
+build
+Index
 
 .DS_Store
