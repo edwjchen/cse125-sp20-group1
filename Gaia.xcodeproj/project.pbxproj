@@ -32,24 +32,7 @@
 
 /* Begin PBXFileReference section */
 		A425881A2441261E0066B22A /* Gaia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Gaia; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4258829244127930066B22A /* Gaia-all-non-framework-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gaia-all-non-framework-target-headers.hmap"; sourceTree = "<group>"; };
-		A425882A244127930066B22A /* Gaia-project-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gaia-project-headers.hmap"; sourceTree = "<group>"; };
-		A425882B244127930066B22A /* Gaia.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = Gaia.hmap; sourceTree = "<group>"; };
-		A425882C244127930066B22A /* Gaia-all-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gaia-all-target-headers.hmap"; sourceTree = "<group>"; };
-		A425882D244127930066B22A /* all-product-headers.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "all-product-headers.yaml"; sourceTree = "<group>"; };
-		A425882E244127930066B22A /* Gaia-own-target-headers.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gaia-own-target-headers.hmap"; sourceTree = "<group>"; };
-		A425882F244127930066B22A /* Gaia-generated-files.hmap */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gaia-generated-files.hmap"; sourceTree = "<group>"; };
-		A4258831244127930066B22A /* 6dbaa262add1c437d1d0bf8e9485d359-desc.xcbuild */ = {isa = PBXFileReference; lastKnownFileType = file; path = "6dbaa262add1c437d1d0bf8e9485d359-desc.xcbuild"; sourceTree = "<group>"; };
-		A4258832244127930066B22A /* 6dbaa262add1c437d1d0bf8e9485d359-manifest.xcbuild */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "6dbaa262add1c437d1d0bf8e9485d359-manifest.xcbuild"; sourceTree = "<group>"; };
-		A4258833244127930066B22A /* build.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = build.db; sourceTree = "<group>"; };
-		A4258834244127930066B22A /* BuildDescriptionCacheIndex-3b59012b542ac55ec06a8101835f2c1e */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BuildDescriptionCacheIndex-3b59012b542ac55ec06a8101835f2c1e"; sourceTree = "<group>"; };
-		A4258837244127930066B22A /* TARGET@v8_hash=68C7FBA78633847A5BB98F0AB01CD90E-json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "TARGET@v8_hash=68C7FBA78633847A5BB98F0AB01CD90E-json"; sourceTree = "<group>"; };
-		A4258839244127930066B22A /* WORKSPACE@v8_mod=1586556599_hash=3b59012b542ac55ec06a8101835f2c1e_subobjects=C4090D72B73C6366F5FA2AC1DAFA5D46-json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "WORKSPACE@v8_mod=1586556599_hash=3b59012b542ac55ec06a8101835f2c1e_subobjects=C4090D72B73C6366F5FA2AC1DAFA5D46-json"; sourceTree = "<group>"; };
-		A425883B244127930066B22A /* PROJECT@v8_mod=1586556648_hash=81960cdcc0f9b966ddbc30608a317456-json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "PROJECT@v8_mod=1586556648_hash=81960cdcc0f9b966ddbc30608a317456-json"; sourceTree = "<group>"; };
-		A425883D244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A425883F244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A4258841244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A4258846244127930066B22A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		A4258848244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A425884A244127940066B22A /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		A425884B244127940066B22A /* PointCloud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointCloud.cpp; sourceTree = "<group>"; };
@@ -89,13 +72,9 @@
 			isa = PBXGroup;
 			children = (
 				A4258869244128D60066B22A /* shaders */,
-				A4258840244127930066B22A /* bin */,
-				A4258824244127930066B22A /* build */,
 				A425883E244127930066B22A /* doc */,
 				A4258859244127940066B22A /* include */,
-				A4258842244127930066B22A /* Index */,
 				A4258847244127930066B22A /* lib */,
-				A4258846244127930066B22A /* LICENSE */,
 				A425885B244127940066B22A /* README.md */,
 				A4258849244127940066B22A /* src */,
 				A425881B2441261E0066B22A /* Products */,
@@ -111,153 +90,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A4258824244127930066B22A /* build */ = {
-			isa = PBXGroup;
-			children = (
-				A4258825244127930066B22A /* Intermediates.noindex */,
-				A425883C244127930066B22A /* Products */,
-				A425883D244127930066B22A /* README.md */,
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
-		A4258825244127930066B22A /* Intermediates.noindex */ = {
-			isa = PBXGroup;
-			children = (
-				A4258826244127930066B22A /* Gaia.build */,
-				A4258830244127930066B22A /* XCBuildData */,
-			);
-			path = Intermediates.noindex;
-			sourceTree = "<group>";
-		};
-		A4258826244127930066B22A /* Gaia.build */ = {
-			isa = PBXGroup;
-			children = (
-				A4258827244127930066B22A /* Debug */,
-			);
-			path = Gaia.build;
-			sourceTree = "<group>";
-		};
-		A4258827244127930066B22A /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				A4258828244127930066B22A /* Gaia.build */,
-			);
-			path = Debug;
-			sourceTree = "<group>";
-		};
-		A4258828244127930066B22A /* Gaia.build */ = {
-			isa = PBXGroup;
-			children = (
-				A4258829244127930066B22A /* Gaia-all-non-framework-target-headers.hmap */,
-				A425882A244127930066B22A /* Gaia-project-headers.hmap */,
-				A425882B244127930066B22A /* Gaia.hmap */,
-				A425882C244127930066B22A /* Gaia-all-target-headers.hmap */,
-				A425882D244127930066B22A /* all-product-headers.yaml */,
-				A425882E244127930066B22A /* Gaia-own-target-headers.hmap */,
-				A425882F244127930066B22A /* Gaia-generated-files.hmap */,
-			);
-			path = Gaia.build;
-			sourceTree = "<group>";
-		};
-		A4258830244127930066B22A /* XCBuildData */ = {
-			isa = PBXGroup;
-			children = (
-				A4258831244127930066B22A /* 6dbaa262add1c437d1d0bf8e9485d359-desc.xcbuild */,
-				A4258832244127930066B22A /* 6dbaa262add1c437d1d0bf8e9485d359-manifest.xcbuild */,
-				A4258833244127930066B22A /* build.db */,
-				A4258834244127930066B22A /* BuildDescriptionCacheIndex-3b59012b542ac55ec06a8101835f2c1e */,
-				A4258835244127930066B22A /* PIFCache */,
-			);
-			path = XCBuildData;
-			sourceTree = "<group>";
-		};
-		A4258835244127930066B22A /* PIFCache */ = {
-			isa = PBXGroup;
-			children = (
-				A4258836244127930066B22A /* target */,
-				A4258838244127930066B22A /* workspace */,
-				A425883A244127930066B22A /* project */,
-			);
-			path = PIFCache;
-			sourceTree = "<group>";
-		};
-		A4258836244127930066B22A /* target */ = {
-			isa = PBXGroup;
-			children = (
-				A4258837244127930066B22A /* TARGET@v8_hash=68C7FBA78633847A5BB98F0AB01CD90E-json */,
-			);
-			path = target;
-			sourceTree = "<group>";
-		};
-		A4258838244127930066B22A /* workspace */ = {
-			isa = PBXGroup;
-			children = (
-				A4258839244127930066B22A /* WORKSPACE@v8_mod=1586556599_hash=3b59012b542ac55ec06a8101835f2c1e_subobjects=C4090D72B73C6366F5FA2AC1DAFA5D46-json */,
-			);
-			path = workspace;
-			sourceTree = "<group>";
-		};
-		A425883A244127930066B22A /* project */ = {
-			isa = PBXGroup;
-			children = (
-				A425883B244127930066B22A /* PROJECT@v8_mod=1586556648_hash=81960cdcc0f9b966ddbc30608a317456-json */,
-			);
-			path = project;
-			sourceTree = "<group>";
-		};
-		A425883C244127930066B22A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Products;
-			sourceTree = "<group>";
-		};
 		A425883E244127930066B22A /* doc */ = {
 			isa = PBXGroup;
 			children = (
 				A425883F244127930066B22A /* README.md */,
 			);
 			path = doc;
-			sourceTree = "<group>";
-		};
-		A4258840244127930066B22A /* bin */ = {
-			isa = PBXGroup;
-			children = (
-				A4258841244127930066B22A /* README.md */,
-			);
-			path = bin;
-			sourceTree = "<group>";
-		};
-		A4258842244127930066B22A /* Index */ = {
-			isa = PBXGroup;
-			children = (
-				A4258843244127930066B22A /* DataStore */,
-			);
-			path = Index;
-			sourceTree = "<group>";
-		};
-		A4258843244127930066B22A /* DataStore */ = {
-			isa = PBXGroup;
-			children = (
-				A4258844244127930066B22A /* v5 */,
-			);
-			path = DataStore;
-			sourceTree = "<group>";
-		};
-		A4258844244127930066B22A /* v5 */ = {
-			isa = PBXGroup;
-			children = (
-				A4258845244127930066B22A /* units */,
-			);
-			path = v5;
-			sourceTree = "<group>";
-		};
-		A4258845244127930066B22A /* units */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = units;
 			sourceTree = "<group>";
 		};
 		A4258847244127930066B22A /* lib */ = {
