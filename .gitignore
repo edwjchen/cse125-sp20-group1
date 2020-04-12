@@ -31,8 +31,14 @@
 *.out
 *.app
 
-src
-include
-glm-*
+#output files
+build/*
+bin/*
+
+# xcode not shared data
+xcuserdata/
+*.xcuserdatad
+
+#
 
 .DS_Store
