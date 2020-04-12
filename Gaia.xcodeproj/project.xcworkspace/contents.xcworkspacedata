@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/Cain/Documents/UCSD_courses/20_Spring/CSE_125/cse125-sp20-group1/Gaia/Gaia.xcodeproj">
+      location = "group:../shaders">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>
