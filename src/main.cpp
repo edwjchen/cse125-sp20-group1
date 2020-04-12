@@ -73,6 +73,17 @@ int main(void)
 	if (!Window::initializeObjects()) 
 		exit(EXIT_FAILURE);
 	
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 330";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    
 	// Loop while GLFW window should stay open.
 	while (!glfwWindowShouldClose(window))
 	{
@@ -85,6 +96,10 @@ int main(void)
 
 	// destroy objects created
 	Window::cleanUp();
+    
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
 	// Destroy the window.
 	glfwDestroyWindow(window);
