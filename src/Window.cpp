@@ -147,11 +147,23 @@ void Window::idleCallback()
 void Window::displayCallback(GLFWwindow* window)
 {	
 	// Clear the color and depth buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // feed inputs to dear imgui, start new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    
+    ImGui::Begin("Control Panel");
+    ImGui::Text("Hello, world %d", 123);
+    ImGui::End();
+    
 	// Render the objects
 	currObj->draw(view, projection, shaderProgram);
 
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    
 	// Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
 
