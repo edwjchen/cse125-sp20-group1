@@ -13,14 +13,14 @@
 		A425885F244127940066B22A /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258857244127940066B22A /* Cube.cpp */; };
 		A4258860244127940066B22A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258858244127940066B22A /* main.cpp */; };
 		A4258863244127EE0066B22A /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4258862244127EE0066B22A /* OpenGL.framework */; };
+		A425887A2447B9F60066B22A /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588712447B9F50066B22A /* imgui.cpp */; };
+		A425887B2447B9F60066B22A /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588722447B9F50066B22A /* imgui_widgets.cpp */; };
+		A425887C2447B9F60066B22A /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588732447B9F50066B22A /* imgui_demo.cpp */; };
+		A425887D2447B9F60066B22A /* imgui_impl_opengl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588762447B9F50066B22A /* imgui_impl_opengl3.cpp */; };
+		A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588772447B9F60066B22A /* imgui_draw.cpp */; };
+		A425887F2447B9F60066B22A /* imgui_impl_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */; };
 		B0255A472443C271009BFB31 /* shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = B0255A462443C271009BFB31 /* shaders */; };
 		B0255A4C2443C994009BFB31 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B0255A482443C901009BFB31 /* libglfw.3.3.dylib */; };
-		B0255A702443CCE1009BFB31 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6A2443CCE0009BFB31 /* imgui_widgets.cpp */; };
-		B0255A712443CCE1009BFB31 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6B2443CCE0009BFB31 /* imgui_draw.cpp */; };
-		B0255A722443CCE1009BFB31 /* imgui_impl_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6C2443CCE0009BFB31 /* imgui_impl_glfw.cpp */; };
-		B0255A732443CCE1009BFB31 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6D2443CCE0009BFB31 /* imgui_demo.cpp */; };
-		B0255A742443CCE1009BFB31 /* imgui_impl_opengl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6E2443CCE0009BFB31 /* imgui_impl_opengl3.cpp */; };
-		B0255A752443CCE1009BFB31 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0255A6F2443CCE0009BFB31 /* imgui.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,22 +47,29 @@
 		A425885B244127940066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A4258862244127EE0066B22A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A4258864244128030066B22A /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../../../usr/local/Cellar/glfw/3.3.2/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
+		A425886C2447B9F50066B22A /* imgui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui.h; path = imgui/imgui.h; sourceTree = "<group>"; };
+		A425886D2447B9F50066B22A /* imgui_impl_opengl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_impl_opengl3.h; path = imgui/imgui_impl_opengl3.h; sourceTree = "<group>"; };
+		A425886E2447B9F50066B22A /* imstb_rectpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imstb_rectpack.h; path = imgui/imstb_rectpack.h; sourceTree = "<group>"; };
+		A425886F2447B9F50066B22A /* imstb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imstb_truetype.h; path = imgui/imstb_truetype.h; sourceTree = "<group>"; };
+		A42588702447B9F50066B22A /* imgui_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_internal.h; path = imgui/imgui_internal.h; sourceTree = "<group>"; };
+		A42588712447B9F50066B22A /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = imgui/imgui.cpp; sourceTree = "<group>"; };
+		A42588722447B9F50066B22A /* imgui_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_widgets.cpp; path = imgui/imgui_widgets.cpp; sourceTree = "<group>"; };
+		A42588732447B9F50066B22A /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_demo.cpp; path = imgui/imgui_demo.cpp; sourceTree = "<group>"; };
+		A42588742447B9F50066B22A /* imgui_impl_glfw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_impl_glfw.h; path = imgui/imgui_impl_glfw.h; sourceTree = "<group>"; };
+		A42588752447B9F50066B22A /* imconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imconfig.h; path = imgui/imconfig.h; sourceTree = "<group>"; };
+		A42588762447B9F50066B22A /* imgui_impl_opengl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_opengl3.cpp; path = imgui/imgui_impl_opengl3.cpp; sourceTree = "<group>"; };
+		A42588772447B9F60066B22A /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = imgui/imgui_draw.cpp; sourceTree = "<group>"; };
+		A42588782447B9F60066B22A /* imstb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imstb_textedit.h; path = imgui/imstb_textedit.h; sourceTree = "<group>"; };
+		A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_glfw.cpp; path = imgui/imgui_impl_glfw.cpp; sourceTree = "<group>"; };
 		B0255A332443B8DB009BFB31 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		B0255A342443B8DB009BFB31 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		B0255A352443B8DB009BFB31 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
 		B0255A362443B8DB009BFB31 /* PointCloud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointCloud.h; sourceTree = "<group>"; };
 		B0255A372443B8DC009BFB31 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
 		B0255A382443B8DC009BFB31 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
-		B0255A392443BFC6009BFB31 /* imgui */ = {isa = PBXFileReference; lastKnownFileType = folder; path = imgui; sourceTree = "<group>"; };
 		B0255A462443C271009BFB31 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
 		B0255A482443C901009BFB31 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
 		B0255A4A2443C964009BFB31 /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../usr/local/Cellar/glfw/3.3.1/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
-		B0255A6A2443CCE0009BFB31 /* imgui_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_widgets.cpp; sourceTree = "<group>"; };
-		B0255A6B2443CCE0009BFB31 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_draw.cpp; sourceTree = "<group>"; };
-		B0255A6C2443CCE0009BFB31 /* imgui_impl_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_impl_glfw.cpp; sourceTree = "<group>"; };
-		B0255A6D2443CCE0009BFB31 /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_demo.cpp; sourceTree = "<group>"; };
-		B0255A6E2443CCE0009BFB31 /* imgui_impl_opengl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_impl_opengl3.cpp; sourceTree = "<group>"; };
-		B0255A6F2443CCE0009BFB31 /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +118,20 @@
 		A4258847244127930066B22A /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				B0255A392443BFC6009BFB31 /* imgui */,
+				A42588752447B9F50066B22A /* imconfig.h */,
+				A42588732447B9F50066B22A /* imgui_demo.cpp */,
+				A42588772447B9F60066B22A /* imgui_draw.cpp */,
+				A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */,
+				A42588742447B9F50066B22A /* imgui_impl_glfw.h */,
+				A42588762447B9F50066B22A /* imgui_impl_opengl3.cpp */,
+				A425886D2447B9F50066B22A /* imgui_impl_opengl3.h */,
+				A42588702447B9F50066B22A /* imgui_internal.h */,
+				A42588722447B9F50066B22A /* imgui_widgets.cpp */,
+				A42588712447B9F50066B22A /* imgui.cpp */,
+				A425886C2447B9F50066B22A /* imgui.h */,
+				A425886E2447B9F50066B22A /* imstb_rectpack.h */,
+				A42588782447B9F60066B22A /* imstb_textedit.h */,
+				A425886F2447B9F50066B22A /* imstb_truetype.h */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -119,12 +139,6 @@
 		A4258849244127940066B22A /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B0255A6D2443CCE0009BFB31 /* imgui_demo.cpp */,
-				B0255A6B2443CCE0009BFB31 /* imgui_draw.cpp */,
-				B0255A6C2443CCE0009BFB31 /* imgui_impl_glfw.cpp */,
-				B0255A6E2443CCE0009BFB31 /* imgui_impl_opengl3.cpp */,
-				B0255A6A2443CCE0009BFB31 /* imgui_widgets.cpp */,
-				B0255A6F2443CCE0009BFB31 /* imgui.cpp */,
 				A425884B244127940066B22A /* PointCloud.cpp */,
 				A425884D244127940066B22A /* Window.cpp */,
 				A4258850244127940066B22A /* shader.cpp */,
@@ -215,16 +229,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				A425885F244127940066B22A /* Cube.cpp in Sources */,
-				B0255A712443CCE1009BFB31 /* imgui_draw.cpp in Sources */,
-				B0255A742443CCE1009BFB31 /* imgui_impl_opengl3.cpp in Sources */,
-				B0255A702443CCE1009BFB31 /* imgui_widgets.cpp in Sources */,
 				A425885E244127940066B22A /* shader.cpp in Sources */,
-				B0255A752443CCE1009BFB31 /* imgui.cpp in Sources */,
 				A425885C244127940066B22A /* PointCloud.cpp in Sources */,
+				A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */,
 				A4258860244127940066B22A /* main.cpp in Sources */,
 				A425885D244127940066B22A /* Window.cpp in Sources */,
-				B0255A722443CCE1009BFB31 /* imgui_impl_glfw.cpp in Sources */,
-				B0255A732443CCE1009BFB31 /* imgui_demo.cpp in Sources */,
+				A425887F2447B9F60066B22A /* imgui_impl_glfw.cpp in Sources */,
+				A425887A2447B9F60066B22A /* imgui.cpp in Sources */,
+				A425887C2447B9F60066B22A /* imgui_demo.cpp in Sources */,
+				A425887D2447B9F60066B22A /* imgui_impl_opengl3.cpp in Sources */,
+				A425887B2447B9F60066B22A /* imgui_widgets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
