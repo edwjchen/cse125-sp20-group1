@@ -1,6 +1,6 @@
 #include "Window.h"
 
-
+/*
 // Window Properties
 int Window::width;
 int Window::height;
@@ -173,9 +173,6 @@ void Window::displayCallback(GLFWwindow* window)
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	/*
-	 * TODO: Modify below to add your key callbacks.
-	 */
 	
 	// Check for a key press.
 	if (action == GLFW_PRESS)
@@ -199,4 +196,148 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 			break;
 		}
 	}
+}
+*/
+
+Window::Window(int width, int height, std::string title) {
+  this->width = width;
+  this->height = height;
+  this->title = title;
+  
+  window = createWindow(width, height, title);
+  if (!window) {
+    throw "Unable to create a window. ";
+  }
+  setupCallbacks();
+  
+}
+
+Window::~Window() {
+  // Destroy the window.
+  glfwDestroyWindow(window);
+  
+  // Terminate GLFW.
+  glfwTerminate();
+}
+
+void Window::errorCallback(int error, const char* description)
+{
+  // Print error.
+  std::cerr << description << std::endl;
+}
+
+void Window::setupCallbacks()
+{
+  // Set the error callback.
+  glfwSetErrorCallback(errorCallback);
+  
+  // Set the window resize callback.
+  glfwSetWindowSizeCallback(window, resizeCallback);
+  
+  // Set the key callback.
+  glfwSetKeyCallback(window, keyCallback);
+}
+
+GLFWwindow* Window::createWindow(int width, int height, std::string title)
+{
+  // Initialize GLFW.
+  if (!glfwInit())
+  {
+    std::cerr << "Failed to initialize GLFW" << std::endl;
+    return NULL;
+  }
+  
+  // 4x antialiasing.
+  glfwWindowHint(GLFW_SAMPLES, 4);
+  
+#ifdef __APPLE__
+  // Apple implements its own version of OpenGL and requires special treatments
+  // to make it uses modern OpenGL.
+  
+  // Ensure that minimum OpenGL version is 3.3
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  // Enable forward compatibility and allow a modern OpenGL context
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+  
+  // Create the GLFW window.
+  GLFWwindow* window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+  
+  // Check if the window could not be created.
+  if (!window)
+  {
+    std::cerr << "Failed to open GLFW window." << std::endl;
+    glfwTerminate();
+    return NULL;
+  }
+  
+  // Make the context of the window.
+  glfwMakeContextCurrent(window);
+  
+#ifndef __APPLE__
+  // On Windows and Linux, we need GLEW to provide modern OpenGL functionality.
+  
+  // Initialize GLEW.
+  if (glewInit())
+  {
+    std::cerr << "Failed to initialize GLEW" << std::endl;
+    return NULL;
+  }
+#endif
+  
+  // Set swap interval to 1.
+  glfwSwapInterval(0);
+  
+  // unresizable window
+  glfwSetWindowSizeLimits(window, this->width, this->height, this->width, this->height);
+  
+  return window;
+}
+
+void Window::resizeCallback(GLFWwindow* window, int width, int height)
+{
+#ifdef __APPLE__
+  // In case your Mac has a retina display.
+  glfwGetFramebufferSize(window, &width, &height);
+#endif
+  // Set the viewport size.
+  glViewport(0, 0, width, height);
+  
+  // Set the projection matrix.
+  // Window::projection = glm::perspective(glm::radians(60.0),
+  //                                       double(width) / (double)height, 1.0, 1000.0);
+}
+
+void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+  
+  // Check for a key press.
+  if (action == GLFW_PRESS)
+  {
+    switch (key)
+    {
+      case GLFW_KEY_ESCAPE:
+        // Close the window. This causes the program to also terminate.
+        glfwSetWindowShouldClose(window, GL_TRUE);
+        break;
+        
+      default:
+        break;
+    }
+  }
+}
+
+GLFWwindow* Window::getWindow() {
+  return this->window;
+}
+
+void Window::displayCallback()
+{
+  // Gets events, including input such as keyboard and mouse or window resizing
+  glfwPollEvents();
+  
+  // Swap buffers.
+  glfwSwapBuffers(window);
 }

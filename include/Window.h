@@ -10,6 +10,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+/*
 class Window
 {
 public:
@@ -47,5 +48,27 @@ public:
 	// Callbacks
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
+*/
 
+class Window {
+public:
+  Window(int width, int height, std::string title);
+  ~Window();
+  GLFWwindow* getWindow();
+  // void run();
+  void displayCallback();
+  
+private:
+  GLFWwindow* window;
+  int width;
+  int height; 
+  std::string title;
+  
+  GLFWwindow* createWindow(int width, int height, std::string title);
+  
+  void setupCallbacks();
+  static void errorCallback(int error, const char* description);
+  static void resizeCallback(GLFWwindow* window, int width, int height);
+  static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+};
 #endif

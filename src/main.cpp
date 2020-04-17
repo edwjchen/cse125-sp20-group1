@@ -1,5 +1,6 @@
 #include "main.h"
 
+/*
 void error_callback(int error, const char* description)
 {
 	// Print error.
@@ -108,4 +109,28 @@ int main(void)
 	glfwTerminate();
 
 	exit(EXIT_SUCCESS);
+}
+*/
+
+int main(void) {
+  // Create the window.
+  Window window(640, 480, "Window");
+  Client client(640, 480);
+  
+  // Initialize the shader program and objects; exit if initialization fails.
+  if (!client.initialize())
+    exit(EXIT_FAILURE);
+  
+  // Loop while GLFW window should stay open.
+  while (!glfwWindowShouldClose(window.getWindow()))
+  {
+    // Main render display callback. Rendering of objects is done here. (Draw)
+    client.displayCallback(); 
+    window.displayCallback();
+    
+    // Idle callback. Updating objects, etc. can be done here. (Update)
+    client.idleCallback();
+  }
+  
+  exit(EXIT_SUCCESS);
 }

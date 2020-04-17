@@ -19,6 +19,7 @@
 		A425887D2447B9F60066B22A /* imgui_impl_opengl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588762447B9F50066B22A /* imgui_impl_opengl3.cpp */; };
 		A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588772447B9F60066B22A /* imgui_draw.cpp */; };
 		A425887F2447B9F60066B22A /* imgui_impl_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */; };
+		A425888224492AB60066B22A /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425888024492AB60066B22A /* Client.cpp */; };
 		B0255A472443C271009BFB31 /* shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = B0255A462443C271009BFB31 /* shaders */; };
 		B0255A4C2443C994009BFB31 /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B0255A482443C901009BFB31 /* libglfw.3.3.dylib */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,8 @@
 		A42588772447B9F60066B22A /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = imgui/imgui_draw.cpp; sourceTree = "<group>"; };
 		A42588782447B9F60066B22A /* imstb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imstb_textedit.h; path = imgui/imstb_textedit.h; sourceTree = "<group>"; };
 		A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_glfw.cpp; path = imgui/imgui_impl_glfw.cpp; sourceTree = "<group>"; };
+		A425888024492AB60066B22A /* Client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Client.cpp; path = src/Client.cpp; sourceTree = SOURCE_ROOT; };
+		A425888124492AB60066B22A /* Client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Client.h; path = src/Client.h; sourceTree = SOURCE_ROOT; };
 		B0255A332443B8DB009BFB31 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		B0255A342443B8DB009BFB31 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		B0255A352443B8DB009BFB31 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
@@ -139,6 +142,7 @@
 		A4258849244127940066B22A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A425888024492AB60066B22A /* Client.cpp */,
 				A425884B244127940066B22A /* PointCloud.cpp */,
 				A425884D244127940066B22A /* Window.cpp */,
 				A4258850244127940066B22A /* shader.cpp */,
@@ -157,6 +161,7 @@
 				B0255A362443B8DB009BFB31 /* PointCloud.h */,
 				B0255A372443B8DC009BFB31 /* shader.h */,
 				B0255A382443B8DC009BFB31 /* Window.h */,
+				A425888124492AB60066B22A /* Client.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -230,6 +235,7 @@
 			files = (
 				A425885F244127940066B22A /* Cube.cpp in Sources */,
 				A425885E244127940066B22A /* shader.cpp in Sources */,
+				A425888224492AB60066B22A /* Client.cpp in Sources */,
 				A425885C244127940066B22A /* PointCloud.cpp in Sources */,
 				A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */,
 				A4258860244127940066B22A /* main.cpp in Sources */,
