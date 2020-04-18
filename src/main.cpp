@@ -115,7 +115,8 @@ int main(void)
 int main(void) {
   // Create the window.
   Window window(640, 480, "Window");
-  Client client(640, 480);
+  std::pair<int, int> fbSize = window.getFrameBufferSize();
+  Client client(fbSize.first, fbSize.second);
   
   // Initialize the shader program and objects; exit if initialization fails.
   if (!client.initialize())

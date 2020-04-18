@@ -57,6 +57,7 @@ public:
   GLFWwindow* getWindow();
   // void run();
   void displayCallback();
+  std::pair<int, int> getFrameBufferSize();
   
 private:
   GLFWwindow* window;

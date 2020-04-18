@@ -233,7 +233,7 @@ void Window::setupCallbacks()
   
   // Set the window resize callback.
   glfwSetWindowSizeCallback(window, resizeCallback);
-  
+ 
   // Set the key callback.
   glfwSetKeyCallback(window, keyCallback);
 }
@@ -265,6 +265,9 @@ GLFWwindow* Window::createWindow(int width, int height, std::string title)
   // Create the GLFW window.
   GLFWwindow* window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   
+  // unresizable window
+  glfwSetWindowSizeLimits(window, this->width, this->height, this->width, this->height);
+  
   // Check if the window could not be created.
   if (!window)
   {
@@ -289,9 +292,7 @@ GLFWwindow* Window::createWindow(int width, int height, std::string title)
   
   // Set swap interval to 1.
   glfwSwapInterval(0);
-  
-  // unresizable window
-  glfwSetWindowSizeLimits(window, this->width, this->height, this->width, this->height);
+  resizeCallback(window, width, height); 
   
   return window;
 }
@@ -340,4 +341,14 @@ void Window::displayCallback()
   
   // Swap buffers.
   glfwSwapBuffers(window);
+}
+
+std::pair<int, int> Window::getFrameBufferSize() {
+  int width = this->width;
+  int height = this->height;
+#ifdef __APPLE__
+  // In case your Mac has a retina display.
+  glfwGetFramebufferSize(window, &width, &height);
+#endif
+  return std::pair<int, int>(width, height); 
 }
