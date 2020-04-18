@@ -9,8 +9,10 @@
 #include "Client.h"
 
 Client::Client(int width, int height) {
-  this->width = width;
-  this->height = height;
+  window = new Window(width, height, "Window");
+  std::pair<int, int> windowSize = window->getFrameBufferSize();
+  this->width = windowSize.first;
+  this->height = windowSize.second;
   eyePos = glm::vec3(0, 0, 20);      // Camera position.
   lookAtPoint = glm::vec3(0, 0, 0);    // The point we are looking at.
   upVector = glm::vec3(0, 1, 0);    // The up direction of the camera.
@@ -32,6 +34,8 @@ Client::~Client() {
   
   // Delete the shader program.
   glDeleteProgram(shaderProgram);
+  
+  delete window;
 }
 
 bool Client::initializeProgram() {
@@ -104,4 +108,54 @@ void Client::printVersions()
   std::cout << "Supported GLSL version is: " <<
   glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 #endif
+}
+
+void Client::run() {
+  if (!initialize())
+    throw "Unable to initialize client";
+  
+  // Loop while GLFW window should stay open.
+  while (!glfwWindowShouldClose(window->getWindow()))
+  {
+    // Main render display callback. Rendering of objects is done here. (Draw)
+    displayCallback();
+    window->displayCallback();
+    
+    // Idle callback. Updating objects, etc. can be done here. (Update)
+    idleCallback();
+  }
+}
+
+void Client::errorCallback(int error, const char* description)
+{
+  // Print error.
+  std::cerr << description << std::endl;
+}
+
+void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+  
+  // Check for a key press.
+  if (action == GLFW_PRESS)
+  {
+    switch (key)
+    {
+      case GLFW_KEY_ESCAPE:
+        // Close the window. This causes the program to also terminate.
+        glfwSetWindowShouldClose(window, GL_TRUE);
+        break;
+        
+      default:
+        break;
+    }
+  }
+}
+
+void Client::setupCallbacks()
+{
+  // Set the error callback.
+  glfwSetErrorCallback(errorCallback);
+  
+  // Set the key callback.
+  glfwSetKeyCallback(window->getWindow(), keyCallback);
 }

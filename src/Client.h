@@ -9,8 +9,18 @@
 #ifndef Client_h
 #define Client_h
 
+#ifdef __APPLE__
+#define GLFW_INCLUDE_GLCOREARB
+#include <OpenGL/gl3.h>
+#else
+#include <GL/glew.h>
+#endif
+#include <GLFW/glfw3.h>
+
 #include <stdio.h>
+#include "Object.h"
 #include "Cube.h"
+#include "Window.h"
 #include "shader.h"
 
 class Client {
@@ -23,7 +33,10 @@ public:
   void idleCallback();
   void displayCallback();
   
+  void run(); 
+  
 private:
+  Window* window; 
   int width;
   int height; 
   // Camera Matrices
@@ -38,7 +51,10 @@ private:
   bool initializeProgram();
   bool initializeObjects();
   void setupOpenglSettings();
-  void printVersions(); 
+  void printVersions();
+  void setupCallbacks();
+  static void errorCallback(int error, const char* description);
+  static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
   
   // objects
   Cube* cube;
