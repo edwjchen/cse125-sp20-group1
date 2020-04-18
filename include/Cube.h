@@ -16,7 +16,8 @@ public:
 	~Cube();
 
 	void draw(const glm::mat4& view, const glm::mat4& projection, GLuint shader);
-	void update();
+	void update(float deltaTime);
+    void move (const glm::vec3& pos) {};
 
 	void spin(float deg);
 };

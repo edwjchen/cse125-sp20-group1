@@ -1,14 +1,10 @@
 #ifndef _WINDOW_H_
 #define _WINDOW_H_
 
-#include <GLFW/glfw3.h>
-#include <stdlib.h>
-#include <iostream>
-#include <stdio.h>
-#include <string>
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "main.h"
+#include "shader.h"
+#include "Object.h"
+#include "engine.h"
 
 
 class Window {
@@ -29,5 +25,8 @@ private:
   GLFWwindow* createWindow(int width, int height, std::string title);
   void setupGui();
   void cleanupGui();
+    
+    void setupGui();
+    void cleanupGui();
 };
 #endif
