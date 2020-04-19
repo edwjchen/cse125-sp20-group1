@@ -1,4 +1,5 @@
 #include "Cube.h"
+#include <iostream>
 
 Cube::Cube(float size) 
 {
@@ -111,7 +112,7 @@ void Cube::draw(const glm::mat4& view, const glm::mat4& projection, GLuint shade
 	glUseProgram(0);
 }
 
-void Cube::update()
+void Cube::update(float deltaTime)
 {
 	// Spin the cube by 1 degree.
 	spin(0.1f);
