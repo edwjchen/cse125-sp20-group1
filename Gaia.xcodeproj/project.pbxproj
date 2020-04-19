@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		613A462B244BE3E6005F07E9 /* my_client.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A4629244BE3E6005F07E9 /* my_client.hpp */; };
+		613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A462D244BE3F3005F07E9 /* IO_handler.cpp */; };
+		613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */; };
 		A425885C244127940066B22A /* PointCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884B244127940066B22A /* PointCloud.cpp */; };
 		A425885D244127940066B22A /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884D244127940066B22A /* Window.cpp */; };
 		A425885F244127940066B22A /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258857244127940066B22A /* Cube.cpp */; };
@@ -40,6 +43,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14A9F7EA244BE9A300F3C909 /* IO_handler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IO_handler.hpp; sourceTree = "<group>"; };
+		613A4629244BE3E6005F07E9 /* my_client.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = my_client.hpp; sourceTree = "<group>"; };
+		613A462D244BE3F3005F07E9 /* IO_handler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IO_handler.cpp; sourceTree = "<group>"; };
+		613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../usr/local/Cellar/boost/1.72.0_1/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 		A425881A2441261E0066B22A /* Gaia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Gaia; sourceTree = BUILT_PRODUCTS_DIR; };
 		A425883F244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A425884B244127940066B22A /* PointCloud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointCloud.cpp; sourceTree = "<group>"; };
@@ -96,6 +103,7 @@
 			files = (
 				B0255A4C2443C994009BFB31 /* libglfw.3.3.dylib in Frameworks */,
 				A4258863244127EE0066B22A /* OpenGL.framework in Frameworks */,
+				613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,6 +165,7 @@
 		A4258849244127940066B22A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				613A462D244BE3F3005F07E9 /* IO_handler.cpp */,
 				A425888024492AB60066B22A /* Client.cpp */,
 				A4258857244127940066B22A /* Cube.cpp */,
 				A4258858244127940066B22A /* main.cpp */,
@@ -172,6 +181,7 @@
 		A4258859244127940066B22A /* include */ = {
 			isa = PBXGroup;
 			children = (
+				14A9F7EA244BE9A300F3C909 /* IO_handler.hpp */,
 				B01FA8CA244BD4BB003EFCB0 /* Client.h */,
 				B03CDCA8244B91FD001D2FAB /* core.h */,
 				B0255A352443B8DB009BFB31 /* Cube.h */,
@@ -184,6 +194,7 @@
 				B03CDCA3244B8FF7001D2FAB /* Sphere.h */,
 				B03CDCA9244B92BF001D2FAB /* Wind.h */,
 				B0255A382443B8DC009BFB31 /* Window.h */,
+				613A4629244BE3E6005F07E9 /* my_client.hpp */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -191,6 +202,7 @@
 		A4258861244127EE0066B22A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */,
 				A4258864244128030066B22A /* libglfw.3.3.dylib */,
 				B0255A482443C901009BFB31 /* libglfw.3.3.dylib */,
 				B0255A4A2443C964009BFB31 /* libglfw.3.3.dylib */,
@@ -267,6 +279,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */,
+				613A462B244BE3E6005F07E9 /* my_client.hpp in Sources */,
 				B01FA8D0244BD525003EFCB0 /* shader.cpp in Sources */,
 				B01FA8D1244BD525003EFCB0 /* Sphere.cpp in Sources */,
 				B01FA8CB244BD512003EFCB0 /* imgui_demo.cpp in Sources */,
@@ -406,12 +420,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
+					/usr/local/Cellar/boost/1.72.0_1/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
+					/usr/local/Cellar/boost/1.72.0_1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -425,12 +441,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
+					/usr/local/Cellar/boost/1.72.0_1/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
+					/usr/local/Cellar/boost/1.72.0_1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
