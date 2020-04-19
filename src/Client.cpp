@@ -10,6 +10,7 @@
 
 Cube* Client::cube;
 Sphere* Client::sphere;
+IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
   window = new Window(width, height, "Window");
@@ -51,6 +52,9 @@ bool Client::initializeProgram() {
     return false;
   }
   
+  // Create io_handler (0 for balls)
+  io_handler = new IO_handler(0);
+
   return true;
 }
 
@@ -59,6 +63,7 @@ bool Client::initializeObjects()
   // Create a cube of size 5.
   cube = new Cube(5.0f);
   sphere = new Sphere(5.0f, 2.0f);
+
   return true;
 }
 
@@ -114,56 +119,121 @@ void Client::printVersions()
 }
 
 void Client::run() {
-  if (!initialize())
+    if (!initialize())
     throw "Unable to initialize client";
-  
-  // Loop while GLFW window should stay open.
-  while (!glfwWindowShouldClose(window->getWindow()))
-  {
-    // Main render display callback. Rendering of objects is done here. (Draw)
-    displayCallback();
-    window->displayCallback();
-    
-    // Idle callback. Updating objects, etc. can be done here. (Update)
-    idleCallback();
-  }
+
+    // Client Try
+    try
+    {
+        boost::asio::io_service io_service;
+        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
+
+        chat_client c(io_service, endpoint);
+
+        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+
+        std::string msg;
+
+        // Loop while GLFW window should stay open.
+        while (!glfwWindowShouldClose(window->getWindow()))
+        {
+            // Main render display callback. Rendering of objects is done here. (Draw)
+            displayCallback();
+            window->displayCallback();
+
+            // Idle callback. Updating objects, etc. can be done here. (Update)
+            idleCallback();
+            io_handler -> SendPackage(&c);
+        } 
+
+
+        c.close();
+        t.join();
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << "\n";
+    }
 }
 
 void Client::errorCallback(int error, const char* description)
 {
-  // Print error.
-  std::cerr << description << std::endl;
+    // Print error.
+    std::cerr << description << std::endl;
 }
 
 void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
   
-  // Check for a key press.
-  if (action == GLFW_PRESS)
-  {
-    switch (key)
+    /*
+      * TODO: Modify below to add your key callbacks.
+      */
+	
+	  // Check for a key press.
+    if (action == GLFW_PRESS)
     {
-      case GLFW_KEY_ESCAPE:{
-        // Close the window. This causes the program to also terminate.
-        glfwSetWindowShouldClose(window, GL_TRUE);
-        break;
-      }
-      case GLFW_KEY_LEFT:{
-        sphere->move(sphere->getPos() + glm::vec3(-1.0f, 0.0f, 0.0f));
-      }
-      default:
-        break;
+        switch (key)
+        {
+            case GLFW_KEY_ESCAPE:{
+                // Close the window. This causes the program to also terminate.
+                glfwSetWindowShouldClose(window, GL_TRUE);
+                break;
+            }
+            // take user's io
+            case GLFW_KEY_W:{
+                io_handler->SendInput(0);
+                break;
+            }
+            case GLFW_KEY_A:{
+                io_handler->SendInput(1);
+                break;
+            }
+            case GLFW_KEY_S:{
+                io_handler->SendInput(2);
+                break;
+            }
+            case GLFW_KEY_D:{
+                io_handler->SendInput(3);
+                break;
+            }
+            default:
+                break;
+        }
     }
     
-    
-  }
+    // Check for holding key
+	else if (action == GLFW_REPEAT)
+	{
+		switch (key)
+		{
+            // Contineous movement
+            case GLFW_KEY_W:{
+                io_handler->SendInput(0);
+                break;
+            }
+            case GLFW_KEY_A:{
+                io_handler->SendInput(1);
+                break;
+            }
+            case GLFW_KEY_S:{
+                io_handler->SendInput(2);
+                break;
+            }
+            case GLFW_KEY_D:{
+                io_handler->SendInput(3);
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 void Client::setupCallbacks()
 {
-  // Set the error callback.
-  glfwSetErrorCallback(errorCallback);
-  
-  // Set the key callback.
-  glfwSetKeyCallback(window->getWindow(), keyCallback);
+    // Set the error callback.
+    glfwSetErrorCallback(errorCallback);
+    
+    // Set the key callback.
+    glfwSetKeyCallback(window->getWindow(), keyCallback);
 }
