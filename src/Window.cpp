@@ -1,6 +1,5 @@
 #include "Window.h"
 
-
 Window::Window(int width, int height, std::string title) {
   this->width = width;
   this->height = height;

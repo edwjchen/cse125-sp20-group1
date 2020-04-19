@@ -2,7 +2,6 @@
 #define _CUBE_H_
 
 #include "Object.h"
-
 #include <vector>
 
 class Cube : public Object
