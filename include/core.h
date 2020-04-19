@@ -15,6 +15,8 @@
 #include <GL/glew.h>
 #endif
 
+#include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -23,5 +25,9 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #endif

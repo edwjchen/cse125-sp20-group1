@@ -12,5 +12,6 @@
 #include "Cube.h"
 #include "PointCloud.h"
 #include "Sphere.h"
+#include "Object.h"
 
 #endif /* engine_h */

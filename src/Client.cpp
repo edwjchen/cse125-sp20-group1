@@ -8,6 +8,9 @@
 
 #include "Client.h"
 
+Cube* Client::cube;
+Sphere* Client::sphere;
+
 Client::Client(int width, int height) {
   window = new Window(width, height, "Window");
   std::pair<int, int> windowSize = window->getFrameBufferSize();
@@ -24,14 +27,13 @@ Client::Client(int width, int height) {
   // Setup OpenGL settings.
   setupOpenglSettings();
   
-
-
+  setupCallbacks();
 }
 
 Client::~Client() {
   // Deallcoate the objects.
   delete cube;
-  
+  delete sphere;
   // Delete the shader program.
   glDeleteProgram(shaderProgram);
   
@@ -56,12 +58,12 @@ bool Client::initializeObjects()
 {
   // Create a cube of size 5.
   cube = new Cube(5.0f);
-  
+  sphere = new Sphere(5.0f, 2.0f);
   return true;
 }
 
 void Client::idleCallback() {
-  cube->update();
+  //cube->update();
 }
 
 void Client::displayCallback() {
@@ -69,7 +71,8 @@ void Client::displayCallback() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   // Render the objects
-  cube->draw(view, projection, shaderProgram);
+  //cube->draw(view, projection, shaderProgram);
+  sphere->draw(view, projection, shaderProgram);
 }
 
 bool Client::initialize() {
@@ -101,7 +104,7 @@ void Client::printVersions()
   // Get info of GPU and supported OpenGL version.
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
   std::cout << "OpenGL version supported: " << glGetString(GL_VERSION)
-  << std::endl;
+    << std::endl;
   
   //If the shading language symbol is defined.
 #ifdef GL_SHADING_LANGUAGE_VERSION
@@ -140,14 +143,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
   {
     switch (key)
     {
-      case GLFW_KEY_ESCAPE:
+      case GLFW_KEY_ESCAPE:{
         // Close the window. This causes the program to also terminate.
         glfwSetWindowShouldClose(window, GL_TRUE);
         break;
-        
+      }
+      case GLFW_KEY_LEFT:{
+        sphere->move(sphere->getPos() + glm::vec3(-1.0f, 0.0f, 0.0f));
+      }
       default:
         break;
     }
+    
+    
   }
 }
 
