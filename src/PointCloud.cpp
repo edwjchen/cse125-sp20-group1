@@ -82,7 +82,7 @@ void PointCloud::draw(const glm::mat4& view, const glm::mat4& projection, GLuint
 	glUseProgram(0);
 }
 
-void PointCloud::update()
+void PointCloud::update(float deltaTime)
 {
 	// Spin the cube by 1 degree
 	spin(0.1f);
