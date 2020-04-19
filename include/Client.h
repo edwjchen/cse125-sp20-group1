@@ -20,6 +20,7 @@
 #include "engine.h"
 #include "Window.h"
 #include "shader.h"
+#include "IO_handler.hpp"
 
 class Client {
 public:
@@ -57,6 +58,9 @@ private:
   // objects
   static Cube* cube;
   static Sphere* sphere;
+
+  // IO Handler
+	static IO_handler* io_handler;
 };
 
 #endif /* Client_h */
