@@ -2,7 +2,6 @@
 #define _CUBE_H_
 
 #include "Object.h"
-
 #include <vector>
 
 class Cube : public Object
@@ -16,9 +15,6 @@ public:
 	~Cube();
 
 	void draw(const glm::mat4& view, const glm::mat4& projection, GLuint shader);
-	void update();
-
-	void spin(float deg);
-};
-
-#endif
+	void update(float deltaTime);
+    void move (const glm::vec3& pos) {};
+}
