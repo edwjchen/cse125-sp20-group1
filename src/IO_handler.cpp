@@ -16,7 +16,23 @@ IO_handler::IO_handler(int type){
 }
 
 void IO_handler::PressW(){
+    // TODO:: link with server
     cout << "Press W!" << endl;
+}
+
+void IO_handler::PressA(){
+    // TODO:: link with server
+    cout << "Press A!" << endl;
+}
+
+void IO_handler::PressS(){
+    // TODO:: link with server
+    cout << "Press S!" << endl;
+}
+
+void IO_handler::PressD(){
+    // TODO:: link with server
+    cout << "Press D!" << endl;
 }
 
 

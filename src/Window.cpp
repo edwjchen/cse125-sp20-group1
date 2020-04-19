@@ -184,33 +184,65 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	 */
 	
 	// Check for a key press.
-	if (action == GLFW_REPEAT)
-	{
-		switch (key)
-		{
-		case GLFW_KEY_ESCAPE:
-			// Close the window. This causes the program to also terminate.
-			glfwSetWindowShouldClose(window, GL_TRUE);				
-			break;
+    if (action == GLFW_PRESS)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            // Close the window. This causes the program to also terminate.
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
 
-		// switch between the cube and the cube pointCloud
-		case GLFW_KEY_1:
-			currObj = cube;
-			break;
-		case GLFW_KEY_2:
-			currObj = cubePoints;
-			break;
-            
+        // switch between the cube and the cube pointCloud
+        case GLFW_KEY_1:
+            currObj = cube;
+            break;
+        case GLFW_KEY_2:
+            currObj = cubePoints;
+            break;
+        
+        // take user's io
         case GLFW_KEY_W:
             io_handler->PressW();
             break;
-
+        case GLFW_KEY_A:
+            io_handler->PressA();
+            break;
+        case GLFW_KEY_S:
+            io_handler->PressS();
+            break;
+        case GLFW_KEY_D:
+            io_handler->PressD();
+            break;
                 
+        default:
+            break;
+        }
+    }
+    
+    // Check for holding key
+	else if (action == GLFW_REPEAT)
+	{
+		switch (key)
+		{
+        
+        // Contineous movement
+        case GLFW_KEY_W:
+            io_handler->PressW();
+            break;
+        case GLFW_KEY_A:
+            io_handler->PressA();
+            break;
+        case GLFW_KEY_S:
+            io_handler->PressS();
+            break;
+        case GLFW_KEY_D:
+            io_handler->PressD();
+            break;
+
 		default:
 			break;
 		}
 	}
-    
-    
 
 }
