@@ -57,6 +57,7 @@ private:
   // objects
   static Cube* cube;
   static Sphere* sphere;
+  static Primitive* currobj;
 };
 
 #endif /* Client_h */

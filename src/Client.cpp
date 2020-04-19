@@ -10,6 +10,7 @@
 
 Cube* Client::cube;
 Sphere* Client::sphere;
+Primitive* Client::currobj;
 
 Client::Client(int width, int height) {
   window = new Window(width, height, "Window");
