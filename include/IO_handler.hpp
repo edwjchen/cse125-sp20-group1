@@ -19,7 +19,8 @@ class IO_handler{
 
 private:
     int ctype = -1;
-    int currDir = -1;
+    std::string currDir = "z";
+    bool ifPressed = false;
     
 public:
     

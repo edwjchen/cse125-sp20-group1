@@ -15,14 +15,32 @@ IO_handler::IO_handler(int type){
 }
 
 void IO_handler::SendInput(int direction){
-    currDir = direction;
+    
+    switch(direction){
+        case 0:
+            currDir = "w";
+            break;
+        case 1:
+            currDir = "a";
+            break;
+        case 2:
+            currDir = "s";
+            break;
+        case 3:
+            currDir = "d";
+            break;
+        
+    }
+    
+    ifPressed = true;
+    
 }
 
 void IO_handler::SendPackage(chat_client* c){
     
-    if(currDir != -1){
-        c->write(to_string(currDir));
-        currDir = -1;
+    if(ifPressed){
+        c->write(currDir);
+        ifPressed = false;
     }
 }
 
