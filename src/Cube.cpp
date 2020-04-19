@@ -1,8 +1,6 @@
 #include "Cube.h"
-<<<<<<< HEAD
 #include <iostream>
-=======
->>>>>>> origin/staging
+
 
 Cube::Cube(float size) 
 {
