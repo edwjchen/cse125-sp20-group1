@@ -26,7 +26,7 @@ public:
 
 	virtual void draw(const glm::mat4& view, const glm::mat4& projection, GLuint shader) = 0;
 	virtual void update(float deltaTime) = 0;
-    virtual void move (const glm::vec3& pos) = 0;
+  virtual void move (const glm::vec3& pos) = 0;
 };
 
 #endif

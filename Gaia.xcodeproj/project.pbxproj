@@ -420,14 +420,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
-					/usr/local/Cellar/boost/1.72.0_1/include,
+					/usr/local/Cellar/boost/1.72.0/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
-					/usr/local/Cellar/boost/1.72.0_1/lib,
+					/usr/local/Cellar/boost/1.72.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -441,14 +441,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
-					/usr/local/Cellar/boost/1.72.0_1/include,
+					/usr/local/Cellar/boost/1.72.0/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
-					/usr/local/Cellar/boost/1.72.0_1/lib,
+					/usr/local/Cellar/boost/1.72.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

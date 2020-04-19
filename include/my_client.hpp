@@ -111,34 +111,3 @@ private:
   boost::asio::streambuf read_msg_;
   chat_message_queue write_msgs_;
 };
-
-/*
-int main(int argc, char* argv[])
-{
-  try
-  {
-
-    boost::asio::io_service io_service;
-    tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
-
-    chat_client c(io_service, endpoint);
-
-    boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-
-    std::string msg;
-    while (getline(std::cin, msg))
-    {
-      c.write(msg);
-    }
-
-    c.close();
-    t.join();
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-
-  return 0;
-}
- */
