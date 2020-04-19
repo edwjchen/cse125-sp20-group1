@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		613A462B244BE3E6005F07E9 /* my_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A4629244BE3E6005F07E9 /* my_client.cpp */; };
+		613A462C244BE3E6005F07E9 /* my_server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A462A244BE3E6005F07E9 /* my_server.cpp */; };
+		613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A462D244BE3F3005F07E9 /* IO_handler.cpp */; };
+		613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */; };
 		A425885C244127940066B22A /* PointCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884B244127940066B22A /* PointCloud.cpp */; };
 		A425885D244127940066B22A /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884D244127940066B22A /* Window.cpp */; };
 		A425885E244127940066B22A /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258850244127940066B22A /* shader.cpp */; };
@@ -37,6 +41,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		613A4629244BE3E6005F07E9 /* my_client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = my_client.cpp; sourceTree = "<group>"; };
+		613A462A244BE3E6005F07E9 /* my_server.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = my_server.cpp; sourceTree = "<group>"; };
+		613A462D244BE3F3005F07E9 /* IO_handler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IO_handler.cpp; sourceTree = "<group>"; };
+		613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../usr/local/Cellar/boost/1.72.0_1/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 		A425881A2441261E0066B22A /* Gaia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Gaia; sourceTree = BUILT_PRODUCTS_DIR; };
 		A425883F244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A425884B244127940066B22A /* PointCloud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointCloud.cpp; sourceTree = "<group>"; };
@@ -72,6 +80,7 @@
 			files = (
 				B0255A4C2443C994009BFB31 /* libglfw.3.3.dylib in Frameworks */,
 				A4258863244127EE0066B22A /* OpenGL.framework in Frameworks */,
+				613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +128,9 @@
 		A4258849244127940066B22A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				613A462D244BE3F3005F07E9 /* IO_handler.cpp */,
+				613A4629244BE3E6005F07E9 /* my_client.cpp */,
+				613A462A244BE3E6005F07E9 /* my_server.cpp */,
 				B0255A6D2443CCE0009BFB31 /* imgui_demo.cpp */,
 				B0255A6B2443CCE0009BFB31 /* imgui_draw.cpp */,
 				B0255A6C2443CCE0009BFB31 /* imgui_impl_glfw.cpp */,
@@ -150,6 +162,7 @@
 		A4258861244127EE0066B22A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */,
 				A4258864244128030066B22A /* libglfw.3.3.dylib */,
 				B0255A482443C901009BFB31 /* libglfw.3.3.dylib */,
 				B0255A4A2443C964009BFB31 /* libglfw.3.3.dylib */,
@@ -214,6 +227,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */,
+				613A462B244BE3E6005F07E9 /* my_client.cpp in Sources */,
+				613A462C244BE3E6005F07E9 /* my_server.cpp in Sources */,
 				A425885F244127940066B22A /* Cube.cpp in Sources */,
 				B0255A712443CCE1009BFB31 /* imgui_draw.cpp in Sources */,
 				B0255A742443CCE1009BFB31 /* imgui_impl_opengl3.cpp in Sources */,
@@ -350,12 +366,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
+					/usr/local/Cellar/boost/1.72.0_1/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
+					/usr/local/Cellar/boost/1.72.0_1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -369,12 +387,14 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
+					/usr/local/Cellar/boost/1.72.0_1/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/glfw/3.3.1/lib,
 					./lib,
 					"$(PROJECT_DIR)/lib",
+					/usr/local/Cellar/boost/1.72.0_1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

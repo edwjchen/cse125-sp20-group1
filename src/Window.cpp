@@ -6,6 +6,9 @@ int Window::width;
 int Window::height;
 const char* Window::windowTitle = "GLFW Starter Project";
 
+// IO Handler
+IO_handler* Window::io_handler;
+
 // Objects to Render
 Cube * Window::cube;
 PointCloud * Window::cubePoints;
@@ -36,6 +39,9 @@ bool Window::initializeProgram() {
 		std::cerr << "Failed to initialize shader program" << std::endl;
 		return false;
 	}
+    
+    // Create io_handler (0 for balls)
+    io_handler = new IO_handler(0);
 
 	return true;
 }
@@ -178,7 +184,7 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	 */
 	
 	// Check for a key press.
-	if (action == GLFW_PRESS)
+	if (action == GLFW_REPEAT)
 	{
 		switch (key)
 		{
@@ -194,9 +200,17 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 		case GLFW_KEY_2:
 			currObj = cubePoints;
 			break;
+            
+        case GLFW_KEY_W:
+            io_handler->PressW();
+            break;
 
+                
 		default:
 			break;
 		}
 	}
+    
+    
+
 }

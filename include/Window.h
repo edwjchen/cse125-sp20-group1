@@ -9,6 +9,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "IO_handler.hpp"
 
 class Window
 {
@@ -19,6 +20,9 @@ public:
 	static int height;
 	static const char* windowTitle;
 
+    // IO Handler
+    static IO_handler* io_handler;
+    
 	// Objects to Render
 	static Cube* cube;
 	static PointCloud * cubePoints;
