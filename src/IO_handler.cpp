@@ -7,7 +7,6 @@
 //
 
 #include "IO_handler.hpp"
-#include "my_client.cpp"
 
 using namespace std;
 
@@ -15,24 +14,18 @@ IO_handler::IO_handler(int type){
     ctype = type;
 }
 
-void IO_handler::PressW(){
-    // TODO:: link with server
-    cout << "Press W!" << endl;
+void IO_handler::SendInput(int direction){
+    currDir = direction;
 }
 
-void IO_handler::PressA(){
-    // TODO:: link with server
-    cout << "Press A!" << endl;
+void IO_handler::SendPackage(chat_client* c){
+    
+    if(currDir != -1){
+        c->write(to_string(currDir));
+        currDir = -1;
+    }
 }
 
-void IO_handler::PressS(){
-    // TODO:: link with server
-    cout << "Press S!" << endl;
-}
 
-void IO_handler::PressD(){
-    // TODO:: link with server
-    cout << "Press D!" << endl;
-}
 
 

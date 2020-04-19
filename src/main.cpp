@@ -55,7 +55,9 @@ int main(void)
 	GLFWwindow* window = Window::createWindow(640, 480);
 	if (!window) 
 		exit(EXIT_FAILURE);
-
+    
+    
+    
 	// Print OpenGL and GLSL versions.
 	print_versions();
 
@@ -64,6 +66,9 @@ int main(void)
 
 	// Setup OpenGL settings.
 	setup_opengl_settings();
+    
+    
+    
 
 	// Initialize the shader program; exit if initialization fails.
 	if (!Window::initializeProgram()) 
@@ -84,15 +89,54 @@ int main(void)
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     
-	// Loop while GLFW window should stay open.
-	while (!glfwWindowShouldClose(window))
-	{
-		// Main render display callback. Rendering of objects is done here. (Draw)
-		Window::displayCallback(window);
+    
+    // Client Try
+    try
+    {
+        boost::asio::io_service io_service;
+        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
 
-		// Idle callback. Updating objects, etc. can be done here. (Update)
-		Window::idleCallback();
-	}
+        chat_client c(io_service, endpoint);
+
+        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+
+        
+        std::string msg;
+        
+        /*
+        while (getline(std::cin, msg))
+        {
+            c.write(msg);
+        }
+
+            c.close();
+            t.join();
+        }
+         */
+
+    
+    
+    
+	// Loop while GLFW window should stay open.
+        while (!glfwWindowShouldClose(window))
+        {
+            // Main render display callback. Rendering of objects is done here. (Draw)
+            Window::displayCallback(window);
+
+            // Idle callback. Updating objects, etc. can be done here. (Update)
+            Window::idleCallback();
+            
+            
+            Window::io_handler -> SendPackage(&c);
+        }
+        
+        c.close();
+        t.join();
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << "\n";
+    }
 
 	// destroy objects created
 	Window::cleanUp();
@@ -107,5 +151,9 @@ int main(void)
 	// Terminate GLFW.
 	glfwTerminate();
 
+
+    
+    
+    
 	exit(EXIT_SUCCESS);
 }

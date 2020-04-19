@@ -11,17 +11,27 @@
 
 #include <stdio.h>
 #include <iostream>
+#include "my_client.hpp"
+#include <string>
 
 
 class IO_handler{
 
+private:
+    int ctype = -1;
+    int currDir = -1;
+    
 public:
-    int ctype = -1;       // player type: 0 for ball, 1 for terrian
+    
     IO_handler(int type);
+    
+    void SendInput(int direction);
+    void SendPackage(chat_client* c);
     void PressW();
     void PressA();
     void PressS();
-    void PressD();
+    void PressD(chat_client* c);
+    
 };
 
 

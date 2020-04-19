@@ -203,16 +203,16 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         
         // take user's io
         case GLFW_KEY_W:
-            io_handler->PressW();
+            io_handler->SendInput(0);
             break;
         case GLFW_KEY_A:
-            io_handler->PressA();
+            io_handler->SendInput(1);
             break;
         case GLFW_KEY_S:
-            io_handler->PressS();
+            io_handler->SendInput(2);
             break;
         case GLFW_KEY_D:
-            io_handler->PressD();
+            io_handler->SendInput(3);
             break;
                 
         default:
@@ -228,21 +228,22 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         
         // Contineous movement
         case GLFW_KEY_W:
-            io_handler->PressW();
+            io_handler->SendInput(0);
             break;
         case GLFW_KEY_A:
-            io_handler->PressA();
+            io_handler->SendInput(1);
             break;
         case GLFW_KEY_S:
-            io_handler->PressS();
+            io_handler->SendInput(2);
             break;
         case GLFW_KEY_D:
-            io_handler->PressD();
+            io_handler->SendInput(3);
             break;
 
 		default:
 			break;
 		}
 	}
+    
 
 }
