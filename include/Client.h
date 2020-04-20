@@ -52,15 +52,20 @@ private:
   void setupOpenglSettings();
   void printVersions();
   void setupCallbacks();
+
   static void errorCallback(int error, const char* description);
   static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
   
   // objects
   static Cube* cube;
-  static Sphere* sphere;
+  static Sphere* sphere_player1;
+  static Sphere* sphere_player2;
 
   // IO Handler
-	static IO_handler* io_handler;
+  static IO_handler* io_handler;
+
+  // Decode message from server and update client side graphic
+  static void updateFromServer(std::string msg);
 };
 
 #endif /* Client_h */
