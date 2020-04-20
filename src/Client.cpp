@@ -9,7 +9,9 @@
 #include "Client.h"
 
 Cube* Client::cube;
-Sphere* Client::sphere;
+Sphere* Client::sphere_player1;
+Sphere* Client::sphere_player2;
+
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -34,7 +36,9 @@ Client::Client(int width, int height) {
 Client::~Client() {
   // Deallcoate the objects.
   delete cube;
-  delete sphere;
+  delete sphere_player1;
+  delete sphere_player2;
+
   // Delete the shader program.
   glDeleteProgram(shaderProgram);
   
@@ -60,11 +64,11 @@ bool Client::initializeProgram() {
 
 bool Client::initializeObjects()
 {
-  // Create a cube of size 5.
-  cube = new Cube(5.0f);
-  sphere = new Sphere(5.0f, 2.0f);
-
-  return true;
+    // Create a cube of size 5.
+    cube = new Cube(5.0f);
+    sphere_player1 = new Sphere(5.0f, 2.0f);
+    sphere_player2 = new Sphere(5.0f, 2.0f);
+    return true;
 }
 
 void Client::idleCallback() {
@@ -77,7 +81,8 @@ void Client::displayCallback() {
   
   // Render the objects
   //cube->draw(view, projection, shaderProgram);
-  sphere->draw(view, projection, shaderProgram);
+    sphere_player1->draw(view, projection, shaderProgram);
+    sphere_player2->draw(view, projection, shaderProgram);
 }
 
 bool Client::initialize() {
@@ -144,9 +149,8 @@ void Client::run() {
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
             io_handler -> SendPackage(&c);
+            updateFromServer(c.getMsg());
         } 
-
-
         c.close();
         t.join();
     }
@@ -236,4 +240,26 @@ void Client::setupCallbacks()
     
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
+}
+void Client::updateFromServer(string msg)
+{
+    if(msg != ""){
+        
+        // Hardcode string decoding for now
+        vector<string> result;
+        stringstream s_stream(msg);
+        while(s_stream.good()) {
+           string substr;
+           getline(s_stream, substr, ','); //get first string delimited by comma
+           result.push_back(substr);
+        }
+        float x1 = stof(result.at(0));
+        float y1 = stof(result.at(1));
+        float x2 = stof(result.at(2));
+        float y2 = stof(result.at(3));
+        glm::vec3 pos1 = glm::vec3(x1, y1, 0);
+        glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+        sphere_player1->move(pos1);
+        sphere_player2->move(pos2);
+    }
 }
