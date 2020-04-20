@@ -151,6 +151,7 @@ void Client::run() {
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         } 
+
         c.close();
         t.join();
     }
