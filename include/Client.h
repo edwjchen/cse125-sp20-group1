@@ -66,7 +66,7 @@ private:
     
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
-    
+
 };
 
 #endif /* Client_h */

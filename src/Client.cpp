@@ -11,6 +11,7 @@
 Cube* Client::cube;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
+
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -35,8 +36,9 @@ Client::Client(int width, int height) {
 Client::~Client() {
   // Deallcoate the objects.
   delete cube;
-    delete sphere_player1;
-    delete sphere_player2;
+  delete sphere_player1;
+  delete sphere_player2;
+
   // Delete the shader program.
   glDeleteProgram(shaderProgram);
   
@@ -149,7 +151,6 @@ void Client::run() {
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         } 
-
         c.close();
         t.join();
     }
@@ -240,7 +241,6 @@ void Client::setupCallbacks()
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
 }
-
 void Client::updateFromServer(string msg)
 {
     if(msg != ""){

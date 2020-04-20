@@ -7,6 +7,7 @@
 
 using namespace boost::asio;
 using namespace std;
+
 using ip::tcp;
 
 typedef std::deque<std::string> chat_message_queue;
@@ -63,11 +64,9 @@ private:
   {
     if (!error)
     {
-      //std::cout << &read_msg_ << std::endl;
       boost::asio::async_read_until(socket_,
           read_msg_, '\n',
           boost::bind(&::chat_client::handle_read, this, boost::asio::placeholders::error));
-
     }
     else
     {
