@@ -76,36 +76,35 @@ void Client::idleCallback() {
 }
 
 void Client::displayCallback() {
-  // Clear the color and depth buffers
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  // Render the objects
-  //cube->draw(view, projection, shaderProgram);
+    // Clear the color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render the objects
+    //cube->draw(view, projection, shaderProgram);
     sphere_player1->draw(view, projection, shaderProgram);
     sphere_player2->draw(view, projection, shaderProgram);
-}
+    }
 
 bool Client::initialize() {
-  return initializeProgram() && initializeObjects(); 
+    return initializeProgram() && initializeObjects();
 }
 
 void Client::setupOpenglSettings()
 {
-  // Set the viewport size.
-  glViewport(0, 0, width, height);
-  
-  // Enable depth buffering.
-  glEnable(GL_DEPTH_TEST);
-  
-  // Related to shaders and z value comparisons for the depth buffer.
-  glDepthFunc(GL_LEQUAL);
-  
-  // Set polygon drawing mode to fill front and back of each polygon.
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  
-  // Set clear color to black.
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-  
+    // Set the viewport size.
+    glViewport(0, 0, width, height);
+
+    // Enable depth buffering.
+    glEnable(GL_DEPTH_TEST);
+
+    // Related to shaders and z value comparisons for the depth buffer.
+    glDepthFunc(GL_LEQUAL);
+
+    // Set polygon drawing mode to fill front and back of each polygon.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    // Set clear color to black.
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 
 }
 
