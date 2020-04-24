@@ -34,6 +34,14 @@ public:
   }
 
 private:
+    std::string getMsg()
+    {
+        // For testing only
+        std::istream buffer(&read_msg_);
+        std::string msg;
+        buffer >> msg;
+        return msg;
+    }
 
     void handle_connect(const boost::system::error_code& error,
                                             tcp::endpoint endpoint)
