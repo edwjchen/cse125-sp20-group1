@@ -35,20 +35,34 @@ public:
 
 private:
 
-  void handle_connect(const boost::system::error_code& error,
-      tcp::endpoint endpoint)
-  {
-    if (!error)
+    void handle_connect(const boost::system::error_code& error,
+                                            tcp::endpoint endpoint)
     {
-      boost::asio::async_read_until(socket_,
-          read_msg_, '\n',
-          boost::bind(&chat_client::handle_read, this,
-            boost::asio::placeholders::error));
-    }else{
-        std::cout << "Connection refused!" << std::endl;
+        if (!error)
+        {
+            boost::asio::async_read_until(socket_, read_msg_, '\n',
+                        boost::bind(&chat_client::handle_id, this,
+                        boost::asio::placeholders::error));
+        }else{
+            std::cout << "Connection refused!" << std::endl;
+        }
     }
-  }
-
+    
+    void handle_id(const boost::system::error_code& error)
+    {
+        if (!error)
+        {
+            id = std::stoi(getMsg());
+            std::cout << "id : " << id << std::endl;
+          boost::asio::async_read_until(socket_, read_msg_, '\n',
+                    boost::bind(&::chat_client::handle_read, this,
+                    boost::asio::placeholders::error));
+        }
+        else
+        {
+          std::cout << "ID not received!" << std::endl;
+        }
+    }
   void handle_read(const boost::system::error_code& error)
   {
     if (!error)
@@ -106,39 +120,9 @@ private:
   }
 
 private:
-  boost::asio::io_service& io_service_;
-  tcp::socket socket_;
-  boost::asio::streambuf read_msg_;
-  chat_message_queue write_msgs_;
+    boost::asio::io_service& io_service_;
+    tcp::socket socket_;
+    boost::asio::streambuf read_msg_;
+    chat_message_queue write_msgs_;
+    int id;
 };
-
-/*
-int main(int argc, char* argv[])
-{
-  try
-  {
-
-    boost::asio::io_service io_service;
-    tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
-
-    chat_client c(io_service, endpoint);
-
-    boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-
-    std::string msg;
-    while (getline(std::cin, msg))
-    {
-      c.write(msg);
-    }
-
-    c.close();
-    t.join();
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
-
-  return 0;
-}
- */
