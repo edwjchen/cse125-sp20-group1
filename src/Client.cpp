@@ -7,6 +7,7 @@
 //
 
 #include "Client.h"
+namespace pt = boost::property_tree;
 
 Cube* Client::cube;
 Sphere* Client::sphere_player1;
@@ -244,25 +245,60 @@ void Client::setupCallbacks()
 }
 void Client::updateFromServer(string msg)
 {
-    if(msg != ""){
+    try{
+        if(msg != ""){
+            stringstream ss;
+            cout << "----" << endl;
+            cout << msg << endl;
+            cout << "----" << endl;
+            
+            ss << msg;
+            
+            pt::ptree tar;
+            pt::read_json(ss, tar);
 
-        // Hardcode string decoding for now
-        vector<string> result;
-        stringstream s_stream(msg);
-        while(s_stream.good()) {
-           string substr;
-           getline(s_stream, substr, ','); //get first string delimited by comma
-           result.push_back(substr);
+            cout << "ha" << endl;
+            
+            int id = 1;
+            BOOST_FOREACH(const pt::ptree::value_type& child,
+                          tar.get_child("location")) {
+                cout << "updating id: " << id << endl;
+                if (id == 1){
+                    float x1 = stof(child.second.get<std::string>("x"));
+                    float y1 = stof(child.second.get<std::string>("y"));
+                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
+                    sphere_player1->move(pos1);
+                }
+                else{
+                    float x2 = stof(child.second.get<std::string>("x"));
+                    float y2 = stof(child.second.get<std::string>("y"));
+                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+                    sphere_player2->move(pos2);
+                }
+                id++;
+            }
         }
-        if(result.size()==4){
-            float x1 = stof(result.at(0));
-            float y1 = stof(result.at(1));
-            float x2 = stof(result.at(2));
-            float y2 = stof(result.at(3));
-            glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-            glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-            sphere_player1->move(pos1);
-            sphere_player2->move(pos2);
-        }
+    } catch (...){
+        
     }
+    
+        // Hardcode string decoding for now
+//        vector<string> result;
+//        stringstream s_stream(msg);
+//        while(s_stream.good()) {
+//           string substr;
+//           getline(s_stream, substr, ','); //get first string delimited by comma
+//           result.push_back(substr);
+//        }
+//        if(result.size()==4){
+//            float x1 = stof(result.at(0));
+//            float y1 = stof(result.at(1));
+//            float x2 = stof(result.at(2));
+//            float y2 = stof(result.at(3));
+//            glm::vec3 pos1 = glm::vec3(x1, y1, 0);
+//            glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+//            sphere_player1->move(pos1);
+//            sphere_player2->move(pos2);
+//        }
+    
 }
