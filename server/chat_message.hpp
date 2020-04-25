@@ -21,7 +21,7 @@ class chat_message
 public:
     int x1, y1, x2, y2;
 
-    chat_message() : x1(-10), x2(10), y1(0), y2(0)
+    chat_message() : x1(5), x2(5), y1(5), y2(5)
     {
     }
     
