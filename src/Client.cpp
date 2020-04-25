@@ -254,13 +254,15 @@ void Client::updateFromServer(string msg)
            getline(s_stream, substr, ','); //get first string delimited by comma
            result.push_back(substr);
         }
-        float x1 = stof(result.at(0));
-        float y1 = stof(result.at(1));
-        float x2 = stof(result.at(2));
-        float y2 = stof(result.at(3));
-        glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-        glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-        sphere_player1->move(pos1);
-        sphere_player2->move(pos2);
+        if(result.size()==4){
+            float x1 = stof(result.at(0));
+            float y1 = stof(result.at(1));
+            float x2 = stof(result.at(2));
+            float y2 = stof(result.at(3));
+            glm::vec3 pos1 = glm::vec3(x1, y1, 0);
+            glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+            sphere_player1->move(pos1);
+            sphere_player2->move(pos2);
+        }
     }
 }
