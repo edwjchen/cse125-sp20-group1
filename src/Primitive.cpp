@@ -46,4 +46,9 @@ void Primitive::reset(){
 void Primitive::move(const glm::vec3& pos){
     // actiavte the shader program
     model = glm::translate(model, (pos - position));
+    position = pos;
+}
+
+void Primitive::move(const glm::mat4& transform){
+    model = transform * model;
 }

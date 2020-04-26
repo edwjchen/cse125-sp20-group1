@@ -6,6 +6,8 @@
 #include <boost/thread.hpp>
 
 using namespace boost::asio;
+using namespace std;
+
 using ip::tcp;
 
 typedef std::deque<std::string> chat_message_queue;
@@ -21,6 +23,15 @@ public:
     socket_.async_connect(endpoint,
         boost::bind(&chat_client::handle_connect, this,
           boost::asio::placeholders::error, endpoint));
+  }
+
+  string getMsg()
+  {
+      // For testing only
+      istream buffer(&read_msg_);
+      string msg;
+      buffer >> msg;
+      return msg;
   }
 
   void write(const std::string msg)
@@ -53,12 +64,9 @@ private:
   {
     if (!error)
     {
-      std::cout << &read_msg_ << std::endl;
       boost::asio::async_read_until(socket_,
           read_msg_, '\n',
           boost::bind(&::chat_client::handle_read, this, boost::asio::placeholders::error));
-
-
     }
     else
     {
