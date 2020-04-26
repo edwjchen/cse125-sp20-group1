@@ -12,6 +12,9 @@ Cube* Client::cube;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
 
+Camera* Client::camera;
+glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
+
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -19,10 +22,7 @@ Client::Client(int width, int height) {
   std::pair<int, int> windowSize = window->getFrameBufferSize();
   this->width = windowSize.first;
   this->height = windowSize.second;
-  eyePos = glm::vec3(0, 0, 20);      // Camera position.
-  lookAtPoint = glm::vec3(0, 0, 0);    // The point we are looking at.
-  upVector = glm::vec3(0, 1, 0);    // The up direction of the camera.
-  view = glm::lookAt(eyePos, lookAtPoint, upVector);
+  camera = new Camera(glm::vec3(0, 0, 20));
   projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
   
   // Print OpenGL and GLSL versions.
@@ -76,14 +76,14 @@ void Client::idleCallback() {
 }
 
 void Client::displayCallback() {
-    // Clear the color and depth buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Render the objects
-    //cube->draw(view, projection, shaderProgram);
-    sphere_player1->draw(view, projection, shaderProgram);
-    sphere_player2->draw(view, projection, shaderProgram);
-    }
+  // Clear the color and depth buffers
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
+  // Render the objects
+  //cube->draw(view, projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+}
 
 bool Client::initialize() {
     return initializeProgram() && initializeObjects();
@@ -240,6 +240,10 @@ void Client::setupCallbacks()
     
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
+  
+    glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
+    glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
+
 }
 void Client::updateFromServer(string msg)
 {
@@ -262,4 +266,20 @@ void Client::updateFromServer(string msg)
         sphere_player1->move(pos1);
         sphere_player2->move(pos2);
     }
+}
+
+void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
+      if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
+            mousePos.x = xpos;
+            mousePos.y = ypos;
+      }
+    
+      float xoffset = xpos - mousePos.x;
+      float yoffset = mousePos.y - ypos; // reversed since y-coordinates go from bottom to top
+    
+      mousePos.x = xpos;
+      mousePos.y = ypos;
+    
+      //std::cout << "mouse" << std::endl;
+      camera->updateLookAt(xoffset, yoffset);
 }
