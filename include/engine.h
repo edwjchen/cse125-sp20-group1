@@ -9,9 +9,8 @@
 #ifndef engine_h
 #define engine_h
 
-#include "Cube.h"
-#include "PointCloud.h"
+#include "Primitive.h"
 #include "Sphere.h"
-#include "Object.h"
+#include "Terrain.hpp"
 
 #endif /* engine_h */

@@ -36,6 +36,7 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
+
 class chat_message
 {
 public:
@@ -51,6 +52,7 @@ public:
         transM2[3] = glm::vec4(-5,-5,0,1);
 
     }
+
 
     void update1(char op){
         switch (op) {
@@ -72,6 +74,7 @@ public:
                 break;
         }
     }
+
 
     void update2(char op){
         switch (op) {

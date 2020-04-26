@@ -9,10 +9,12 @@
 #include "Client.h"
 namespace pt = boost::property_tree;
 
-Cube* Client::cube;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
+Terrain* Client::terrain;
 
+Camera* Client::camera;
+glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -20,10 +22,7 @@ Client::Client(int width, int height) {
   std::pair<int, int> windowSize = window->getFrameBufferSize();
   this->width = windowSize.first;
   this->height = windowSize.second;
-  eyePos = glm::vec3(0, 0, 20);      // Camera position.
-  lookAtPoint = glm::vec3(0, 0, 0);    // The point we are looking at.
-  upVector = glm::vec3(0, 1, 0);    // The up direction of the camera.
-  view = glm::lookAt(eyePos, lookAtPoint, upVector);
+  camera = new Camera(glm::vec3(0, 10, 0));
   projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
   // Print OpenGL and GLSL versions.
@@ -35,79 +34,82 @@ Client::Client(int width, int height) {
 }
 
 Client::~Client() {
-  // Deallcoate the objects.
-  delete cube;
-  delete sphere_player1;
-  delete sphere_player2;
+    // Deallcoate the objects.
+    delete sphere_player1;
+    delete sphere_player2;
+    delete terrain;
+    delete camera;
 
-  // Delete the shader program.
-  glDeleteProgram(shaderProgram);
 
-  delete window;
+    // Delete the shader program.
+    glDeleteProgram(shaderProgram);
+
+    delete window;
 }
 
 bool Client::initializeProgram() {
-  // Create a shader program with a vertex shader and a fragment shader.
-  shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
+    // Create a shader program with a vertex shader and a fragment shader.
+    shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
 
-  // Check the shader program.
-  if (!shaderProgram)
-  {
-    std::cerr << "Failed to initialize shader program" << std::endl;
-    return false;
-  }
+    // Check the shader program.
+    if (!shaderProgram)
+    {
+        std::cerr << "Failed to initialize shader program" << std::endl;
+        return false;
+    }
 
-  // Create io_handler (0 for balls)
-  io_handler = new IO_handler(0);
+    // Create io_handler (0 for balls)
+    io_handler = new IO_handler(0);
 
-  return true;
+    return true;
 }
 
 bool Client::initializeObjects()
 {
-    // Create a cube of size 5.
-    cube = new Cube(5.0f);
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
+
+    terrain = new Terrain(251, 251, 0.5f);
+    terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
+    terrain->terrainBuildMesh();
     return true;
 }
 
 void Client::idleCallback() {
-  //cube->update();
+
 }
 
 void Client::displayCallback() {
-  // Clear the color and depth buffers
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear the color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Render the objects
-  //cube->draw(view, projection, shaderProgram);
-    sphere_player1->draw(view, projection, shaderProgram);
-    sphere_player2->draw(view, projection, shaderProgram);
+    // Render the objects
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    terrain->draw(camera->getView(), projection, shaderProgram);
 }
 
 bool Client::initialize() {
-  return initializeProgram() && initializeObjects();
+    return initializeProgram() && initializeObjects();
 }
 
 void Client::setupOpenglSettings()
 {
-  // Set the viewport size.
-  glViewport(0, 0, width, height);
 
-  // Enable depth buffering.
-  glEnable(GL_DEPTH_TEST);
+    // Set the viewport size.
+    glViewport(0, 0, width, height);
 
-  // Related to shaders and z value comparisons for the depth buffer.
-  glDepthFunc(GL_LEQUAL);
+    // Enable depth buffering.
+    glEnable(GL_DEPTH_TEST);
 
-  // Set polygon drawing mode to fill front and back of each polygon.
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // Related to shaders and z value comparisons for the depth buffer.
+    glDepthFunc(GL_LEQUAL);
 
-  // Set clear color to black.
-  glClearColor(0.0, 0.0, 0.0, 0.0);
+    // Set polygon drawing mode to fill front and back of each polygon.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
+    // Set clear color to black.
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 void Client::printVersions()
@@ -153,6 +155,7 @@ void Client::run() {
             updateFromServer(c.getMsg());
         }
 
+
         c.close();
         t.join();
     }
@@ -175,7 +178,7 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
       * TODO: Modify below to add your key callbacks.
       */
 
-	  // Check for a key press.
+      // Check for a key press.
     if (action == GLFW_PRESS)
     {
         switch (key)
@@ -208,10 +211,10 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
     }
 
     // Check for holding key
-	else if (action == GLFW_REPEAT)
-	{
-		switch (key)
-		{
+    else if (action == GLFW_REPEAT)
+    {
+        switch (key)
+        {
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendInput(0);
@@ -242,7 +245,28 @@ void Client::setupCallbacks()
 
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
+
+    glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
+    glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
+
 }
+
+void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
+      if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
+            mousePos.x = xpos;
+            mousePos.y = ypos;
+      }
+
+      float xoffset = xpos - mousePos.x;
+      float yoffset = mousePos.y - ypos; // reversed since y-coordinates go from bottom to top
+
+      mousePos.x = xpos;
+      mousePos.y = ypos;
+
+      //std::cout << "mouse" << std::endl;
+      camera->updateLookAt(xoffset, yoffset);
+}
+
 void Client::updateFromServer(string msg)
 {
     try{
@@ -251,24 +275,24 @@ void Client::updateFromServer(string msg)
 //            cout << "----" << endl;
 //            cout << msg << endl;
 //            cout << "----" << endl;
-            
+
             ss << msg;
-            
+
             pt::ptree tar;
             pt::read_json(ss, tar);
 
             glm::mat4 matrix1, matrix2;
             //cout << "ha" << endl;
-            
+
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
                           tar.get_child("Obj")) {
-                
+
                 if (id == 1){
                     int i=0;
                     BOOST_FOREACH(const pt::ptree::value_type& m,
                                   child.second.get_child("transformation")) {
-                
+
                         matrix1[i/4][i%4] = stof(m.second.data());
                         //cout << m.second.data() << endl;
                     }
@@ -276,7 +300,7 @@ void Client::updateFromServer(string msg)
 //                    float y1 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
 //                    sphere_player1->move(pos1);
-                    
+
                 }
                 else{
                     int i=0;
@@ -293,9 +317,9 @@ void Client::updateFromServer(string msg)
             }
         }
     } catch (...){
-        
+
     }
-    
+
         // Hardcode string decoding for now
 //        vector<string> result;
 //        stringstream s_stream(msg);
@@ -314,5 +338,5 @@ void Client::updateFromServer(string msg)
 //            sphere_player1->move(pos1);
 //            sphere_player2->move(pos2);
 //        }
-    
+
 }

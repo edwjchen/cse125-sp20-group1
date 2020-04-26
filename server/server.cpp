@@ -20,6 +20,8 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/foreach.hpp>
+
 #include "chat_message.hpp"
 
 using namespace boost::asio;
@@ -53,11 +55,43 @@ private:
             boost::asio::streambuf buf;
             boost::asio::read_until( *socket, buf, "\n" );
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
-            cout << "id: " << id << ", operation: "<< data << endl;
-            if(id == 1){
-                obj.update1(data.at(0));
-            }else if(id == 2){
-                obj.update2(data.at(0));
+            std::string key_op = "";
+            std::string mouse_op;
+
+            // Read JSON from client
+            try{
+                if(data != ""){
+                    stringstream ss;
+                    ss << data;
+
+                    pt::ptree tar;
+                    pt::read_json(ss, tar);
+
+                    int i = 0;
+                    BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
+                        if(i == 0){
+                            key_op = child.second.get<std::string>("key");
+                            cout << key_op << endl;
+                        }
+                        else{
+                            // Mouse cmd
+                        }
+                        i++;
+                    }
+
+
+                }
+            } catch (...){
+
+            }
+
+            if(key_op != ""){
+                cout << "id: " << id << ", operation: "<< key_op << endl;
+                if(id == 1){
+                    obj.update1(key_op.at(0));
+                }else if(id == 2){
+                    obj.update2(key_op.at(0));
+                }
             }
         }
     }
@@ -66,7 +100,7 @@ private:
     {
         // socket
         cout << "begin accepting" << endl;
-        while (i < 2){
+        while (i < 4){
             boost::asio::io_service io_service;
             tcp::socket socket_(io_service);
             std::shared_ptr<tcp::socket> socket_1(new tcp::socket(io_service));
@@ -79,9 +113,7 @@ private:
             boost::thread send_thread(&Server::send_info, this, i, socket_1);
             boost::thread read_thread(&Server::read_info, this, i, socket_1);
         }
-        while(1){
-
-        }
+        while(1){}
     }
 
 public:

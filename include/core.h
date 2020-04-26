@@ -25,9 +25,16 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+#include <math.h>
+#include <algorithm>
+#include <assert.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
 
 #endif
