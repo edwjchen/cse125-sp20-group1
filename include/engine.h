@@ -13,5 +13,6 @@
 #include "PointCloud.h"
 #include "Sphere.h"
 #include "Object.h"
+#include "Terrain.hpp"
 
 #endif /* engine_h */

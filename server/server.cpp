@@ -21,6 +21,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/foreach.hpp>
+
 #include "chat_message.hpp"
 
 using namespace boost::asio;
@@ -112,9 +113,7 @@ private:
             boost::thread send_thread(&Server::send_info, this, i, socket_1);
             boost::thread read_thread(&Server::read_info, this, i, socket_1);
         }
-        while(1){
-
-        }
+        while(1){}
     }
 
 public:
