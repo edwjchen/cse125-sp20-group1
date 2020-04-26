@@ -453,7 +453,7 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
-					/usr/local/Cellar/boost/1.72.0_1/include,
+					/usr/local/Cellar/boost/1.72.0/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -476,7 +476,7 @@
 					/usr/local/include,
 					./include,
 					"./lib/**",
-					/usr/local/Cellar/boost/1.72.0_1/include,
+					/usr/local/Cellar/boost/1.72.0/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,

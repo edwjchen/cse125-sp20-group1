@@ -1,5 +1,8 @@
 #include "Cube.h"
+<<<<<<< HEAD
 #include <iostream>
+=======
+>>>>>>> master
 
 Cube::Cube(float size) 
 {

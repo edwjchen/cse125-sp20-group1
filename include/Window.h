@@ -3,7 +3,6 @@
 
 #include "core.h"
 
-
 class Window {
 public:
   Window(int width, int height, std::string title);
@@ -23,4 +22,5 @@ private:
   void setupGui();
   void cleanupGui();
 };
+
 #endif

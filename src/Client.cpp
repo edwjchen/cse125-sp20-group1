@@ -79,7 +79,7 @@ bool Client::initializeObjects()
 }
 
 void Client::idleCallback() {
-  //cube->update();
+  
 }
 
 void Client::displayCallback() {
