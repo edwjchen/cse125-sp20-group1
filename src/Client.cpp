@@ -248,32 +248,46 @@ void Client::updateFromServer(string msg)
     try{
         if(msg != ""){
             stringstream ss;
-            cout << "----" << endl;
-            cout << msg << endl;
-            cout << "----" << endl;
+//            cout << "----" << endl;
+//            cout << msg << endl;
+//            cout << "----" << endl;
             
             ss << msg;
             
             pt::ptree tar;
             pt::read_json(ss, tar);
 
-            cout << "ha" << endl;
+            glm::mat4 matrix1, matrix2;
+            //cout << "ha" << endl;
             
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
-                          tar.get_child("location")) {
-                cout << "updating id: " << id << endl;
+                          tar.get_child("Obj")) {
+                
                 if (id == 1){
-                    float x1 = stof(child.second.get<std::string>("x"));
-                    float y1 = stof(child.second.get<std::string>("y"));
-                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-                    sphere_player1->move(pos1);
+                    int i=0;
+                    BOOST_FOREACH(const pt::ptree::value_type& m,
+                                  child.second.get_child("transformation")) {
+                
+                        matrix1[i/4][i%4] = stof(m.second.data());
+                        //cout << m.second.data() << endl;
+                    }
+//                    float x1 = stof(child.second.get<std::string>("x"));
+//                    float y1 = stof(child.second.get<std::string>("y"));
+//                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
+//                    sphere_player1->move(pos1);
+                    
                 }
                 else{
-                    float x2 = stof(child.second.get<std::string>("x"));
-                    float y2 = stof(child.second.get<std::string>("y"));
-                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-                    sphere_player2->move(pos2);
+                    int i=0;
+                    BOOST_FOREACH(const pt::ptree::value_type& m,
+                                  child.second.get_child("transformation")) {
+                        matrix2[i/4][i%4] = stof(m.second.data());
+                    }
+//                    float x2 = stof(child.second.get<std::string>("x"));
+//                    float y2 = stof(child.second.get<std::string>("y"));
+//                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+//                    sphere_player2->move(pos2);
                 }
                 id++;
             }

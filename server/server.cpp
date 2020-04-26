@@ -66,7 +66,7 @@ private:
     {
         // socket
         cout << "begin accepting" << endl;
-        while (i < 2){
+        while (i < 4){
             boost::asio::io_service io_service;
             tcp::socket socket_(io_service);
             std::shared_ptr<tcp::socket> socket_1(new tcp::socket(io_service));
