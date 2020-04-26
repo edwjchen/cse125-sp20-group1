@@ -63,3 +63,5 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+
+server/server
