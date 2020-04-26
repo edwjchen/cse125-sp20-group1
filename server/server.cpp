@@ -69,7 +69,8 @@ private:
                     int i = 0;
                     BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
                         if(i == 0){
-                            key_op = child.second.data();
+                            key_op = child.second.get<std::string>("key");
+                            cout << key_op << endl;
                         }
                         else{
                             // Mouse cmd
