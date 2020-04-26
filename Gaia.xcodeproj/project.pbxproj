@@ -205,11 +205,8 @@
 		A4258859244127940066B22A /* include */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
-=======
 				A49FE87424553DF80014CF39 /* Camera.hpp */,
 				14A9F7EA244BE9A300F3C909 /* IO_handler.hpp */,
->>>>>>> c2e8796bc70ef378fc71c1aa56a6380eed1988ba
 				B01FA8CA244BD4BB003EFCB0 /* Client.h */,
 				B03CDCA8244B91FD001D2FAB /* core.h */,
 				B0255A352443B8DB009BFB31 /* Cube.h */,
@@ -325,11 +322,8 @@
 				A425885F244127940066B22A /* Cube.cpp in Sources */,
 				B03CDCA7244B90E3001D2FAB /* Primitive.cpp in Sources */,
 				A425888224492AB60066B22A /* Client.cpp in Sources */,
-<<<<<<< HEAD
 				B07A7F7A24550C06004C76D1 /* Terrain.cpp in Sources */,
-=======
 				A49FE87524553DF80014CF39 /* Camera.cpp in Sources */,
->>>>>>> c2e8796bc70ef378fc71c1aa56a6380eed1988ba
 				A425885C244127940066B22A /* PointCloud.cpp in Sources */,
 				A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */,
 				A4258860244127940066B22A /* main.cpp in Sources */,

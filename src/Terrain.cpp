@@ -131,10 +131,10 @@ void Terrain::terrainBuildMesh()
     */
     for (int vx = 0; vx < vertices_w; vx++) {
         for (int vz = 0; vz < vertices_d; vz++) {
-         float vy = getHeight(vx, vz);
-         glm::vec3 v0 = glm::vec3(vx * step, vy, -vz * step);
-         glm::vec3 n0 = calculateNormal(vx, vz);
-         mesh->addVertex(v0.x, v0.y, v0.z, n0.x, n0.y, n0.z);
+             float vy = getHeight(vx, vz);
+             glm::vec3 v0 = glm::vec3(vx * step, vy, -vz * step);
+             glm::vec3 n0 = calculateNormal(vx, vz);
+             mesh->addVertex(v0.x, v0.y, v0.z, n0.x, n0.y, n0.z);
         }
     }
 
@@ -251,7 +251,7 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint sh
 
     // Bind the VAO
     glBindVertexArray(VAO);
-    //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     // draw the points using triangles, indexed with the EBO
     glDrawElements(GL_TRIANGLE_STRIP, num_indices, GL_UNSIGNED_INT, 0);
 
