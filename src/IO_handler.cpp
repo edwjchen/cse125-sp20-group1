@@ -9,6 +9,7 @@
 #include "IO_handler.hpp"
 
 using namespace std;
+namespace pt = boost::property_tree;
 
 IO_handler::IO_handler(int type){
     ctype = type;
@@ -37,9 +38,24 @@ void IO_handler::SendInput(int direction){
 }
 
 void IO_handler::SendPackage(chat_client* c){
-    
     if(ifPressed){
-        c->write(currDir);
+        pt::ptree root;
+        pt::ptree cmd;
+        
+        pt::ptree cmd_key;
+        pt::ptree cmd_mouse;
+        
+        cmd_key.put("key", currDir);
+        //cmd_mouse.put("mouse", ...);
+        
+        cmd.push_back(std::make_pair("", cmd_key));
+        cmd.push_back(std::make_pair("", cmd_mouse));
+        
+        root.add_child("cmd", cmd);
+        
+        stringstream ss;
+        write_json(ss, root, false);
+        c->write(ss.str());
         ifPressed = false;
     }
 }
