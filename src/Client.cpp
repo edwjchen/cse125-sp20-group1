@@ -11,6 +11,7 @@
 Cube* Client::cube;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
+Terrain* Client::terrain;
 
 IO_handler* Client::io_handler;
 
@@ -34,32 +35,34 @@ Client::Client(int width, int height) {
 }
 
 Client::~Client() {
-  // Deallcoate the objects.
-  delete cube;
-  delete sphere_player1;
-  delete sphere_player2;
+    // Deallcoate the objects.
+    delete cube;
+    delete sphere_player1;
+    delete sphere_player2;
+    delete terrain;
 
-  // Delete the shader program.
-  glDeleteProgram(shaderProgram);
-  
-  delete window;
+
+    // Delete the shader program.
+    glDeleteProgram(shaderProgram);
+
+    delete window;
 }
 
 bool Client::initializeProgram() {
-  // Create a shader program with a vertex shader and a fragment shader.
-  shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
-  
-  // Check the shader program.
-  if (!shaderProgram)
-  {
+    // Create a shader program with a vertex shader and a fragment shader.
+    shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
+
+    // Check the shader program.
+    if (!shaderProgram)
+    {
     std::cerr << "Failed to initialize shader program" << std::endl;
     return false;
-  }
-  
-  // Create io_handler (0 for balls)
-  io_handler = new IO_handler(0);
+    }
 
-  return true;
+    // Create io_handler (0 for balls)
+    io_handler = new IO_handler(0);
+    
+    return true;
 }
 
 bool Client::initializeObjects()
@@ -68,6 +71,10 @@ bool Client::initializeObjects()
     cube = new Cube(5.0f);
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
+    
+    terrain = new Terrain(251, 251, 0.5f);
+    terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
+    terrain->terrainBuildMesh();
     return true;
 }
 
@@ -81,9 +88,10 @@ void Client::displayCallback() {
 
     // Render the objects
     //cube->draw(view, projection, shaderProgram);
-    sphere_player1->draw(view, projection, shaderProgram);
-    sphere_player2->draw(view, projection, shaderProgram);
-    }
+//    sphere_player1->draw(view, projection, shaderProgram);
+//    sphere_player2->draw(view, projection, shaderProgram);
+    terrain->draw(view, projection, shaderProgram);
+}
 
 bool Client::initialize() {
     return initializeProgram() && initializeObjects();
