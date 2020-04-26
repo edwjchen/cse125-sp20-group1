@@ -9,7 +9,6 @@
 #include "Client.h"
 namespace pt = boost::property_tree;
 
-Cube* Client::cube;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
 Terrain* Client::terrain;
@@ -23,7 +22,7 @@ Client::Client(int width, int height) {
   std::pair<int, int> windowSize = window->getFrameBufferSize();
   this->width = windowSize.first;
   this->height = windowSize.second;
-  camera = new Camera(glm::vec3(75, 10, -75));
+  camera = new Camera(glm::vec3(0, 10, 0));
   projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
   // Print OpenGL and GLSL versions.
@@ -36,7 +35,6 @@ Client::Client(int width, int height) {
 
 Client::~Client() {
     // Deallcoate the objects.
-    delete cube;
     delete sphere_player1;
     delete sphere_player2;
     delete terrain;
@@ -68,8 +66,6 @@ bool Client::initializeProgram() {
 
 bool Client::initializeObjects()
 {
-    // Create a cube of size 5.
-    cube = new Cube(5.0f);
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
     
@@ -88,8 +84,8 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-//    sphere_player1->draw(camera->getView(), projection, shaderProgram);
-//    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, shaderProgram);
 }
 
@@ -254,28 +250,6 @@ void Client::setupCallbacks()
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
 
 }
-void Client::updateFromServer(string msg)
-{
-    if(msg != ""){
-        
-        // Hardcode string decoding for now
-        vector<string> result;
-        stringstream s_stream(msg);
-        while(s_stream.good()) {
-           string substr;
-           getline(s_stream, substr, ','); //get first string delimited by comma
-           result.push_back(substr);
-        }
-        float x1 = stof(result.at(0));
-        float y1 = stof(result.at(1));
-        float x2 = stof(result.at(2));
-        float y2 = stof(result.at(3));
-        glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-        glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-        sphere_player1->move(pos1);
-        sphere_player2->move(pos2);
-    }
-}
 
 void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
       if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
@@ -292,6 +266,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
       //std::cout << "mouse" << std::endl;
       camera->updateLookAt(xoffset, yoffset);
 }
+
 void Client::updateFromServer(string msg)
 {
     try{

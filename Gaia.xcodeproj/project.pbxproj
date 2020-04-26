@@ -10,9 +10,7 @@
 		613A462B244BE3E6005F07E9 /* my_client.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A4629244BE3E6005F07E9 /* my_client.hpp */; };
 		613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A462D244BE3F3005F07E9 /* IO_handler.cpp */; };
 		613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */; };
-		A425885C244127940066B22A /* PointCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884B244127940066B22A /* PointCloud.cpp */; };
 		A425885D244127940066B22A /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425884D244127940066B22A /* Window.cpp */; };
-		A425885F244127940066B22A /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258857244127940066B22A /* Cube.cpp */; };
 		A4258860244127940066B22A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4258858244127940066B22A /* main.cpp */; };
 		A4258863244127EE0066B22A /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4258862244127EE0066B22A /* OpenGL.framework */; };
 		A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588772447B9F60066B22A /* imgui_draw.cpp */; };
@@ -56,10 +54,8 @@
 		613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../usr/local/Cellar/boost/1.72.0_1/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 		A425881A2441261E0066B22A /* Gaia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Gaia; sourceTree = BUILT_PRODUCTS_DIR; };
 		A425883F244127930066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A425884B244127940066B22A /* PointCloud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointCloud.cpp; sourceTree = "<group>"; };
 		A425884D244127940066B22A /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Window.cpp; sourceTree = "<group>"; };
 		A4258850244127940066B22A /* shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
-		A4258857244127940066B22A /* Cube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cube.cpp; sourceTree = "<group>"; };
 		A4258858244127940066B22A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A425885B244127940066B22A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A4258862244127EE0066B22A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -79,14 +75,11 @@
 		A42588782447B9F60066B22A /* imstb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imstb_textedit.h; path = imgui/imstb_textedit.h; sourceTree = "<group>"; };
 		A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_glfw.cpp; path = imgui/imgui_impl_glfw.cpp; sourceTree = "<group>"; };
 		A425888024492AB60066B22A /* Client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Client.cpp; path = src/Client.cpp; sourceTree = SOURCE_ROOT; };
-		B0018A0D244D819F00667E79 /* server */ = {isa = PBXFileReference; lastKnownFileType = folder; path = server; sourceTree = "<group>"; };
 		A49FE87324553DF80014CF39 /* Camera.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; tabWidth = 4; };
 		A49FE87424553DF80014CF39 /* Camera.hpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; tabWidth = 4; };
+		B0018A0D244D819F00667E79 /* server */ = {isa = PBXFileReference; lastKnownFileType = folder; path = server; sourceTree = "<group>"; };
 		B01FA8CA244BD4BB003EFCB0 /* Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; };
 		B0255A332443B8DB009BFB31 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		B0255A342443B8DB009BFB31 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
-		B0255A352443B8DB009BFB31 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
-		B0255A362443B8DB009BFB31 /* PointCloud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointCloud.h; sourceTree = "<group>"; };
 		B0255A372443B8DC009BFB31 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
 		B0255A382443B8DC009BFB31 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		B0255A462443C271009BFB31 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
@@ -189,9 +182,7 @@
 				613A462D244BE3F3005F07E9 /* IO_handler.cpp */,
 				A425888024492AB60066B22A /* Client.cpp */,
 				A49FE87324553DF80014CF39 /* Camera.cpp */,
-				A4258857244127940066B22A /* Cube.cpp */,
 				A4258858244127940066B22A /* main.cpp */,
-				A425884B244127940066B22A /* PointCloud.cpp */,
 				B03CDCA5244B90E3001D2FAB /* Primitive.cpp */,
 				A4258850244127940066B22A /* shader.cpp */,
 				B03CDCA2244B8FF7001D2FAB /* Sphere.cpp */,
@@ -206,16 +197,12 @@
 			isa = PBXGroup;
 			children = (
 				A49FE87424553DF80014CF39 /* Camera.hpp */,
-				14A9F7EA244BE9A300F3C909 /* IO_handler.hpp */,
 				B01FA8CA244BD4BB003EFCB0 /* Client.h */,
 				B03CDCA8244B91FD001D2FAB /* core.h */,
-				B0255A352443B8DB009BFB31 /* Cube.h */,
 				B03CDCAA244BBE66001D2FAB /* engine.h */,
 				14A9F7EA244BE9A300F3C909 /* IO_handler.hpp */,
 				B0255A332443B8DB009BFB31 /* main.h */,
 				613A4629244BE3E6005F07E9 /* my_client.hpp */,
-				B0255A342443B8DB009BFB31 /* Object.h */,
-				B0255A362443B8DB009BFB31 /* PointCloud.h */,
 				B03CDCA6244B90E3001D2FAB /* Primitive.h */,
 				B0255A372443B8DC009BFB31 /* shader.h */,
 				B03CDCA3244B8FF7001D2FAB /* Sphere.h */,
@@ -319,12 +306,10 @@
 				B01FA8CD244BD513003EFCB0 /* imgui_impl_opengl3.cpp in Sources */,
 				B01FA8CE244BD513003EFCB0 /* imgui_widgets.cpp in Sources */,
 				B01FA8CF244BD513003EFCB0 /* imgui.cpp in Sources */,
-				A425885F244127940066B22A /* Cube.cpp in Sources */,
 				B03CDCA7244B90E3001D2FAB /* Primitive.cpp in Sources */,
 				A425888224492AB60066B22A /* Client.cpp in Sources */,
 				B07A7F7A24550C06004C76D1 /* Terrain.cpp in Sources */,
 				A49FE87524553DF80014CF39 /* Camera.cpp in Sources */,
-				A425885C244127940066B22A /* PointCloud.cpp in Sources */,
 				A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */,
 				A4258860244127940066B22A /* main.cpp in Sources */,
 				A425885D244127940066B22A /* Window.cpp in Sources */,

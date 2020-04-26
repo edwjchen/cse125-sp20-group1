@@ -57,7 +57,6 @@ private:
     static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 
     // objects
-    static Cube* cube;
     static Sphere* sphere_player1;
     static Sphere* sphere_player2;
     static Terrain* terrain;
