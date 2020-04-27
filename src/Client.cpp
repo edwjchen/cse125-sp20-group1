@@ -271,9 +271,6 @@ void Client::updateFromServer(string msg)
     try{
         if(msg != ""){
             stringstream ss;
-//            cout << "----" << endl;
-//            cout << msg << endl;
-//            cout << "----" << endl;
             
             ss << msg;
             
@@ -293,20 +290,27 @@ void Client::updateFromServer(string msg)
                                   child.second.get_child("transformation")) {
                 
                         matrix1[i/4][i%4] = stof(m.second.data());
-                        //cout << m.second.data() << endl;
+                        i++;
+                        //cout << matrix1[i/4][i%4] << endl;
                     }
 //                    float x1 = stof(child.second.get<std::string>("x"));
 //                    float y1 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
 //                    sphere_player1->move(pos1);
-                    
+                    //sphere_player1->move(matrix1);
+                    sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
+                    //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
+
                 }
                 else{
                     int i=0;
                     BOOST_FOREACH(const pt::ptree::value_type& m,
                                   child.second.get_child("transformation")) {
                         matrix2[i/4][i%4] = stof(m.second.data());
+                        i++;
                     }
+                    //sphere_player2->move(matrix2);
+                    sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
 //                    float x2 = stof(child.second.get<std::string>("x"));
 //                    float y2 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
@@ -314,6 +318,11 @@ void Client::updateFromServer(string msg)
                 }
                 id++;
             }
+            //glm::vec3 wtf = sphere_player1->getPos();
+            //cout << wtf.x << " " << wtf.y << " " << wtf.z << endl;
+            //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
+            //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+
         }
     } catch (...){
         
