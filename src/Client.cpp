@@ -22,7 +22,7 @@ Client::Client(int width, int height) {
   std::pair<int, int> windowSize = window->getFrameBufferSize();
   this->width = windowSize.first;
   this->height = windowSize.second;
-  camera = new Camera(glm::vec3(0, 10, 0));
+  camera = new Camera(glm::vec3(75, 10, -75));
   projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
   // Print OpenGL and GLSL versions.
@@ -84,8 +84,8 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, shaderProgram);
 }
 
