@@ -22,7 +22,7 @@ Client::Client(int width, int height) {
   std::pair<int, int> windowSize = window->getFrameBufferSize();
   this->width = windowSize.first;
   this->height = windowSize.second;
-  camera = new Camera(glm::vec3(75, 10, -75));
+  camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(0, 0, 0));
   projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
   // Print OpenGL and GLSL versions.
@@ -246,7 +246,7 @@ void Client::setupCallbacks()
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
   
-    glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
+    // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
 
 }
@@ -264,7 +264,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
       mousePos.y = ypos;
     
       //std::cout << "mouse" << std::endl;
-      camera->updateLookAt(xoffset, yoffset);
+      // camera->updateLookAt(xoffset, yoffset);
 }
 
 void Client::updateFromServer(string msg)
