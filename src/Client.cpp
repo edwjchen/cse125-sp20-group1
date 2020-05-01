@@ -15,7 +15,7 @@ Terrain* Client::terrain;
 
 Camera* Client::camera;
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
