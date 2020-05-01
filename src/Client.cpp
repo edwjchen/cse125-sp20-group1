@@ -16,7 +16,7 @@ Terrain* Client::terrain;
 Camera* Client::camera;
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 bool Client::mouseControl = false;
-bool Client::isMouseButtonDown = false;
+int Client::isMouseButtonDown = 0;
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -268,10 +268,15 @@ void Client::setupCallbacks()
 
 void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
     if(action == GLFW_PRESS){
-        isMouseButtonDown = true;
+        if(button==GLFW_MOUSE_BUTTON_RIGHT){
+            isMouseButtonDown = 2;
+        }
+        else{
+            isMouseButtonDown = 1;
+        }
     }
     else if (action == GLFW_RELEASE){
-        isMouseButtonDown = false;
+        isMouseButtonDown = 0;
     }
 }
 
@@ -286,11 +291,14 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
     }
     
     
-    if(isMouseButtonDown){
-        cout << xpos << ", " << ypos << endl;
+    if(isMouseButtonDown > 0){
+        string leftOrRight = "left";
+        if(isMouseButtonDown == 2){
+            leftOrRight = "right";
+        }
+        cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
     }
 
-    
 
     if (mouseControl) {
         float xoffset = xpos - mousePos.x;
