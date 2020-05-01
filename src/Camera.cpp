@@ -62,6 +62,14 @@ void Camera::rotateAround(float xAngle, float yAngle) {
     
     front = glm::rotate(-xAngle, up) * glm::vec4(front, 0);
     front = glm::rotate(yAngle, right) * glm::vec4(front, 0);
+    if (glm::dot(front, glm::vec3(0, 1, 0)) > 0.96) { // too close to up
+        right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+        front = glm::rotate(-0.3f, right) * glm::vec4(0, 1, 0, 0); // rotate back
+    }
+    if (glm::dot(front, glm::vec3(0, -1, 0))  > 0.96) { // too close to opposite up
+        right = glm::normalize(glm::cross(front, glm::vec3(0.0f, -1.0f, 0.0f)));
+        front = glm::rotate(-0.3f, right) * glm::vec4(0, -1, 0, 0); // rotate back
+    }
     eyePos = lookAtPos + front * glm::length(eyePos - lookAtPos);
     
     front = glm::normalize(lookAtPos - eyePos);
