@@ -15,7 +15,8 @@ Terrain* Client::terrain;
 
 Camera* Client::camera;
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = true;
+bool Client::mouseControl = false;
+bool Client::isMouseButtonDown = false;
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -23,7 +24,8 @@ Client::Client(int width, int height) {
     std::pair<int, int> windowSize = window->getFrameBufferSize();
     this->width = windowSize.first;
     this->height = windowSize.second;
-    camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(30, 5, -30));
+    //camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(30, 5, -30));
+    camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
     // Print OpenGL and GLSL versions.
@@ -85,8 +87,8 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, shaderProgram);
 }
 
@@ -149,11 +151,16 @@ void Client::run() {
             // Main render display callback. Rendering of objects is done here. (Draw)
             displayCallback();
             window->displayCallback();
+            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
+
+            // Terrian Camera Logic
+//            if(c.get_id() % 2 != 0){
+//                camera->setPos(glm::vec3(60.0f,59.0f,21.0f));
+//                camera->setLookAt(glm::vec3(60.0f,5.0f,-30.0f));
+//            }
             
-            //if(c.get_id() % 2 != 0){
-                camera->setPos(glm::vec3(50.0f,70.0f,40.0f));
-                camera->setLookAt(glm::vec3(50.0f,-100.0f,-100.0f));
-            //}
+            //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
+            //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
@@ -254,28 +261,48 @@ void Client::setupCallbacks()
   
     // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
-
+    
+    glfwSetMouseButtonCallback(window->getWindow(), setMouseButtonCallback);
 }
 
+
+void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
+    if(action == GLFW_PRESS){
+        isMouseButtonDown = true;
+    }
+    else if (action == GLFW_RELEASE){
+        isMouseButtonDown = false;
+    }
+}
+
+
 void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-    if (mouseControl) {
-        if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
-            mousePos.x = xpos;
-            mousePos.y = ypos;
-            return;
-        }
-        
-        float xoffset = xpos - mousePos.x;
-        float yoffset = ypos - mousePos.y;
-        
+   
+    if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
         mousePos.x = xpos;
         mousePos.y = ypos;
         
+        return;
+    }
+    
+    
+    if(isMouseButtonDown){
+        cout << xpos << ", " << ypos << endl;
+    }
+
+    
+
+    if (mouseControl) {
+        float xoffset = xpos - mousePos.x;
+        float yoffset = ypos - mousePos.y;
+        mousePos.x = xpos;
+        mousePos.y = ypos;
         camera->rotateAround(xoffset, yoffset);
     }
 }
-void Client::updateFromServer(string msg)
-{
+
+
+void Client::updateFromServer(string msg) {
     try{
         if(msg != ""){
             stringstream ss;
@@ -307,7 +334,7 @@ void Client::updateFromServer(string msg)
 //                    sphere_player1->move(pos1);
                     //sphere_player1->move(matrix1);
                     sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
-                    //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
+                    //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
 
                 }
                 else{
