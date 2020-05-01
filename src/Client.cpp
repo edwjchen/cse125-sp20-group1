@@ -149,6 +149,11 @@ void Client::run() {
             // Main render display callback. Rendering of objects is done here. (Draw)
             displayCallback();
             window->displayCallback();
+            
+            //if(c.get_id() % 2 != 0){
+                camera->setPos(glm::vec3(50.0f,70.0f,40.0f));
+                camera->setLookAt(glm::vec3(50.0f,-100.0f,-100.0f));
+            //}
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();

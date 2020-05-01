@@ -28,24 +28,29 @@ public:
           boost::asio::placeholders::error, endpoint));
   }
 
-  string getMsg()
-  {
-      // For testing only
-      istream buffer(&read_msg_);
-      string msg;
-      buffer >> msg;
-      return msg;
-  }
+    string getMsg()
+    {
+        // For testing only
+        istream buffer(&read_msg_);
+        string msg;
+        buffer >> msg;
+        return msg;
+    }
 
-  void write(const std::string msg)
-  {
-    io_service_.post(boost::bind(&chat_client::do_write, this, msg));
-  }
+    void write(const std::string msg)
+    {
+        io_service_.post(boost::bind(&chat_client::do_write, this, msg));
+    }
 
-  void close()
-  {
-    io_service_.post(boost::bind(&chat_client::do_close, this));
-  }
+    void close()
+    {
+        io_service_.post(boost::bind(&chat_client::do_close, this));
+    }
+    
+    int get_id() {
+        return id;
+    }
+    
 
 private:
 
@@ -91,44 +96,45 @@ private:
     }
   }
 
-  void do_write(std::string msg)
-  {
-    bool write_in_progress = !write_msgs_.empty();
-    write_msgs_.push_back(msg+'\n');
-    if (!write_in_progress)
+    void do_write(std::string msg)
     {
-      boost::asio::async_write(socket_,
-          boost::asio::buffer(write_msgs_.front().data(),
-            write_msgs_.front().length()),
-          boost::bind(&chat_client::handle_write, this,
-            boost::asio::placeholders::error));
+        bool write_in_progress = !write_msgs_.empty();
+        write_msgs_.push_back(msg+'\n');
+        if (!write_in_progress)
+        {
+            boost::asio::async_write(socket_,
+                boost::asio::buffer(write_msgs_.front().data(),
+                write_msgs_.front().length()),
+                boost::bind(&chat_client::handle_write, this,
+                boost::asio::placeholders::error));
+        }
     }
-  }
 
-  void handle_write(const boost::system::error_code& error)
-  {
-    if (!error)
+    void handle_write(const boost::system::error_code& error)
     {
-      write_msgs_.pop_front();
-      if (!write_msgs_.empty())
-      {
-        boost::asio::async_write(socket_,
-            boost::asio::buffer(write_msgs_.front().data(),
-              write_msgs_.front().length()),
-            boost::bind(&chat_client::handle_write, this,
-              boost::asio::placeholders::error));
-      }
+        if (!error) {
+            write_msgs_.pop_front();
+            if (!write_msgs_.empty()) {
+                boost::asio::async_write(socket_,
+                    boost::asio::buffer(write_msgs_.front().data(),
+                    write_msgs_.front().length()),
+                    boost::bind(&chat_client::handle_write, this,
+                        boost::asio::placeholders::error));
+            }
+        }
+        else
+        {
+          do_close();
+        }
     }
-    else
-    {
-      do_close();
-    }
-  }
 
-  void do_close()
-  {
-    socket_.close();
-  }
+    void do_close()
+    {
+        socket_.close();
+    }
+    
+
+    
 
 private:
     boost::asio::io_service& io_service_;
