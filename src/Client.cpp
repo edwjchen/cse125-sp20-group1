@@ -15,22 +15,23 @@ Terrain* Client::terrain;
 
 Camera* Client::camera;
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
+bool Client::mouseControl = false;
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
-  window = new Window(width, height, "Window");
-  std::pair<int, int> windowSize = window->getFrameBufferSize();
-  this->width = windowSize.first;
-  this->height = windowSize.second;
-  camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(0, 0, 0));
-  projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
+    window = new Window(width, height, "Window");
+    std::pair<int, int> windowSize = window->getFrameBufferSize();
+    this->width = windowSize.first;
+    this->height = windowSize.second;
+    camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(30, 5, -30));
+    projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
-  // Print OpenGL and GLSL versions.
-  printVersions();
-  // Setup OpenGL settings.
-  setupOpenglSettings();
+    // Print OpenGL and GLSL versions.
+    printVersions();
+    // Setup OpenGL settings.
+    setupOpenglSettings();
 
-  setupCallbacks();
+    setupCallbacks();
 }
 
 Client::~Client() {
@@ -252,19 +253,21 @@ void Client::setupCallbacks()
 }
 
 void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-      if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
+    if (mouseControl) {
+        if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
             mousePos.x = xpos;
             mousePos.y = ypos;
-      }
-    
-      float xoffset = xpos - mousePos.x;
-      float yoffset = mousePos.y - ypos; // reversed since y-coordinates go from bottom to top
-    
-      mousePos.x = xpos;
-      mousePos.y = ypos;
-    
-      //std::cout << "mouse" << std::endl;
-      // camera->updateLookAt(xoffset, yoffset);
+            return;
+        }
+        
+        float xoffset = xpos - mousePos.x;
+        float yoffset = ypos - mousePos.y;
+        
+        mousePos.x = xpos;
+        mousePos.y = ypos;
+        
+        camera->rotateAround(xoffset, yoffset);
+    }
 }
 
 void Client::updateFromServer(string msg)

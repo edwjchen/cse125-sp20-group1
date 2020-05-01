@@ -7,10 +7,11 @@
 //
 
 #include "Camera.hpp"
-#define SENS 0.1f
+#define SENS 0.05f
 
 Camera::Camera(glm::vec3 eyePos, glm::vec3 lookAtPos) {
     this->eyePos = eyePos;
+    this->lookAtPos = lookAtPos;
     sensitivity = SENS;
     
     glm::vec3 front = glm::normalize(lookAtPos - eyePos);
@@ -19,13 +20,16 @@ Camera::Camera(glm::vec3 eyePos, glm::vec3 lookAtPos) {
     
     this->frontVector = front;
     this->upVector = up;
-    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);}
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
+
+}
 
 Camera::~Camera() {
     
 }
 
 void Camera::setLookAt(glm::vec3 pos) {
+    this->lookAtPos = pos; 
     glm::vec3 front = glm::normalize(pos - eyePos);
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
     glm::vec3 up = glm::normalize(glm::cross(right, front));
@@ -46,4 +50,29 @@ glm::vec3 Camera::getPos() {
 void Camera::setPos(glm::vec3 pos) {
     this->eyePos = pos;
     this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
+}
+
+void Camera::rotateAround(float xAngle, float yAngle) {
+    xAngle *= sensitivity;
+    yAngle *= sensitivity;
+    
+    glm::vec3 front = glm::normalize(eyePos - lookAtPos);
+    glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    glm::vec3 up = upVector;
+    
+    front = glm::rotate(-xAngle, up) * glm::vec4(front, 0);
+    front = glm::rotate(yAngle, right) * glm::vec4(front, 0);
+    eyePos = lookAtPos + front * glm::length(eyePos - lookAtPos);
+    
+    front = glm::normalize(lookAtPos - eyePos);
+    right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    up = glm::normalize(glm::cross(right, front));
+    
+    this->frontVector = front;
+    this->upVector = up;
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
+}
+
+glm::vec3 Camera::getLookAtPos() {
+    return lookAtPos;
 }
