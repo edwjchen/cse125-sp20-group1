@@ -61,7 +61,9 @@ private:
     static Sphere* sphere_player2;
     static Terrain* terrain;
     static Camera* camera;
+    
     static glm::vec2 mousePos;
+    static bool mouseControl; 
 
     // IO Handler
     static IO_handler* io_handler;
