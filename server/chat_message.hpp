@@ -44,8 +44,15 @@ public:
 
     glm::mat4 transM1, transM2;
 
+    std::vector<float> v; // dummy height map for now
+
     chat_message() : x1(5), x2(5), y1(5), y2(5)
     {
+
+        for (int i = 0; i < 16300; i++){
+            v.push_back(i);
+        }
+
         transM1 = glm::mat4(1.0f);
         transM1[3] = glm::vec4(56,2,-46,1);
         transM2 = glm::mat4(1.0f);
@@ -111,6 +118,9 @@ public:
         pt::ptree matrix1[16];
         pt::ptree matrix2[16];
 
+        pt::ptree height_root;
+
+
         obj1.put("id", 1);
         for(int i=0;i<4;i++){
           for(int j=0;j<4;j++){
@@ -133,11 +143,20 @@ public:
         }
         obj2.add_child("transformation", m2);
 
+        
 
         obj.push_back(std::make_pair("", obj1));
         obj.push_back(std::make_pair("", obj2));
 
         root.add_child("Obj", obj);
+
+        // build and add current height map node to root
+        for(int i = 0; i < v.size(); i++){
+            pt::ptree node;
+            node.put("", v[i]);
+            height_root.push_back(std::make_pair("", node));
+        }
+        root.add_child("Height_map", height_root);
 
         stringstream ss;
         write_json(ss, root, false);

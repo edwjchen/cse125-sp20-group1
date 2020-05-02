@@ -38,14 +38,15 @@ private:
 
     char info_buffer[1024];
 
+    std::vector<float> v;
+
     chat_message obj;
 
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
             std::string msg = obj.data()+'\n';
-            std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
-            std::this_thread::sleep_for(std::chrono::milliseconds(30));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
 
@@ -79,6 +80,14 @@ private:
                         }
                         i++;
                     }
+
+                    // print heightmap passed from client
+                    // cout << "printing Height_map" << endl;
+                    // BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Height_map")) {
+                    //     cout << v.second.data();
+                    // }
+                    // cout << "-------------------" << endl;
+
                 }
             } catch (...){
 
@@ -120,12 +129,16 @@ public:
     Server(boost::asio::io_service& io_service) : io_service_(io_service),
             acceptor_(io_service_, tcp::endpoint(tcp::v4(), 8888))
     {
+        for (int i = 0; i < 16300; i++){
+            v.push_back(i);
+        }
         start_accept();
     }
 };
 
 int main(int argc, char *argv[])
 {
+
     try
     {
         boost::asio::io_service io_service;
