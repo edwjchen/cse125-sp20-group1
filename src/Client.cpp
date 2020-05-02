@@ -17,6 +17,8 @@ Camera* Client::camera;
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 bool Client::mouseControl = false;
 int Client::isMouseButtonDown = 0;
+glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
+glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -203,19 +205,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             // take user's io
             case GLFW_KEY_W:{
-                io_handler->SendInput(0);
+                io_handler->SendKeyBoardInput(0);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendInput(1);
+                io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendInput(2);
+                io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendInput(3);
+                io_handler->SendKeyBoardInput(3);
                 break;
             }
             default:
@@ -230,19 +232,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         {
             // Contineous movement
             case GLFW_KEY_W:{
-                io_handler->SendInput(0);
+                io_handler->SendKeyBoardInput(0);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendInput(1);
+                io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendInput(2);
+                io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendInput(3);
+                io_handler->SendKeyBoardInput(3);
                 break;
             }
             default:
@@ -267,16 +269,46 @@ void Client::setupCallbacks()
 
 
 void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
+    double xpos, ypos;
+    //getting cursor position
+    glfwGetCursorPos(window, &xpos, &ypos);
+    
     if(action == GLFW_PRESS){
+        // Check to see if we need to set click start position
+        if(clickPos.x == INFINITY && clickPos.y == INFINITY){
+            clickPos = glm::vec2((float)xpos, (float)ypos);
+        }
+        
         if(button==GLFW_MOUSE_BUTTON_RIGHT){
+            cout << "RIGHT!!" << endl;
             isMouseButtonDown = 2;
         }
-        else{
+        else if(button==GLFW_MOUSE_BUTTON_LEFT){
+            cout << "LEFT!!" << endl;
             isMouseButtonDown = 1;
         }
+        else{
+            cout << "unknown click?" << endl;
+        }
+            
+//        if(isMouseButtonDown > 0){
+//            string leftOrRight = "left";
+//            if(isMouseButtonDown == 2){
+//                leftOrRight = "right";
+//            }
+//            cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
+//        }
     }
     else if (action == GLFW_RELEASE){
+        releasePos = glm::vec2((float)xpos, (float)ypos);
+        cout << "drag start: " << clickPos[0] << ", " << clickPos[1] << endl;
+        cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
+        
+        // send i/o to server
+        io_handler->SendMouseInput(isMouseButtonDown, clickPos, relasePos);
+        
         isMouseButtonDown = 0;
+        clickPos = glm::vec2(INFINITY, INFINITY);
     }
 }
 
@@ -291,13 +323,13 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
     }
     
     
-    if(isMouseButtonDown > 0){
-        string leftOrRight = "left";
-        if(isMouseButtonDown == 2){
-            leftOrRight = "right";
-        }
-        cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
-    }
+//    if(isMouseButtonDown > 0){
+//        string leftOrRight = "left";
+//        if(isMouseButtonDown == 2){
+//            leftOrRight = "right";
+//        }
+//        cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
+//    }
 
 
     if (mouseControl) {

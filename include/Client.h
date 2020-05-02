@@ -58,7 +58,9 @@ private:
     static void setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
     // flag
-    static int isMouseButtonDown; // 0 for release, 1 for left, 2 for right
+    static int isMouseButtonDown; // 0 for release, 1 for left, 2 for right (temperary unused)
+    static glm::vec2 clickPos;
+    static glm::vec2 releasePos;
     
     
     // objects

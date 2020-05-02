@@ -15,7 +15,7 @@ IO_handler::IO_handler(int type){
     ctype = type;
 }
 
-void IO_handler::SendInput(int direction){
+void IO_handler::SendKeyBoardInput(int direction){
     
     switch(direction){
         case 0:
@@ -32,32 +32,52 @@ void IO_handler::SendInput(int direction){
             break;
         
     }
-    
     ifPressed = true;
-    
+}
+
+void IO_handler::SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end){
+    if(leftOrRight == 0){
+        cerr << "WHY YOU ARE HERE???" << endl;
+        return;
+    }
+    else if(leftOrRight == 1){
+        currBut = "l";
+        startPos = start;
+    }
+    else if(leftOrRight == 2){
+        currBut = "r";
+        endPos = end;
+    }
+    else{
+        cerr << "???????" << endl;
+        return;
+    }
+    ifClicked = true;
 }
 
 void IO_handler::SendPackage(chat_client* c){
+    pt::ptree root;
+    pt::ptree cmd;
+    
+    pt::ptree cmd_key;
+    pt::ptree cmd_mouse;
+
     if(ifPressed){
-        pt::ptree root;
-        pt::ptree cmd;
-        
-        pt::ptree cmd_key;
-        pt::ptree cmd_mouse;
-        
         cmd_key.put("key", currDir);
-        //cmd_mouse.put("mouse", ...);
-        
-        cmd.push_back(std::make_pair("", cmd_key));
-        cmd.push_back(std::make_pair("", cmd_mouse));
-        
-        root.add_child("cmd", cmd);
-        
-        stringstream ss;
-        write_json(ss, root, false);
-        c->write(ss.str());
         ifPressed = false;
     }
+    if(ifClicked){
+        cmd_mouse.put("mouse", currBut);
+        ifClicked = false;
+    }
+    cmd.push_back(std::make_pair("", cmd_key));
+    cmd.push_back(std::make_pair("", cmd_mouse));
+    
+    root.add_child("cmd", cmd);
+    
+    stringstream ss;
+    write_json(ss, root, false);
+    c->write(ss.str());
 }
 
 
