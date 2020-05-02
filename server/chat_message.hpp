@@ -47,9 +47,9 @@ public:
     chat_message() : x1(5), x2(5), y1(5), y2(5)
     {
         transM1 = glm::mat4(1.0f);
-        transM1[3] = glm::vec4(5,5,0,1);
+        transM1[3] = glm::vec4(56,2,-46,1);
         transM2 = glm::mat4(1.0f);
-        transM2[3] = glm::vec4(-5,-5,0,1);
+        transM2[3] = glm::vec4(58,2,-54,1);
 
     }
 
@@ -58,7 +58,7 @@ public:
         switch (op) {
             case 'w':
                 y1++;
-                transM1[3][1]++;
+                transM1[3][2]--;
                 break;
             case 'a':
                 x1--;
@@ -66,7 +66,7 @@ public:
                 break;
             case 's':
                 y1--;
-                transM1[3][1]--;
+                transM1[3][2]++;
                 break;
             case 'd':
                 x1++;
@@ -80,7 +80,7 @@ public:
         switch (op) {
             case 'w':
                 y2++;
-                transM2[3][1]++;
+                transM2[3][2]--;
                 break;
             case 'a':
                 x2--;
@@ -88,7 +88,7 @@ public:
                 break;
             case 's':
                 y2--;
-                transM2[3][1]--;
+                transM2[3][2]++;
                 break;
             case 'd':
                 x2++;

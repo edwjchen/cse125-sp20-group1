@@ -7,60 +7,80 @@
 //
 
 #include "Camera.hpp"
-#define SENS 0.1f
+#define SENS 0.05f
 
-Camera::Camera(glm::vec3 pos, float yaw, float pitch, glm::vec3 up) {
-    eyePos = pos;
-    upVector = up;
-    this->yaw = yaw;
-    this->pitch = pitch;
+Camera::Camera(glm::vec3 eyePos, glm::vec3 lookAtPos) {
+    this->eyePos = eyePos;
+    this->lookAtPos = lookAtPos;
     sensitivity = SENS;
-    updateVectors();
+    
+    glm::vec3 front = glm::normalize(lookAtPos - eyePos);
+    glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    glm::vec3 up = glm::normalize(glm::cross(right, front));
+    
+    this->frontVector = front;
+    this->upVector = up;
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
+
 }
 
 Camera::~Camera() {
     
 }
 
-void Camera::move(glm::vec3 dis) {
-    eyePos = glm::translate(glm::mat4(1), dis) * glm::vec4(eyePos, 1.0f);
+void Camera::setLookAt(glm::vec3 pos) {
+    this->lookAtPos = pos; 
+    glm::vec3 front = glm::normalize(pos - eyePos);
+    glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    glm::vec3 up = glm::normalize(glm::cross(right, front));
+    
+    this->frontVector = front;
+    this->upVector = up;
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
 }
 
-void Camera::updateLookAt(float xoffset, float yoffset) {
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-    
-    yaw   += xoffset;
-    pitch += yoffset;
-    
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-    
-    // Update Front, Right and Up Vectors using the updated Euler angles
-    updateVectors();
+glm::mat4 Camera::getView() {
+    return view;
 }
 
-void Camera::updateVectors() {
-    glm::vec3 front;
-    glm::vec3 right;
-    glm::vec3 up;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = glm::normalize(front);
+glm::vec3 Camera::getPos() {
+    return eyePos;
+}
 
+void Camera::setPos(glm::vec3 pos) {
+    this->eyePos = pos;
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
+}
+
+void Camera::rotateAround(float xAngle, float yAngle) {
+    xAngle *= sensitivity;
+    yAngle *= sensitivity;
+    
+    glm::vec3 front = glm::normalize(eyePos - lookAtPos);
+    glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    glm::vec3 up = upVector;
+    
+    front = glm::rotate(-xAngle, up) * glm::vec4(front, 0);
+    front = glm::rotate(yAngle, right) * glm::vec4(front, 0);
+    if (glm::dot(front, glm::vec3(0, 1, 0)) > 0.96) { // too close to up
+        right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+        front = glm::rotate(-0.3f, right) * glm::vec4(0, 1, 0, 0); // rotate back
+    }
+    if (glm::dot(front, glm::vec3(0, -1, 0))  > 0.96) { // too close to opposite up
+        right = glm::normalize(glm::cross(front, glm::vec3(0.0f, -1.0f, 0.0f)));
+        front = glm::rotate(-0.3f, right) * glm::vec4(0, -1, 0, 0); // rotate back
+    }
+    eyePos = lookAtPos + front * glm::length(eyePos - lookAtPos);
+    
+    front = glm::normalize(lookAtPos - eyePos);
     right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
     up = glm::normalize(glm::cross(right, front));
     
     this->frontVector = front;
     this->upVector = up;
-    
-    this->view = glm::lookAt(eyePos, eyePos + front, upVector);
+    this->view = glm::lookAt(eyePos, eyePos + frontVector, upVector);
 }
 
-glm::mat4 Camera::getView() {
-    return view;
+glm::vec3 Camera::getLookAtPos() {
+    return lookAtPos;
 }
