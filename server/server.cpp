@@ -56,7 +56,8 @@ private:
             boost::asio::read_until( *socket, buf, "\n" );
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
             std::string key_op = "";
-            std::string mouse_op;
+            std::string mouse_op = "";
+            float temp[4];
             
             // Read JSON from client
             try{
@@ -71,10 +72,23 @@ private:
                     BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
                         if(i == 0){
                             key_op = child.second.get<std::string>("key");
-                            cout << key_op << endl;
                         }
                         else{
-                            // Mouse cmd
+                            // Mouse
+                            mouse_op = child.second.get<std::string>("mouse");
+                            if(mouse_op.compare("l")){
+                                int index = 0;
+                                BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_l")){
+                                    temp[index] = stof(t.second.data());
+                                    index++;
+                                }
+                            } else if(mouse_op.compare("r")){
+                                int index = 0;
+                                BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_r")){
+                                    temp[index] = stof(t.second.data());
+                                    index++;
+                                }
+                            }
                             
                         }
                         i++;
@@ -91,6 +105,11 @@ private:
                 }else if(id == 2){
                     obj.update2(key_op.at(0));
                 }
+            }
+            if(mouse_op != ""){
+                //cout << "id: " << id << ", button: " << mouse_op <<endl;
+                cout << mouse_op << ": " << temp[0] << ", " << temp[1] << ", " << temp[2] << ", " << temp[3] << endl;
+                
             }
         }
     }
