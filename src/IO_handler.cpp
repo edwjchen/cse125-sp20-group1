@@ -43,10 +43,18 @@ void IO_handler::SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end)
     else if(leftOrRight == 1){
         currBut = "l";
         startPos = start;
+        endPos = end;
+//        cerr << currBut << endl;
+//        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
+//        cout << "drag end: " << endPos[0] << ", " << endPos[1] << endl;
     }
     else if(leftOrRight == 2){
         currBut = "r";
+        startPos = start;
         endPos = end;
+//        cerr << currBut << endl;
+//        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
+//        cout << "drag end: " << endPos[0] << ", " << endPos[1] << endl;
     }
     else{
         cerr << "???????" << endl;
@@ -61,13 +69,40 @@ void IO_handler::SendPackage(chat_client* c){
     
     pt::ptree cmd_key;
     pt::ptree cmd_mouse;
+    
+
 
     if(ifPressed){
         cmd_key.put("key", currDir);
         ifPressed = false;
     }
     if(ifClicked){
+        pt::ptree mouse_l;
+        pt::ptree mouse_r;
+        pt::ptree allPos[4];
+        
+        allPos[0].put("", startPos.x);
+        allPos[1].put("", startPos.y);
+        allPos[2].put("", endPos.x);
+        allPos[3].put("", endPos.y);
+        
+        if(currBut.compare("l")){
+            for(int i=0; i<4; i++){
+                mouse_l.push_back(std::make_pair("", allPos[i]));
+            }
+        }
+        else if (currBut.compare("r")) {
+            for(int i=0; i<4; i++){
+                mouse_r.push_back(std::make_pair("", allPos[i]));
+            }
+        }
+        else {
+            cerr << "string comparision error in io_handller 96" << endl;
+        }
+        
         cmd_mouse.put("mouse", currBut);
+        cmd_mouse.add_child("mouse_l", mouse_l);
+        cmd_mouse.add_child("mouse_r", mouse_r);
         ifClicked = false;
     }
     cmd.push_back(std::make_pair("", cmd_key));

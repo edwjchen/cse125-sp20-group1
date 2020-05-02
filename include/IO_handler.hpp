@@ -23,7 +23,7 @@ private:
     std::string currDir = "z";
     std::string currBut = "z";
     glm::vec2 startPos = glm::vec2(0.0);
-    glm::vec2 endPos glm::vec2(0.0);
+    glm::vec2 endPos = glm::vec2(0.0);
     bool ifPressed = false;
     bool ifClicked = false;
     

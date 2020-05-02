@@ -280,11 +280,11 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         }
         
         if(button==GLFW_MOUSE_BUTTON_RIGHT){
-            cout << "RIGHT!!" << endl;
+            //cout << "RIGHT!!" << endl;
             isMouseButtonDown = 2;
         }
         else if(button==GLFW_MOUSE_BUTTON_LEFT){
-            cout << "LEFT!!" << endl;
+            //cout << "LEFT!!" << endl;
             isMouseButtonDown = 1;
         }
         else{
@@ -301,11 +301,11 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
     }
     else if (action == GLFW_RELEASE){
         releasePos = glm::vec2((float)xpos, (float)ypos);
-        cout << "drag start: " << clickPos[0] << ", " << clickPos[1] << endl;
-        cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
+        //cout << "drag start: " << clickPos[0] << ", " << clickPos[1] << endl;
+        //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
         
         // send i/o to server
-        io_handler->SendMouseInput(isMouseButtonDown, clickPos, relasePos);
+        io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
         
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
