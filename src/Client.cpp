@@ -166,7 +166,7 @@ void Client::run() {
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
-            io_handler -> SendPackage(&c);
+            io_handler -> SendPackage(&c, &terrain->mesh->vertices);
             updateFromServer(c.getMsg());
         }
 
@@ -343,10 +343,13 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
 
 
 void Client::updateFromServer(string msg) {
+//    cout << terrain->mesh->vertices.size();
+//    for (auto pos: terrain->mesh->vertices){
+//        cout << pos.x << ", " << pos.y << ", " << pos.z << endl;
+//    }
     try{
         if(msg != ""){
             stringstream ss;
-
             ss << msg;
 
             pt::ptree tar;
@@ -355,6 +358,14 @@ void Client::updateFromServer(string msg) {
             glm::mat4 matrix1, matrix2;
             //cout << "ha" << endl;
 
+            // print height passed from server
+//            cout << "Height: " << endl;
+//            BOOST_FOREACH(const pt::ptree::value_type& v,
+//                          tar.get_child("Height_map")) {
+//                cout << v.second.data() << endl;
+//            }
+//            cout << "---------" << endl;
+            
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
                           tar.get_child("Obj")) {
@@ -392,15 +403,16 @@ void Client::updateFromServer(string msg) {
 //                    sphere_player2->move(pos2);
                 }
                 id++;
+                
             }
             //glm::vec3 wtf = sphere_player1->getPos();
             //cout << wtf.x << " " << wtf.y << " " << wtf.z << endl;
             //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
             //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
-
+            
         }
     } catch (...){
-
+        cout << "Fail to parse package from server" << endl;
     }
 
         // Hardcode string decoding for now

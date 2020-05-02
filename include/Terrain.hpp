@@ -27,6 +27,8 @@ public:
     void setHeightsFromTexture(const char *file, float offset, float scale);
     void terrainBuildMesh();
     
+    TerrainMesh * mesh;
+    
 private:
     unsigned num_indices;
 
@@ -41,8 +43,7 @@ private:
     int width;
     int depth;
     float step;
-    
-    TerrainMesh * mesh;
+
     
     void prepareDraw();
     float getHeight(unsigned int w, unsigned int d);

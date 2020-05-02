@@ -33,11 +33,13 @@ public:
     
     void SendKeyBoardInput(int direction);
     void SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end);
-    void SendPackage(chat_client* c);
+    void SendPackage(chat_client* c, std::vector<glm::vec3>* terrainVec);
     void PressW();
     void PressA();
     void PressS();
     void PressD(chat_client* c);
+    
+    boost::property_tree::ptree parseTerrain(std::vector<glm::vec3>* terrainVec);
     
 };
 
