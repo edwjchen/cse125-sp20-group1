@@ -19,6 +19,31 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO_positions);
     glGenBuffers(1, &VBO_normals);
+
+
+    Uint32 rmask, gmask, bmask, amask;
+
+    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
+       on the endianness (byte order) of the machine */
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+    #else
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+    #endif
+    
+    surface = SDL_CreateRGBSurface(0, width, depth, 32, rmask, gmask, bmask, amask);
+    setHeightsFromSurface(0.0f, 12.0f);
+    
+    if (surface == NULL) {
+        SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+        exit(1);
+    }
 }
 
 Terrain::~Terrain(){
@@ -262,26 +287,26 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint sh
 void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
 {
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)){
-        std::cout << "Could not initialize STL Image" << SDL_GetError() <<std::endl;
+        std::cout << "Could not initialize STL surface" << SDL_GetError() <<std::endl;
         return;
     }
 
-    SDL_Surface *image = IMG_Load(file);
+    surface = IMG_Load(file);
     
-    if (!image) {
+    if (!surface) {
       std::cout << "Texture Manager: Failed to load file, " << file << std::endl;
       return;
     }
     
-    uint8_t *pixels = (uint8_t *) image->pixels;
-    float scale_x = ((float) image->w) / (width - 1);
-    float scale_z = ((float) image->h) / (depth - 1);
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
 
     for (int x = 0; x < width; x++) {
         for (int z = 0; z < depth; z++) {
             int img_x = (int) truncf(x * scale_x);
             int img_y = (int) truncf(z * scale_z);
-            float h = pixels[img_y * image->pitch + img_x * 4];
+            float h = pixels[img_y * surface->pitch + img_x * 4];
 
             /* Normalize height to [-1, 1] */
             h = h / 127.5 - 1.0f;
@@ -295,4 +320,42 @@ void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
             setHeight(x, z, h);
         }
     }
+}
+
+void Terrain::setHeightsFromSurface(float offset, float scale)
+{
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
+
+    for (int x = 0; x < width; x++) {
+        for (int z = 0; z < depth; z++) {
+            int img_x = (int) truncf(x * scale_x);
+            int img_y = (int) truncf(z * scale_z);
+            float h = pixels[img_y * surface->pitch + img_x * 4];
+
+            /* Normalize height to [-1, 1] */
+            h = h / 127.5 - 1.0f;
+
+            /* Apply scale */
+            h *= scale;
+
+            /* Apply height offset */
+            h += offset;
+
+            setHeight(x, z, h);
+        }
+    }
+}
+
+void Terrain::edit(std::vector<glm::vec2> editPoints, float height)
+{
+    int color = height / 10 * 255.0f;
+    Uint32 c_color = SDL_MapRGB(screen->format, color,color,color);
+    for (int i = 0; i < editPoints.size() - 1; i++){
+        Draw_Line(screen, (int)editPoints[i].x, (int)editPoints[i].y, (int)editPoints[i+1].x, (int)editPoints[i+1].y, c_color);
+    }
+    
+    setHeightsFromSurface(0.0f, 12.0f);
+    terrainBuildMesh();
 }

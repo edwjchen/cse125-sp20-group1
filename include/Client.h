@@ -44,7 +44,9 @@ private:
 
     // Shader Program ID
     GLuint shaderProgram;
-
+    GLuint skyboxProgram;
+    GLuint terrainProgram;
+    
     // Constructors and Destructors
     bool initializeProgram();
     bool initializeObjects();
@@ -61,6 +63,7 @@ private:
     static Sphere* sphere_player2;
     static Terrain* terrain;
     static Camera* camera;
+    static Skybox* skybox;
     
     static glm::vec2 mousePos;
     static bool mouseControl; 
