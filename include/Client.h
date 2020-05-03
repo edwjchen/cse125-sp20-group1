@@ -69,6 +69,10 @@ private:
     static Terrain* terrain;
     static Camera* camera;
     
+    // Store sphere absolute position for camera, since the position stored is always 0
+    static glm::vec3 sphere1_pos;
+    static glm::vec3 sphere2_pos;
+    
     static glm::vec2 mousePos;
     static bool mouseControl; 
 

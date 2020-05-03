@@ -78,6 +78,7 @@ private:
         if (!error)
         {
             std::string id_str{buffers_begin(read_msg_.data()),         buffers_end(read_msg_.data())};
+            read_msg_.consume(read_msg_.size());
             id = std::stoi(id_str);
             std::cout << "id : " << id << std::endl;
             boost::asio::async_read_until(socket_, read_msg_, '\n',

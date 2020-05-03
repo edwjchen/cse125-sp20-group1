@@ -14,6 +14,8 @@ Sphere* Client::sphere_player2;
 Terrain* Client::terrain;
 
 Camera* Client::camera;
+glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
+glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 bool Client::mouseControl = false;
 int Client::isMouseButtonDown = 0;
@@ -155,18 +157,23 @@ void Client::run() {
             window->displayCallback();
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
-            // Terrian Camera Logic
-//            if(c.get_id() % 2 != 0){
-//                camera->setPos(glm::vec3(60.0f,59.0f,21.0f));
-//                camera->setLookAt(glm::vec3(60.0f,5.0f,-30.0f));
-//            }
+            // Sphere player and Terrian player Camera Logic
+            if(c.get_id() == 1){
+                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+            }
+            else if(c.get_id() == 2){
+                camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
+                camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
+            }
+            else{
+                // camera for terrian player is fixed
+            }
             
             //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
             //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
-            //camera->setPos(glm::vec3(sphere_player1->getPos().x, sphere_player1->getPos().y + 1,sphere_player1->getPos().z));
-            //camera->setLookAt(glm::vec3(sphere_player1->getPos().x, sphere_player1->getPos().y + 1,sphere_player1->getPos().z));
             idleCallback();
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
@@ -374,24 +381,32 @@ void Client::updateFromServer(string msg) {
 //                    float y1 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
 //                    sphere_player1->move(pos1);
-                    //sphere_player1->move(matrix1);
-                    sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
+                    
+                    // Store the absolute position
+                    sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                    sphere_player1->move(matrix1);
+                    //sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
                     //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
 
                 }
-                else{
+                else if(id == 2){
                     int i=0;
                     BOOST_FOREACH(const pt::ptree::value_type& m,
                                   child.second.get_child("transformation")) {
                         matrix2[i/4][i%4] = stof(m.second.data());
                         i++;
                     }
-                    //sphere_player2->move(matrix2);
-                    sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+                    // Store the absolute position
+                    sphere2_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                    sphere_player2->move(matrix2);
+                    //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
 //                    float x2 = stof(child.second.get<std::string>("x"));
 //                    float y2 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
 //                    sphere_player2->move(pos2);
+                }
+                else{
+                    // id 3, 4 for terrian
                 }
                 id++;
             }
