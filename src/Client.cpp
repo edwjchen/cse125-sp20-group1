@@ -397,7 +397,7 @@ void Client::updateFromServer(string msg) {
                         i++;
                     }
                     // Store the absolute position
-                    sphere2_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                    sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
                     sphere_player2->move(matrix2);
                     //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
 //                    float x2 = stof(child.second.get<std::string>("x"));
