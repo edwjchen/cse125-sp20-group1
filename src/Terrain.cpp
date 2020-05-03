@@ -296,3 +296,15 @@ void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
         }
     }
 }
+
+std::vector<unsigned int>* Terrain::getIndices() {
+    return &indices;
+}
+
+std::vector<glm::vec3>* Terrain::getVertices() {
+    return &mesh->vertices;
+}
+
+std::vector<glm::vec3>* Terrain::getNormals() {
+    return &mesh->normals;
+}

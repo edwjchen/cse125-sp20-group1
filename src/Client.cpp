@@ -68,6 +68,7 @@ bool Client::initializeProgram() {
 bool Client::initializeObjects()
 {
     sphere_player1 = new Sphere(5.0f, 2.0f);
+    sphere_player1->move(glm::vec3(0, 2, 0));
     sphere_player2 = new Sphere(5.0f, 2.0f);
     
     terrain = new Terrain(251, 251, 0.5f);
@@ -77,7 +78,10 @@ bool Client::initializeObjects()
 }
 
 void Client::idleCallback() {
-  
+    glm::vec3 pos = sphere_player1->getCenter();
+    pos.y -= 0.1f;
+    sphere_player1->move(pos);
+    checkCollisions();
 }
 
 void Client::displayCallback() {
@@ -85,7 +89,7 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
     //sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, shaderProgram);
 }
@@ -111,6 +115,10 @@ void Client::setupOpenglSettings()
 
     // Set clear color to black.
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    
+    // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
+
+    // glEnable(GL_CULL_FACE);
 }
 
 void Client::printVersions()
@@ -219,17 +227,32 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendInput(0);
+                glm::vec3 pos = sphere_player1->getCenter();
+                pos.x += 0.3f;
+                sphere_player1->move(pos);
                 break;
             }
             case GLFW_KEY_A:{
+                glm::vec3 pos = sphere_player1->getCenter();
+                pos.z += 0.3f;
+                sphere_player1->move(pos);
+
                 io_handler->SendInput(1);
                 break;
             }
             case GLFW_KEY_S:{
+                glm::vec3 pos = sphere_player1->getCenter();
+                pos.x -= 0.3f;
+                sphere_player1->move(pos);
+
                 io_handler->SendInput(2);
                 break;
             }
             case GLFW_KEY_D:{
+                glm::vec3 pos = sphere_player1->getCenter();
+                pos.z -= 0.3f;
+                sphere_player1->move(pos);
+
                 io_handler->SendInput(3);
                 break;
             }
@@ -247,7 +270,6 @@ void Client::setupCallbacks()
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
   
-    // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
 
 }
@@ -342,4 +364,28 @@ void Client::updateFromServer(string msg)
 //            sphere_player2->move(pos2);
 //        }
     
+}
+
+void Client::checkCollisions() {
+    std::vector<unsigned int>* indices = terrain->getIndices();
+    std::vector<glm::vec3>* vertices = terrain->getVertices();
+    // std::vector<glm::vec3>* normals = terrain->getNormals();
+    
+    for (int j = 0; j < 1; j++) {
+        glm::vec3 offset(0);
+        for (int i = 2; i < indices->size(); i++) {
+            glm::vec3& a = (*vertices)[(*indices)[i-2]];
+            glm::vec3& b = (*vertices)[(*indices)[i-1]];
+            glm::vec3& c = (*vertices)[(*indices)[i]];
+            glm::vec3 n = -glm::normalize(glm::cross(c-a, b-a));
+            // glm::vec3 n = glm::normalize(((*normals)[(*indices)[i-2]] + (*normals)[(*indices)[i-1]] + (*normals)[(*indices)[i]]) / 3.0f);
+            if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
+                n = -n;
+            }
+            
+            offset += sphere_player1->checkCollision(a, b, c, n);
+        }
+        sphere_player1->move(sphere_player1->getCenter() + offset);
+    }
+
 }

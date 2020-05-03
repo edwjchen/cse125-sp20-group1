@@ -27,6 +27,11 @@ public:
     void setHeightsFromTexture(const char *file, float offset, float scale);
     void terrainBuildMesh();
     
+    std::vector<unsigned int>* getIndices();
+    std::vector<glm::vec3>* getVertices();
+    std::vector<glm::vec3>* getNormals();
+    
+    
 private:
     unsigned num_indices;
 
