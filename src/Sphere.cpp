@@ -176,7 +176,7 @@ glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec
     }
     
     float t = -(glm::dot(a, n) - glm::dot(position, n));
-    if (t < 0 || t > (radius + 0.001f)) {
+    if (t < -(radius + 0.001f) || t > (radius + 0.001f)) {
         return glm::vec3(0);
     }
     
@@ -193,7 +193,11 @@ glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec
     if (glm::dot(n, glm::cross(e1, A)) >= 0 &&
         glm::dot(n, glm::cross(e2, B)) >= 0 &&
         glm::dot(n, glm::cross(e3, C)) >= 0) {
-        return P - (position + radius * glm::normalize(P - position));
+        if (t > 0) {
+            return P - (position + radius * glm::normalize(P - position));
+        } else {
+            return P - (position + radius * glm::normalize(position - P));
+        }
     } else {
         return glm::vec3(0);
     }

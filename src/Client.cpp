@@ -228,13 +228,13 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             case GLFW_KEY_W:{
                 io_handler->SendInput(0);
                 glm::vec3 pos = sphere_player1->getCenter();
-                pos.x += 0.3f;
+                pos.x += 1.0f;
                 sphere_player1->move(pos);
                 break;
             }
             case GLFW_KEY_A:{
                 glm::vec3 pos = sphere_player1->getCenter();
-                pos.z += 0.3f;
+                pos.z += 1.0f;
                 sphere_player1->move(pos);
 
                 io_handler->SendInput(1);
@@ -242,7 +242,7 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             case GLFW_KEY_S:{
                 glm::vec3 pos = sphere_player1->getCenter();
-                pos.x -= 0.3f;
+                pos.x -= 1.0f;
                 sphere_player1->move(pos);
 
                 io_handler->SendInput(2);
@@ -250,7 +250,7 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             case GLFW_KEY_D:{
                 glm::vec3 pos = sphere_player1->getCenter();
-                pos.z -= 0.3f;
+                pos.z -= 1.0f;
                 sphere_player1->move(pos);
 
                 io_handler->SendInput(3);
