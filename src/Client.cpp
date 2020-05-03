@@ -165,6 +165,8 @@ void Client::run() {
             //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
+            //camera->setPos(glm::vec3(sphere_player1->getPos().x, sphere_player1->getPos().y + 1,sphere_player1->getPos().z));
+            //camera->setLookAt(glm::vec3(sphere_player1->getPos().x, sphere_player1->getPos().y + 1,sphere_player1->getPos().z));
             idleCallback();
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());

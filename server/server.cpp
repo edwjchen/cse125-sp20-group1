@@ -43,7 +43,7 @@ private:
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
             std::string msg = obj.data()+'\n';
-            std::cout << msg ;
+            //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
             std::this_thread::sleep_for(std::chrono::milliseconds(30));
         }
