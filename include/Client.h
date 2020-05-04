@@ -44,7 +44,9 @@ private:
 
     // Shader Program ID
     GLuint shaderProgram;
-
+    GLuint skyboxProgram;
+    GLuint terrainProgram;
+    
     // Constructors and Destructors
     bool initializeProgram();
     bool initializeObjects();
@@ -68,7 +70,8 @@ private:
     static Sphere* sphere_player2;
     static Terrain* terrain;
     static Camera* camera;
-    
+    static Skybox* skybox;
+  
     // Store sphere absolute position for camera, since the position stored is always 0
     static glm::vec3 sphere1_pos;
     static glm::vec3 sphere2_pos;
