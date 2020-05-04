@@ -31,7 +31,6 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "SDL_draw.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"

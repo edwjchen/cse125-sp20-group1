@@ -32,8 +32,6 @@
 		B07A7F8124558D30004C76D1 /* libSDL2_image-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B07A7F8024558D30004C76D1 /* libSDL2_image-2.0.0.dylib */; };
 		B07A7F8324558D49004C76D1 /* libSDL2-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B07A7F8224558D49004C76D1 /* libSDL2-2.0.0.dylib */; };
 		B0C64460245F34F4006BC486 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0C6445E245F34F4006BC486 /* Skybox.cpp */; };
-		B0C64463245F64AF006BC486 /* SDL_draw.c in Sources */ = {isa = PBXBuildFile; fileRef = B0C64461245F64AE006BC486 /* SDL_draw.c */; };
-		B0C64464245F64AF006BC486 /* Draw_Line.c in Sources */ = {isa = PBXBuildFile; fileRef = B0C64462245F64AF006BC486 /* Draw_Line.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -109,9 +107,6 @@
 		B07A7F8224558D49004C76D1 /* libSDL2-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.0.dylib"; path = "../../../../usr/local/Cellar/sdl2/2.0.12_1/lib/libSDL2-2.0.0.dylib"; sourceTree = "<group>"; };
 		B0C6445E245F34F4006BC486 /* Skybox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
 		B0C6445F245F34F4006BC486 /* Skybox.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Skybox.hpp; sourceTree = "<group>"; };
-		B0C64461245F64AE006BC486 /* SDL_draw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = SDL_draw.c; path = lib/sdl_draw/SDL_draw.c; sourceTree = "<group>"; };
-		B0C64462245F64AF006BC486 /* Draw_Line.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Draw_Line.c; path = lib/sdl_draw/Draw_Line.c; sourceTree = "<group>"; };
-		B0C64465245F66FC006BC486 /* sdl_draw */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sdl_draw; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,8 +128,6 @@
 		A42588112441261E0066B22A = {
 			isa = PBXGroup;
 			children = (
-				B0C64462245F64AF006BC486 /* Draw_Line.c */,
-				B0C64461245F64AE006BC486 /* SDL_draw.c */,
 				B07A7F7E2455898A004C76D1 /* textures */,
 				B0018A0D244D819F00667E79 /* server */,
 				B0255A462443C271009BFB31 /* shaders */,
@@ -168,7 +161,6 @@
 		A4258847244127930066B22A /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				B0C64465245F66FC006BC486 /* sdl_draw */,
 				A42588732447B9F50066B22A /* imgui_demo.cpp */,
 				A42588772447B9F60066B22A /* imgui_draw.cpp */,
 				A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */,
@@ -309,8 +301,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0C64463245F64AF006BC486 /* SDL_draw.c in Sources */,
-				B0C64464245F64AF006BC486 /* Draw_Line.c in Sources */,
 				613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */,
 				613A462B244BE3E6005F07E9 /* my_client.hpp in Sources */,
 				B01FA8D0244BD525003EFCB0 /* shader.cpp in Sources */,

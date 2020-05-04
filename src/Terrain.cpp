@@ -348,14 +348,77 @@ void Terrain::setHeightsFromSurface(float offset, float scale)
     }
 }
 
+void Terrain::drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color){
+    int x0 = start.x;
+    int y0 = start.y;
+    int x1 = end.x;
+    int y1 = end.y;
+    
+    int dx, dy, p, x, y;
+
+    dx = x1 - x0;
+    dy = y1 - y0;
+
+    x = x0;
+    y = y0;
+
+    p = 2 * dy - dx;
+
+    while(x < x1)
+    {
+        if(p >= 0)
+        {
+            putpixel(x,y,color);
+            y = y+1;
+            p = p + 2 * dy - 2 * dx;
+        }
+        else
+        {
+            putpixel(x,y,color);
+            p = p + 2 * dy;
+        }
+        x = x + 1;
+    }
+}
+
+void Terrain::putpixel(int x, int y, int color){
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
+    int img_x = (int) truncf(x * scale_x);
+    int img_y = (int) truncf(y * scale_z);
+    uint32_t pixel = pixels[img_y * surface->pitch + img_x * 4];
+    uint8_t r ;
+    uint8_t g ;
+    uint8_t b ;
+    
+    SDL_GetRGB( pixel, surface->format ,  &r, &g, &b );
+    
+    r = std::min(r + (uint8_t)color, 255);
+    g = std::min(g + (uint8_t)color, 255);
+    b = std::min(b + (uint8_t)color, 255);
+    
+    pixels[img_y * surface->pitch + img_x * 4] = SDL_MapRGB(surface->format, r, g, b);
+}
+
 void Terrain::edit(std::vector<glm::vec2> editPoints, float height)
 {
     int color = height / 10 * 255.0f;
-    Uint32 c_color = SDL_MapRGB(screen->format, color,color,color);
+//    Uint32 c_color = SDL_MapRGB(screen->format, color,color,color);
+    
+//    SDL_Renderer* renderer = NULL;
+//    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+//    SDL_RenderClear(renderer);
+//    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    
     for (int i = 0; i < editPoints.size() - 1; i++){
-        Draw_Line(screen, (int)editPoints[i].x, (int)editPoints[i].y, (int)editPoints[i+1].x, (int)editPoints[i+1].y, c_color);
+        drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
     }
     
     setHeightsFromSurface(0.0f, 12.0f);
     terrainBuildMesh();
+    
+//    if (renderer) {
+//        SDL_DestroyRenderer(renderer);
+//    }
 }

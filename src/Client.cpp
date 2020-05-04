@@ -92,8 +92,16 @@ bool Client::initializeObjects()
     sphere_player2 = new Sphere(5.0f, 2.0f);
     
     terrain = new Terrain(251, 251, 0.5f);
+    std::vector<glm::vec2> tmp = {
+        glm::vec2(1.0f, 1.0f),
+        glm::vec2(125.0f, 125.0f),
+        glm::vec2(135.0f, 125.0f),
+        glm::vec2(250.0f, 250.0f)
+    };
+    terrain->edit(tmp, 10);
+    
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
-    terrain->terrainBuildMesh();
+    //terrain->terrainBuildMesh();
     return true;
 }
 
