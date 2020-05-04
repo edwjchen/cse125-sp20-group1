@@ -15,8 +15,15 @@ Terrain* Client::terrain;
 Skybox* Client::skybox;
 
 Camera* Client::camera;
+glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
+glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = true;
+
+bool Client::mouseControl = false;
+int Client::isMouseButtonDown = 0;
+glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
+glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
+
 IO_handler* Client::io_handler;
 
 Client::Client(int width, int height) {
@@ -24,7 +31,9 @@ Client::Client(int width, int height) {
     std::pair<int, int> windowSize = window->getFrameBufferSize();
     this->width = windowSize.first;
     this->height = windowSize.second;
-    camera = new Camera(glm::vec3(0, 10, 0), glm::vec3(75, 0, -75));
+
+    //camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(30, 5, -30));
+    camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
     // Print OpenGL and GLSL versions.
@@ -179,6 +188,23 @@ void Client::run() {
             // Main render display callback. Rendering of objects is done here. (Draw)
             displayCallback();
             window->displayCallback();
+            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
+
+            // Sphere player and Terrian player Camera Logic
+            if(c.get_id() == 1){
+                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+            }
+            else if(c.get_id() == 2){
+                camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
+                camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
+            }
+            else{
+                // camera for terrian player is fixed
+            }
+            
+            //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
+            //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
@@ -221,19 +247,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             // take user's io
             case GLFW_KEY_W:{
-                io_handler->SendInput(0);
+                io_handler->SendKeyBoardInput(0);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendInput(1);
+                io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendInput(2);
+                io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendInput(3);
+                io_handler->SendKeyBoardInput(3);
                 break;
             }
             default:
@@ -248,19 +274,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         {
             // Contineous movement
             case GLFW_KEY_W:{
-                io_handler->SendInput(0);
+                io_handler->SendKeyBoardInput(0);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendInput(1);
+                io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendInput(2);
+                io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendInput(3);
+                io_handler->SendKeyBoardInput(3);
                 break;
             }
             default:
@@ -279,35 +305,89 @@ void Client::setupCallbacks()
   
     // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
-
+    
+    glfwSetMouseButtonCallback(window->getWindow(), setMouseButtonCallback);
 }
 
-void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-    if (mouseControl) {
-        if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
-            mousePos.x = xpos;
-            mousePos.y = ypos;
-            return;
+
+void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods){
+    double xpos, ypos;
+    //getting cursor position
+    glfwGetCursorPos(window, &xpos, &ypos);
+    
+    if(action == GLFW_PRESS){
+        // Check to see if we need to set click start position
+        if(clickPos.x == INFINITY && clickPos.y == INFINITY){
+            clickPos = glm::vec2((float)xpos, (float)ypos);
         }
         
-        float xoffset = xpos - mousePos.x;
-        float yoffset = ypos - mousePos.y;
+        if(button==GLFW_MOUSE_BUTTON_RIGHT){
+            //cout << "RIGHT!!" << endl;
+            isMouseButtonDown = 2;
+        }
+        else if(button==GLFW_MOUSE_BUTTON_LEFT){
+            //cout << "LEFT!!" << endl;
+            isMouseButtonDown = 1;
+        }
+        else{
+            cout << "unknown click?" << endl;
+        }
+            
+//        if(isMouseButtonDown > 0){
+//            string leftOrRight = "left";
+//            if(isMouseButtonDown == 2){
+//                leftOrRight = "right";
+//            }
+//            cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
+//        }
+    }
+    else if (action == GLFW_RELEASE){
+        releasePos = glm::vec2((float)xpos, (float)ypos);
+        //cout << "drag start: " << clickPos[0] << ", " << clickPos[1] << endl;
+        //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
         
+        // send i/o to server
+        io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
+        
+        isMouseButtonDown = 0;
+        clickPos = glm::vec2(INFINITY, INFINITY);
+    }
+}
+
+
+void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
+   
+    if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
         mousePos.x = xpos;
         mousePos.y = ypos;
         
+        return;
+    }
+    
+    
+//    if(isMouseButtonDown > 0){
+//        string leftOrRight = "left";
+//        if(isMouseButtonDown == 2){
+//            leftOrRight = "right";
+//        }
+//        cout << leftOrRight << " click on: " << xpos << ", " << ypos << endl;
+//    }
+
+
+    if (mouseControl) {
+        float xoffset = xpos - mousePos.x;
+        float yoffset = ypos - mousePos.y;
+        mousePos.x = xpos;
+        mousePos.y = ypos;
         camera->rotateAround(xoffset, yoffset);
     }
 }
 
-void Client::updateFromServer(string msg)
-{
+
+void Client::updateFromServer(string msg) {
     try{
         if(msg != ""){
             stringstream ss;
-//            cout << "----" << endl;
-//            cout << msg << endl;
-//            cout << "----" << endl;
             
             ss << msg;
             
@@ -327,27 +407,47 @@ void Client::updateFromServer(string msg)
                                   child.second.get_child("transformation")) {
                 
                         matrix1[i/4][i%4] = stof(m.second.data());
-                        //cout << m.second.data() << endl;
+                        i++;
+                        //cout << matrix1[i/4][i%4] << endl;
                     }
 //                    float x1 = stof(child.second.get<std::string>("x"));
 //                    float y1 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
 //                    sphere_player1->move(pos1);
                     
+                    // Store the absolute position
+                    sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                    sphere_player1->move(matrix1);
+                    //sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
+                    //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
+
                 }
-                else{
+                else if(id == 2){
                     int i=0;
                     BOOST_FOREACH(const pt::ptree::value_type& m,
                                   child.second.get_child("transformation")) {
                         matrix2[i/4][i%4] = stof(m.second.data());
+                        i++;
                     }
+                    // Store the absolute position
+                    sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
+                    sphere_player2->move(matrix2);
+                    //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
 //                    float x2 = stof(child.second.get<std::string>("x"));
 //                    float y2 = stof(child.second.get<std::string>("y"));
 //                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
 //                    sphere_player2->move(pos2);
                 }
+                else{
+                    // id 3, 4 for terrian
+                }
                 id++;
             }
+            //glm::vec3 wtf = sphere_player1->getPos();
+            //cout << wtf.x << " " << wtf.y << " " << wtf.z << endl;
+            //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
+            //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+
         }
     } catch (...){
         
