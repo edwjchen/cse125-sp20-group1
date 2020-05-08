@@ -12,6 +12,7 @@ namespace pt = boost::property_tree;
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
 Terrain* Client::terrain;
+Skybox* Client::skybox;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
@@ -57,13 +58,23 @@ Client::~Client() {
 bool Client::initializeProgram() {
     // Create a shader program with a vertex shader and a fragment shader.
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
-
+    skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
+    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag");
+    
     // Check the shader program.
     if (!shaderProgram)
     {
         std::cerr << "Failed to initialize shader program" << std::endl;
         return false;
     }
+    
+    // Check the shader program.
+    if (!skyboxProgram)
+    {
+        std::cerr << "Failed to initialize skybox program" << std::endl;
+        return false;
+    }
+
 
     // Create io_handler (0 for balls)
     io_handler = new IO_handler(0);
@@ -73,12 +84,30 @@ bool Client::initializeProgram() {
 
 bool Client::initializeObjects()
 {
+    vector<std::string> faces =
+    {
+        "textures/sky-right.png",
+        "textures/sky-left.png",
+        "textures/sky-top.png",
+        "textures/sky-bottom.png",
+        "textures/sky-back.png",
+        "textures/sky-front.png",
+    };
+    skybox = new Skybox(faces);
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
     
     terrain = new Terrain(251, 251, 0.5f);
-    terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
-    terrain->terrainBuildMesh();
+    std::vector<glm::vec2> tmp = {
+        glm::vec2(1.0f, 1.0f),
+        glm::vec2(125.0f, 125.0f),
+        glm::vec2(135.0f, 125.0f),
+        glm::vec2(250.0f, 250.0f)
+    };
+    terrain->edit(tmp, 10);
+    
+    //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
+    //terrain->terrainBuildMesh();
     return true;
 }
 
@@ -91,9 +120,10 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    sphere_player2->draw(camera->getView(), projection, shaderProgram);
-    terrain->draw(camera->getView(), projection, shaderProgram);
+    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    terrain->draw(camera->getView(), projection, terrainProgram);
+    skybox->draw(camera->getView(), projection, skyboxProgram);
 }
 
 bool Client::initialize() {

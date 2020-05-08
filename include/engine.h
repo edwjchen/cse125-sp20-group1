@@ -12,5 +12,6 @@
 #include "Primitive.h"
 #include "Sphere.h"
 #include "Terrain.hpp"
+#include "Skybox.hpp"
 
 #endif /* engine_h */
