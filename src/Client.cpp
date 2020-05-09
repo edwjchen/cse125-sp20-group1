@@ -128,9 +128,7 @@ void Client::displayCallback() {
     sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
-    if(id != 1 && id != 2){
-        sphere_mouse->draw(camera->getView(), projection, shaderProgram);
-    }
+    sphere_mouse->draw(camera->getView(), projection, shaderProgram);
 
 }
 
@@ -401,8 +399,10 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
     
     glm::mat4 mtx = glm::mat4(1.0f);
     glm::vec2 translatedMPos = screenPointToWorld(glm::vec2(xpos, ypos));
-    mtx[3] = glm::vec4(translatedMPos.x,0,translatedMPos.y,1);
-    sphere_mouse->move(mtx);
+    if(translatedMPos.x >= 0 && translatedMPos.x <= 125 && translatedMPos.y <= 0 && translatedMPos.y >= -125){
+        mtx[3] = glm::vec4(translatedMPos.x,-1,translatedMPos.y,1);
+        sphere_mouse->move(mtx);
+    }
     
     if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
         mousePos.x = xpos;
