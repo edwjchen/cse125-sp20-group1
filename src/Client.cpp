@@ -356,6 +356,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     glm::vec3 w;
     glm::vec3 u;
     glm::vec3 v;
+    float fov = glm::radians(60.0f);
     float a, b, t;
     float wWidth = 640.0f;
     float wHeight = 480.0f;
@@ -368,9 +369,12 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     v = glm::cross(w,u);
     
     // i,j problem might occur here.
-    a = (glm::tan(60.0f/2.0f) * (float)wWidth/wHeight) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
+//    a = (glm::tan(fov/2.0f)) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
+//    b = (glm::tan(fov/2.0f)) * (((wHeight/2.0f)-mousePos.x)/(wHeight/2.0f));
     
-    b = (glm::tan(60.0f/2.0f)) * ((mousePos.x-(wHeight/2.0f))/(wHeight/2.0f));
+    a = (glm::tan(fov/2.0f)
+         * wWidth/wHeight) * ((mousePos.x-(wWidth/2.0f))/(wWidth/2.0f));
+    b = (glm::tan(fov/2.0f)) * ((mousePos.y-(wHeight/2.0f))/(wHeight/2.0f));
     
     rayDir = glm::normalize(a*u + b*v - w);
     
