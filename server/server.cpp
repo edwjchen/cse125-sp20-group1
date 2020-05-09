@@ -81,7 +81,11 @@ private:
                                 BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_l")){
                                     temp[index] = stof(t.second.data());
                                     index++;
+//                                    if(temp[index]!= 0){
+//                                        cout << temp[index] << " ";
+//                                    }
                                 }
+                                //cout << endl;
                             } else if(mouse_op.compare("r")){
                                 int index = 0;
                                 BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_r")){

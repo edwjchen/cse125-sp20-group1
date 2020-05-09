@@ -41,18 +41,19 @@ void IO_handler::SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end)
         return;
     }
     else if(leftOrRight == 1){
-        currBut = "l";
         startPos = start;
         endPos = end;
+        currBut = "l";
 
+        //cout << endPos.x << " " << endPos.y << endl;
 //        cerr << currBut << endl;
 //        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
 //        cout << "drag end: " << endPos[0] << ", " << endPos[1] << endl;
     }
     else if(leftOrRight == 2){
-        currBut = "r";
         startPos = start;
         endPos = end;
+        currBut = "r";
 
 //        cerr << currBut << endl;
 //        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
@@ -77,10 +78,8 @@ void IO_handler::SendPackage(chat_client* c){
     pt::ptree allPos[4];
     
     cmd_key.put("key", currDir);
-    currDir = "";
     
     cmd_mouse.put("mouse", currBut);
-    currBut = "";
         
     allPos[0].put("", startPos.x);
     allPos[1].put("", startPos.y);
@@ -100,6 +99,10 @@ void IO_handler::SendPackage(chat_client* c){
     else {
         cerr << "string comparision error in io_handller 96" << endl;
     }
+    
+    currBut = "";
+    currDir = "";
+
     
     cmd_mouse.add_child("mouse_l", mouse_l);
     cmd_mouse.add_child("mouse_r", mouse_r);

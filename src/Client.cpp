@@ -126,9 +126,12 @@ void Client::displayCallback() {
     // Render the objects
     sphere_player1->draw(camera->getView(), projection, shaderProgram);
     sphere_player2->draw(camera->getView(), projection, shaderProgram);
-    sphere_mouse->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
+    if(id != 1 && id != 2){
+        sphere_mouse->draw(camera->getView(), projection, shaderProgram);
+    }
+
 }
 
 bool Client::initialize() {
@@ -349,12 +352,16 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
         
         // send i/o to server
+        //io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
+
         glm::vec2 translatedCPos = screenPointToWorld(clickPos);
         glm::vec2 translatedRPos = screenPointToWorld(releasePos);
         io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
-        
+
+        cout << "finalPos x: " << translatedRPos.x << " finalPos y: " << translatedRPos.y << endl;
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
+        releasePos = glm::vec2(INFINITY, INFINITY);
     }
 }
 
@@ -373,14 +380,6 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     w = glm::normalize(camera->getPos() - camera->getLookAtPos());
     u = glm::normalize(glm::cross(camera->getUpVector(), w));
     v = glm::cross(w,u);
-    
-    // i,j problem might occur here.
-    //a = (glm::tan(fov/2.0f)) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
-    //b = (glm::tan(fov/2.0f)) * (((wHeight/2.0f)-mousePos.x)/(wHeight/2.0f));
-    
-    //a = (glm::tan(fov/2.0f)
-    //     * wWidth/wHeight) * ((mousePos.x-(wWidth/2.0f))/(wWidth/2.0f));
-    //b = (glm::tan(fov/2.0f)) * ((mousePos.y-(wHeight/2.0f))/(wHeight/2.0f));
     
     // Finally worked version
     a = glm::tan(fov/2) * (wWidth /wHeight) * ((mousePos.x - (float)wWidth/2) / (wWidth/2));
