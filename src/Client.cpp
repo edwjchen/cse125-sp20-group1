@@ -120,8 +120,8 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
 }
@@ -188,11 +188,11 @@ void Client::run() {
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == 1){
+            if(c.get_id() == -1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
-            else if(c.get_id() == 2){
+            else if(c.get_id() == -2){
                 camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
             }
@@ -344,11 +344,43 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
         
         // send i/o to server
+        glm::vec2 translatedPos = screenPointToWorld(releasePos);
         io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
         
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
     }
+}
+
+glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
+    glm::vec3 w;
+    glm::vec3 u;
+    glm::vec3 v;
+    float a, b, t;
+    float wWidth = 640.0f;
+    float wHeight = 480.0f;
+    glm::vec3 rayDir;
+    glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 finalPos;
+    
+    w = glm::normalize(camera->getPos() - camera->getLookAtPos());
+    u = glm::normalize(glm::cross(camera->getUpVector(), w));
+    v = glm::cross(w,u);
+    
+    // i,j problem might occur here.
+    a = (glm::tan(60.0f/2.0f) * (float)wWidth/wHeight) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
+    
+    b = (glm::tan(60.0f/2.0f)) * ((mousePos.x-(wHeight/2.0f))/(wHeight/2.0f));
+    
+    rayDir = glm::normalize(a*u + b*v - w);
+    
+    t = glm::dot((glm::vec3(0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    
+    finalPos = camera->getPos()+t * rayDir;
+    
+    cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
+    
+    return glm::vec2(finalPos.x, finalPos.z);
 }
 
 
@@ -449,24 +481,5 @@ void Client::updateFromServer(string msg) {
     } catch (...){
         
     }
-    
-        // Hardcode string decoding for now
-//        vector<string> result;
-//        stringstream s_stream(msg);
-//        while(s_stream.good()) {
-//           string substr;
-//           getline(s_stream, substr, ','); //get first string delimited by comma
-//           result.push_back(substr);
-//        }
-//        if(result.size()==4){
-//            float x1 = stof(result.at(0));
-//            float y1 = stof(result.at(1));
-//            float x2 = stof(result.at(2));
-//            float y2 = stof(result.at(3));
-//            glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-//            glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-//            sphere_player1->move(pos1);
-//            sphere_player2->move(pos2);
-//        }
     
 }

@@ -84,6 +84,10 @@ private:
 
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
+    
+    
+    // Transform screen coordinate to world coordinate
+    static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
 };
 
 #endif /* Client_h */

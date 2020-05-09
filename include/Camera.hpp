@@ -21,7 +21,8 @@ public:
     void rotateAround(float xAngle, float yAngle);
     glm::vec3 getPos();
     glm::mat4 getView();
-    glm::vec3 getLookAtPos(); 
+    glm::vec3 getLookAtPos();
+    glm::vec3 getUpVector(){return upVector;}
 private:
     // Camera Matrices
     glm::mat4 view;
