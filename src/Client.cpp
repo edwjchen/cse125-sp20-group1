@@ -11,6 +11,7 @@ namespace pt = boost::property_tree;
 
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
+Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
 
@@ -45,6 +46,7 @@ Client::~Client() {
     // Deallcoate the objects.
     delete sphere_player1;
     delete sphere_player2;
+    delete sphere_mouse;
     delete terrain;
     delete camera;
 
@@ -96,6 +98,8 @@ bool Client::initializeObjects()
     skybox = new Skybox(faces);
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
+    // testing only
+    sphere_mouse = new Sphere(1.0f, 2.0f);
     
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
@@ -122,6 +126,7 @@ void Client::displayCallback() {
     // Render the objects
     sphere_player1->draw(camera->getView(), projection, shaderProgram);
     sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_mouse->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
 }
@@ -188,11 +193,11 @@ void Client::run() {
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == -1){
+            if(c.get_id() == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
-            else if(c.get_id() == -2){
+            else if(c.get_id() == 2){
                 camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
             }
@@ -344,8 +349,9 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
         
         // send i/o to server
-        glm::vec2 translatedPos = screenPointToWorld(releasePos);
-        io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
+        glm::vec2 translatedCPos = screenPointToWorld(clickPos);
+        glm::vec2 translatedRPos = screenPointToWorld(releasePos);
+        io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
         
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
@@ -369,12 +375,16 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     v = glm::cross(w,u);
     
     // i,j problem might occur here.
-//    a = (glm::tan(fov/2.0f)) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
-//    b = (glm::tan(fov/2.0f)) * (((wHeight/2.0f)-mousePos.x)/(wHeight/2.0f));
+    //a = (glm::tan(fov/2.0f)) * ((mousePos.y-(wWidth/2.0f))/(wWidth/2.0f));
+    //b = (glm::tan(fov/2.0f)) * (((wHeight/2.0f)-mousePos.x)/(wHeight/2.0f));
     
-    a = (glm::tan(fov/2.0f)
-         * wWidth/wHeight) * ((mousePos.x-(wWidth/2.0f))/(wWidth/2.0f));
-    b = (glm::tan(fov/2.0f)) * ((mousePos.y-(wHeight/2.0f))/(wHeight/2.0f));
+    //a = (glm::tan(fov/2.0f)
+    //     * wWidth/wHeight) * ((mousePos.x-(wWidth/2.0f))/(wWidth/2.0f));
+    //b = (glm::tan(fov/2.0f)) * ((mousePos.y-(wHeight/2.0f))/(wHeight/2.0f));
+    
+    // Finally worked version
+    a = glm::tan(fov/2) * (wWidth /wHeight) * ((mousePos.x - (float)wWidth/2) / (wWidth/2));
+    b = glm::tan(fov/2) * (((wHeight/2) - mousePos.y)/ (wHeight/2));
     
     rayDir = glm::normalize(a*u + b*v - w);
     
@@ -382,14 +392,19 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     
     finalPos = camera->getPos()+t * rayDir;
     
-    cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
+    //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
     
     return glm::vec2(finalPos.x, finalPos.z);
 }
 
 
 void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-   
+    
+    glm::mat4 mtx = glm::mat4(1.0f);
+    glm::vec2 translatedMPos = screenPointToWorld(glm::vec2(xpos, ypos));
+    mtx[3] = glm::vec4(translatedMPos.x,0,translatedMPos.y,1);
+    sphere_mouse->move(mtx);
+    
     if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
         mousePos.x = xpos;
         mousePos.y = ypos;
