@@ -49,16 +49,16 @@ public:
     chat_message() : x1(5), x2(5), y1(5), y2(5)
     {
         transM1 = glm::mat4(1.0f);
-        transM1[3] = glm::vec4(56,2,-46,1);
+        transM1[3] = glm::vec4(0,-10,0,1);
         transM2 = glm::mat4(1.0f);
-        transM2[3] = glm::vec4(58,2,-54,1);
+        transM2[3] = glm::vec4(58,0,-54,1);
 
         for (int i = 0; i < 16000; i++){
             height_map.push_back(1);
         }
 
     }
-
+  
     void update1(char op){
         switch (op) {
             case 'w':
