@@ -41,18 +41,19 @@ void IO_handler::SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end)
         return;
     }
     else if(leftOrRight == 1){
-        currBut = "l";
         startPos = start;
         endPos = end;
+        currBut = "l";
 
+        //cout << endPos.x << " " << endPos.y << endl;
 //        cerr << currBut << endl;
 //        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
 //        cout << "drag end: " << endPos[0] << ", " << endPos[1] << endl;
     }
     else if(leftOrRight == 2){
-        currBut = "r";
         startPos = start;
         endPos = end;
+        currBut = "r";
 
 //        cerr << currBut << endl;
 //        cout << "drag start: " << startPos[0] << ", " << startPos[1] << endl;
@@ -77,10 +78,8 @@ void IO_handler::SendPackage(chat_client* c){
     pt::ptree allPos[4];
     
     cmd_key.put("key", currDir);
-    currDir = "";
     
     cmd_mouse.put("mouse", currBut);
-    currBut = "";
         
     allPos[0].put("", startPos.x);
     allPos[1].put("", startPos.y);
@@ -101,6 +100,10 @@ void IO_handler::SendPackage(chat_client* c){
         cerr << "string comparision error in io_handller 96" << endl;
     }
     
+    currBut = "";
+    currDir = "";
+
+    
     cmd_mouse.add_child("mouse_l", mouse_l);
     cmd_mouse.add_child("mouse_r", mouse_r);
     
@@ -109,12 +112,27 @@ void IO_handler::SendPackage(chat_client* c){
     cmd.push_back(std::make_pair("", cmd_mouse));
     
     root.add_child("cmd", cmd);
+//    root.add_child("Height_map", parseTerrain(terrainVec));
     
     stringstream ss;
     write_json(ss, root, false);
     c->write(ss.str());
 }
 
-
+boost::property_tree::ptree IO_handler::parseTerrain(vector<glm::vec3>* terrainVec){
+    pt::ptree root;
+    pt::ptree testRoot;
+    int ind = 0;
+    for (auto pos: *terrainVec){
+        pt::ptree node;
+        node.put("", pos.y);
+        root.push_back(make_pair("", node));
+        ind++;
+    }
+    stringstream ss;
+    testRoot.add_child("height_map", root);
+    write_json(ss, testRoot, false);
+    return root;
+}
 
 
