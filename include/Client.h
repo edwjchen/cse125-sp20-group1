@@ -69,6 +69,7 @@ private:
     // objects
     static Sphere* sphere_player1;
     static Sphere* sphere_player2;
+    static Sphere* sphere_mouse; // for testing purpose
     static Terrain* terrain;
     static Camera* camera;
 
@@ -86,6 +87,10 @@ private:
 
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
+    
+    
+    // Transform screen coordinate to world coordinate
+    static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
 };
 
 #endif /* Client_h */
