@@ -44,7 +44,9 @@ private:
 
     // Shader Program ID
     GLuint shaderProgram;
-
+    GLuint skyboxProgram;
+    GLuint terrainProgram;
+    
     // Constructors and Destructors
     bool initializeProgram();
     bool initializeObjects();
@@ -56,12 +58,25 @@ private:
     static void errorCallback(int error, const char* description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
+    static void setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
+    // flag
+    static int isMouseButtonDown; // 0 for release, 1 for left, 2 for right (temperary unused)
+    static glm::vec2 clickPos;
+    static glm::vec2 releasePos;
+    
+    
     // objects
     static Sphere* sphere_player1;
     static Sphere* sphere_player2;
     static Terrain* terrain;
     static Camera* camera;
+
+    static Skybox* skybox;
+  
+    // Store sphere absolute position for camera, since the position stored is always 0
+    static glm::vec3 sphere1_pos;
+    static glm::vec3 sphere2_pos;
     
     static glm::vec2 mousePos;
     static bool mouseControl; 

@@ -32,6 +32,7 @@
 		B07A7F7F2455898B004C76D1 /* textures in CopyFiles */ = {isa = PBXBuildFile; fileRef = B07A7F7E2455898A004C76D1 /* textures */; };
 		B07A7F8124558D30004C76D1 /* libSDL2_image-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B07A7F8024558D30004C76D1 /* libSDL2_image-2.0.0.dylib */; };
 		B07A7F8324558D49004C76D1 /* libSDL2-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B07A7F8224558D49004C76D1 /* libSDL2-2.0.0.dylib */; };
+		B0C64460245F34F4006BC486 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0C6445E245F34F4006BC486 /* Skybox.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,6 +108,8 @@
 		B07A7F7E2455898A004C76D1 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		B07A7F8024558D30004C76D1 /* libSDL2_image-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2_image-2.0.0.dylib"; path = "../../../../usr/local/Cellar/sdl2_image/2.0.5/lib/libSDL2_image-2.0.0.dylib"; sourceTree = "<group>"; };
 		B07A7F8224558D49004C76D1 /* libSDL2-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.0.dylib"; path = "../../../../usr/local/Cellar/sdl2/2.0.12_1/lib/libSDL2-2.0.0.dylib"; sourceTree = "<group>"; };
+		B0C6445E245F34F4006BC486 /* Skybox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
+		B0C6445F245F34F4006BC486 /* Skybox.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Skybox.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +196,8 @@
 				B07A7F7824550C06004C76D1 /* Terrain.cpp */,
 				B07A7F7B24557A3E004C76D1 /* TerrainMesh.cpp */,
 				A4D1425F246764A600EA3B7A /* TerrainBoundingBox.cpp */,
+				B0C6445E245F34F4006BC486 /* Skybox.cpp */,
+
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -200,6 +205,7 @@
 		A4258859244127940066B22A /* include */ = {
 			isa = PBXGroup;
 			children = (
+				B0C6445F245F34F4006BC486 /* Skybox.hpp */,
 				A49FE87424553DF80014CF39 /* Camera.hpp */,
 				B01FA8CA244BD4BB003EFCB0 /* Client.h */,
 				B03CDCA8244B91FD001D2FAB /* core.h */,
@@ -306,6 +312,7 @@
 				B01FA8D0244BD525003EFCB0 /* shader.cpp in Sources */,
 				B01FA8D1244BD525003EFCB0 /* Sphere.cpp in Sources */,
 				B07A7F7D24557A3E004C76D1 /* TerrainMesh.cpp in Sources */,
+				B0C64460245F34F4006BC486 /* Skybox.cpp in Sources */,
 				B01FA8CB244BD512003EFCB0 /* imgui_demo.cpp in Sources */,
 				B01FA8CC244BD512003EFCB0 /* imgui_impl_glfw.cpp in Sources */,
 				B01FA8CD244BD513003EFCB0 /* imgui_impl_opengl3.cpp in Sources */,

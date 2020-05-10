@@ -20,6 +20,31 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO_positions);
     glGenBuffers(1, &VBO_normals);
+
+
+    Uint32 rmask, gmask, bmask, amask;
+
+    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
+       on the endianness (byte order) of the machine */
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+    #else
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+    #endif
+    
+    surface = SDL_CreateRGBSurface(0, width, depth, 32, rmask, gmask, bmask, amask);
+    setHeightsFromSurface(0.0f, 12.0f);
+    
+    if (surface == NULL) {
+        SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+        exit(1);
+    }
 }
 
 Terrain::~Terrain(){
@@ -263,26 +288,26 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint sh
 void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
 {
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)){
-        std::cout << "Could not initialize STL Image" << SDL_GetError() <<std::endl;
+        std::cout << "Could not initialize STL surface" << SDL_GetError() <<std::endl;
         return;
     }
 
-    SDL_Surface *image = IMG_Load(file);
+    surface = IMG_Load(file);
     
-    if (!image) {
+    if (!surface) {
       std::cout << "Texture Manager: Failed to load file, " << file << std::endl;
       return;
     }
     
-    uint8_t *pixels = (uint8_t *) image->pixels;
-    float scale_x = ((float) image->w) / (width - 1);
-    float scale_z = ((float) image->h) / (depth - 1);
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
 
     for (int x = 0; x < width; x++) {
         for (int z = 0; z < depth; z++) {
             int img_x = (int) truncf(x * scale_x);
             int img_y = (int) truncf(z * scale_z);
-            float h = pixels[img_y * image->pitch + img_x * 4];
+            float h = pixels[img_y * surface->pitch + img_x * 4];
 
             /* Normalize height to [-1, 1] */
             h = h / 127.5 - 1.0f;
@@ -340,4 +365,156 @@ void Terrain::computeBoundingBoxes() {
             boundingBoxes.push_back(box);
         }
     }
+
+void Terrain::setHeightsFromSurface(float offset, float scale)
+{
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
+
+    for (int x = 0; x < width; x++) {
+        for (int z = 0; z < depth; z++) {
+            int img_x = (int) truncf(x * scale_x);
+            int img_y = (int) truncf(z * scale_z);
+            float h = pixels[img_y * surface->pitch + img_x * 4];
+
+            /* Normalize height to [-1, 1] */
+            h = h / 127.5 - 1.0f;
+
+            /* Apply scale */
+            h *= scale;
+
+            /* Apply height offset */
+            h += offset;
+
+            setHeight(x, z, h);
+        }
+    }
+}
+
+void Terrain::drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color){
+    int x0 = start.x;
+    int y0 = start.y;
+    int x1 = end.x;
+    int y1 = end.y;
+    
+    int dx, dy, p, x, y;
+
+    dx = x1 - x0;
+    dy = y1 - y0;
+
+    x = x0;
+    y = y0;
+
+    p = 2 * dy - dx;
+
+    while(x < x1)
+    {
+        if(p >= 0)
+        {
+            putpixel(x,y,color);
+            y = y+1;
+            p = p + 2 * dy - 2 * dx;
+        }
+        else
+        {
+            putpixel(x,y,color);
+            p = p + 2 * dy;
+        }
+        x = x + 1;
+    }
+}
+
+void Terrain::putpixel(int x, int y, int color){
+    uint8_t *pixels = (uint8_t *) surface->pixels;
+    float scale_x = ((float) surface->w) / (width - 1);
+    float scale_z = ((float) surface->h) / (depth - 1);
+    int img_x = (int) truncf(x * scale_x);
+    int img_y = (int) truncf(y * scale_z);
+    
+    //color /= 2;
+    int radius = 8;
+    
+    for (int i=-radius ; i<radius ; i++) {
+        for(int j=-radius; j<radius; j++) {
+            if((i*i + j*j)<(radius*radius)){
+                int x_coord = std::min(std::max(0, img_x + j), surface->w-1);
+                int y_coord = std::min(std::max(0, img_y + i), surface->h-1);
+                
+                uint32_t pixel = pixels[y_coord * surface->pitch + x_coord * 4];
+                uint8_t r, g, b;
+
+                SDL_GetRGB( pixel, surface->format ,  &r, &g, &b );
+
+                r = std::min(r + (uint8_t)color, 255);
+                g = std::min(g + (uint8_t)color, 255);
+                b = std::min(b + (uint8_t)color, 255);
+                pixels[y_coord * surface->pitch + x_coord * 4] = SDL_MapRGB(surface->format, r, g, b);
+           }
+        }
+    }
+
+}
+
+void Terrain::edit(std::vector<glm::vec2> editPoints, float height)
+{
+    int color = height / 10 * 255.0f;
+
+    
+    for (int i = 0; i < editPoints.size() - 1; i++){
+        drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
+    }
+    
+    SDL_Surface *screen;
+    SDL_Window *window;
+    SDL_Init(SDL_INIT_VIDEO);
+
+    // create the window like normal
+    window = SDL_CreateWindow("SDL2 Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 260, 260, 0);
+    // but instead of creating a renderer, we can draw directly to the screen
+    screen = SDL_GetWindowSurface(window);
+    
+//    SDL_Surface *img = IMG_Load("textures/terrain-heightmap-01.png");
+    SDL_BlitSurface(surface, NULL, screen, NULL); // blit it to the screen
+    SDL_UpdateWindowSurface(window);
+
+    // show image for 2 seconds
+    SDL_Delay(10000);
+    
+    setHeightsFromSurface(0.0f, 12.0f);
+    terrainBuildMesh();
+    
+    
+//    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
+//        SDL_Window* window = NULL;
+//        SDL_Renderer* renderer = NULL;
+//
+//
+//        if (SDL_CreateWindowAndRenderer(width, depth, 0, &window, &renderer) == 0) {
+//            surface = SDL_GetWindowSurface(window);
+//            SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+//            SDL_RenderClear(renderer);
+//
+//            SDL_SetRenderDrawColor(renderer, color, color, color, SDL_ALPHA_OPAQUE);
+//            for (int i = 0; i < editPoints.size() - 1; i++){
+//                SDL_RenderDrawLine(renderer, editPoints[i].x, editPoints[i].y, editPoints[i+1].x, editPoints[i+1].y);
+//            }
+//        }
+//
+//        if (renderer) {
+//            SDL_DestroyRenderer(renderer);
+//        }
+//        if (window) {
+//            SDL_DestroyWindow(window);
+//        }
+//    }
+//    SDL_Quit();
+}
+
+
+void Terrain::applyGravity(){
+//    for (auto& p : particles){
+//        glm::vec3 force = gravity * p->getMass();
+//        p->applyForce(force);
+//    }
 }
