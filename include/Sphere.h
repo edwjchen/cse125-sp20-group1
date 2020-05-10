@@ -24,8 +24,10 @@ public:
     glm::vec3 computeNormal();
     glm::vec3 computeSurfaceV();
     void computeAreoForce(Wind* wind);
+    virtual void move (const glm::vec3& pos);
     
     glm::vec3 getCenter() { return position; }
+    float getRadius() { return radius; }
     
     void setRadius(float r);
     
@@ -36,7 +38,9 @@ public:
     void createVerts();
     void createIndices();
     
-    //glm::vec3 getNormal() { return normal; }
+    glm::vec3 checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 n); 
+    
+    glm::vec3 force = glm::vec3(0); 
     
 private:
     float radius;
