@@ -20,8 +20,8 @@ class IO_handler{
 
 private:
     int ctype = -1;
-    std::string currDir = "z";
-    std::string currBut = "z";
+    std::string currDir = "";
+    std::string currBut = "";
     glm::vec2 startPos = glm::vec2(0.0);
     glm::vec2 endPos = glm::vec2(0.0);
     bool ifPressed = false;

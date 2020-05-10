@@ -26,6 +26,9 @@ public:
     void draw (const glm::mat4& view, const glm::mat4& projection, GLuint shader);
     void setHeightsFromTexture(const char *file, float offset, float scale);
     void terrainBuildMesh();
+    void edit(std::vector<glm::vec2> editPoints, float height);
+    
+    SDL_Surface * surface;
     
     TerrainMesh * mesh;
     
@@ -51,6 +54,11 @@ private:
     float getHeightAt(float x, float z);
     glm::vec3 calculateNormal(unsigned x, unsigned z);
     void computeIndicesForClipVolume(ClipVolume *clip);
+    
+    void setHeightsFromSurface(float offset, float scale);
+    void drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color);
+    void putpixel(int x, int y, int color);
+    
 };
 
 #endif /* Terrain_hpp */

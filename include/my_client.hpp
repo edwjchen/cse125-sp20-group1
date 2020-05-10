@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <deque>
 #include <iostream>
+#include <queue>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -31,10 +32,15 @@ public:
     string getMsg()
     {
         // For testing only
-        istream buffer(&read_msg_);
-        string msg;
-        buffer >> msg;
-        return msg;
+        //        istream buffer(&read_msg_);
+        //        string msg;
+        //        buffer >> msg;
+        string update = "";
+        if(!msg.empty()){
+            update = msg.front();
+            msg.pop();
+        }
+        return update;
     }
 
     void write(const std::string msg)
@@ -46,11 +52,11 @@ public:
     {
         io_service_.post(boost::bind(&chat_client::do_close, this));
     }
-    
+
     int get_id() {
         return id;
     }
-    
+
 
 private:
 
@@ -71,31 +77,43 @@ private:
     {
         if (!error)
         {
-            id = std::stoi(getMsg());
+            std::string id_str{buffers_begin(read_msg_.data()),         buffers_end(read_msg_.data())};
+            read_msg_.consume(read_msg_.size());
+            id = std::stoi(id_str);
             std::cout << "id : " << id << std::endl;
-          boost::asio::async_read_until(socket_, read_msg_, '\n',
-                    boost::bind(&::chat_client::handle_read, this,
-                    boost::asio::placeholders::error));
+            boost::asio::async_read_until(socket_, read_msg_, '\n',
+                boost::bind(&::chat_client::handle_read, this,
+                boost::asio::placeholders::error,
+                boost::asio::placeholders::bytes_transferred));
         }
         else
         {
-          std::cout << "ID not received!" << std::endl;
+            std::cout << "ID not received!" << std::endl;
         }
     }
-  void handle_read(const boost::system::error_code& error)
+  void handle_read(const boost::system::error_code& error, std::size_t bytes_transferred)
   {
-    if (!error)
-    {
-      boost::asio::async_read_until(socket_,
+      if (!error)
+      {
+          int n = read_msg_.size();
+          // std::cout << n << std::endl;
+          std::string target{buffers_begin(read_msg_.data()), buffers_end(read_msg_.data())};
+          // std::cout << target << std::endl;
+          // Add debug msgs
+
+          msg.push(target);
+          read_msg_.consume(bytes_transferred + 1);
+
+          boost::asio::async_read_until(socket_,
           read_msg_, '\n',
-          boost::bind(&::chat_client::handle_read, this, boost::asio::placeholders::error));
-
-
-    }
-    else
-    {
-      do_close();
-    }
+          boost::bind(&::chat_client::handle_read, this,
+                      boost::asio::placeholders::error,
+                      boost::asio::placeholders::bytes_transferred));
+      }
+      else
+      {
+          do_close();
+      }
   }
 
     void do_write(std::string msg)
@@ -134,9 +152,9 @@ private:
     {
         socket_.close();
     }
-    
 
-    
+
+
 
 private:
     boost::asio::io_service& io_service_;
@@ -144,4 +162,5 @@ private:
     boost::asio::streambuf read_msg_;
     chat_message_queue write_msgs_;
     int id;
+    std::queue<string> msg;
 };

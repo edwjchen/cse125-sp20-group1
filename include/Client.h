@@ -44,7 +44,9 @@ private:
 
     // Shader Program ID
     GLuint shaderProgram;
-
+    GLuint skyboxProgram;
+    GLuint terrainProgram;
+    
     // Constructors and Destructors
     bool initializeProgram();
     bool initializeObjects();
@@ -66,8 +68,14 @@ private:
     // objects
     static Sphere* sphere_player1;
     static Sphere* sphere_player2;
+    static Sphere* sphere_mouse; // for testing purpose
     static Terrain* terrain;
     static Camera* camera;
+    static Skybox* skybox;
+  
+    // Store sphere absolute position for camera, since the position stored is always 0
+    static glm::vec3 sphere1_pos;
+    static glm::vec3 sphere2_pos;
     
     static glm::vec2 mousePos;
     static bool mouseControl; 
@@ -77,6 +85,10 @@ private:
 
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
+    
+    
+    // Transform screen coordinate to world coordinate
+    static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
 };
 
 #endif /* Client_h */
