@@ -32,6 +32,7 @@ Client::Client(int width, int height) {
     std::pair<int, int> windowSize = window->getFrameBufferSize();
     this->width = windowSize.first;
     this->height = windowSize.second;
+
     camera = new Camera(glm::vec3(60, 79, 21), glm::vec3(60, 5, -30));
     //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
@@ -104,6 +105,7 @@ bool Client::initializeObjects()
     sphere_player2 = new Sphere(5.0f, 2.0f);
     // testing only
     sphere_mouse = new Sphere(1.0f, 0.7f);
+
     
     terrain = new Terrain(251, 251, 0.5f);
 
@@ -411,7 +413,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     rayDir = glm::normalize(a*u + b*v - w);
     
     t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
-    
+
     finalPos = camera->getPos()+t * rayDir;
     
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
@@ -460,14 +462,14 @@ void Client::updateFromServer(string msg) {
     try{
         if(msg != ""){
             stringstream ss;
-            
             ss << msg;
             
             pt::ptree tar;
             pt::read_json(ss, tar);
 
             glm::mat4 matrix1, matrix2;
-            //cout << "ha" << endl;
+            
+            vector <float> height_map;
             
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
@@ -482,17 +484,10 @@ void Client::updateFromServer(string msg) {
                         i++;
                         //cout << matrix1[i/4][i%4] << endl;
                     }
-//                    float x1 = stof(child.second.get<std::string>("x"));
-//                    float y1 = stof(child.second.get<std::string>("y"));
-//                    glm::vec3 pos1 = glm::vec3(x1, y1, 0);
-//                    sphere_player1->move(pos1);
                     
                     // Store the absolute position
                     sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
                     sphere_player1->move(matrix1);
-                    //sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
-                    //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
-
                 }
                 else if(id == 2){
                     int i=0;
@@ -504,21 +499,22 @@ void Client::updateFromServer(string msg) {
                     // Store the absolute position
                     sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
                     sphere_player2->move(matrix2);
-                    //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
-//                    float x2 = stof(child.second.get<std::string>("x"));
-//                    float y2 = stof(child.second.get<std::string>("y"));
-//                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-//                    sphere_player2->move(pos2);
                 }
                 else{
                     // id 3, 4 for terrian
                 }
                 id++;
             }
-            //glm::vec3 wtf = sphere_player1->getPos();
-            //cout << wtf.x << " " << wtf.y << " " << wtf.z << endl;
-            //cout << matrix1[0][0] << " " << matrix1[1][1] << " " << matrix1[2][2] << endl;
-            //sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+            int i=0;
+            BOOST_FOREACH(const pt::ptree::value_type& v,
+            tar.get_child("height_map")) {
+                height_map.push_back(stof(v.second.data()));
+                i++;
+            }
+            
+            //build mesh based on height map from server
+            //TODO: different signature
+            //setHeightsFromTexture(height_map, offset, scale);
 
         }
     } catch (...){

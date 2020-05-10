@@ -112,12 +112,27 @@ void IO_handler::SendPackage(chat_client* c){
     cmd.push_back(std::make_pair("", cmd_mouse));
     
     root.add_child("cmd", cmd);
+//    root.add_child("Height_map", parseTerrain(terrainVec));
     
     stringstream ss;
     write_json(ss, root, false);
     c->write(ss.str());
 }
 
-
+boost::property_tree::ptree IO_handler::parseTerrain(vector<glm::vec3>* terrainVec){
+    pt::ptree root;
+    pt::ptree testRoot;
+    int ind = 0;
+    for (auto pos: *terrainVec){
+        pt::ptree node;
+        node.put("", pos.y);
+        root.push_back(make_pair("", node));
+        ind++;
+    }
+    stringstream ss;
+    testRoot.add_child("height_map", root);
+    write_json(ss, testRoot, false);
+    return root;
+}
 
 

@@ -39,9 +39,12 @@ public:
 
     
     SDL_Surface * surface;
-    
+
+    TerrainMesh * mesh;
+
     glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
     void applyGravity();
+
 private:
     unsigned num_indices;
 
@@ -57,8 +60,7 @@ private:
     int width;
     int depth;
     float step;
-    
-    TerrainMesh * mesh;
+
     
     void prepareDraw();
     float getHeight(unsigned int w, unsigned int d);

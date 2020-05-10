@@ -34,7 +34,7 @@ public:
     void displayCallback();
 
     void run();
-  
+
 private:
     Window* window;
     int width;

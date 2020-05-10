@@ -52,11 +52,11 @@ public:
     {
         io_service_.post(boost::bind(&chat_client::do_close, this));
     }
-    
+
     int get_id() {
         return id;
     }
-    
+
 
 private:
 
@@ -100,10 +100,10 @@ private:
           std::string target{buffers_begin(read_msg_.data()), buffers_end(read_msg_.data())};
           // std::cout << target << std::endl;
           // Add debug msgs
-          
+
           msg.push(target);
           read_msg_.consume(bytes_transferred + 1);
-        
+
           boost::asio::async_read_until(socket_,
           read_msg_, '\n',
           boost::bind(&::chat_client::handle_read, this,
@@ -152,9 +152,9 @@ private:
     {
         socket_.close();
     }
-    
 
-    
+
+
 
 private:
     boost::asio::io_service& io_service_;

@@ -58,6 +58,8 @@ private:
             std::string key_op = "";
             std::string mouse_op = "";
             float temp[4];
+            std::vector<glm::vec2> editPoints;
+            float height = 10;
             
             // Read JSON from client
             try{
@@ -113,7 +115,9 @@ private:
             if(mouse_op != ""){
                 //cout << "id: " << id << ", button: " << mouse_op <<endl;
                 cout << mouse_op << ": " << temp[0] << ", " << temp[1] << ", " << temp[2] << ", " << temp[3] << endl;
-                
+                editPoints.push_back(glm::vec2(temp[0],temp[1]));
+                editPoints.push_back(glm::vec2(temp[2],temp[3]));
+                obj.editTerrain(editPoints, 10);
             }
         }
     }
@@ -149,6 +153,7 @@ public:
 
 int main(int argc, char *argv[])
 {
+
     try
     {
         boost::asio::io_service io_service;
