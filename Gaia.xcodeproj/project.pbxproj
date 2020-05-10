@@ -16,6 +16,7 @@
 		A425887E2447B9F60066B22A /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588772447B9F60066B22A /* imgui_draw.cpp */; };
 		A425888224492AB60066B22A /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A425888024492AB60066B22A /* Client.cpp */; };
 		A49FE87524553DF80014CF39 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A49FE87324553DF80014CF39 /* Camera.cpp */; };
+		A4D14261246764A600EA3B7A /* TerrainBoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4D1425F246764A600EA3B7A /* TerrainBoundingBox.cpp */; };
 		B01FA8CB244BD512003EFCB0 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588732447B9F50066B22A /* imgui_demo.cpp */; };
 		B01FA8CC244BD512003EFCB0 /* imgui_impl_glfw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588792447B9F60066B22A /* imgui_impl_glfw.cpp */; };
 		B01FA8CD244BD513003EFCB0 /* imgui_impl_opengl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A42588762447B9F50066B22A /* imgui_impl_opengl3.cpp */; };
@@ -78,6 +79,8 @@
 		A425888024492AB60066B22A /* Client.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Client.cpp; path = src/Client.cpp; sourceTree = SOURCE_ROOT; tabWidth = 4; };
 		A49FE87324553DF80014CF39 /* Camera.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; tabWidth = 4; };
 		A49FE87424553DF80014CF39 /* Camera.hpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; tabWidth = 4; };
+		A4D1425F246764A600EA3B7A /* TerrainBoundingBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TerrainBoundingBox.cpp; sourceTree = "<group>"; };
+		A4D14260246764A600EA3B7A /* TerrainBoundingBox.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TerrainBoundingBox.hpp; sourceTree = "<group>"; };
 		B0018A0D244D819F00667E79 /* server */ = {isa = PBXFileReference; lastKnownFileType = folder; path = server; sourceTree = "<group>"; };
 		B01FA8CA244BD4BB003EFCB0 /* Client.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; tabWidth = 4; };
 		B0255A332443B8DB009BFB31 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
@@ -192,7 +195,9 @@
 				A425884D244127940066B22A /* Window.cpp */,
 				B07A7F7824550C06004C76D1 /* Terrain.cpp */,
 				B07A7F7B24557A3E004C76D1 /* TerrainMesh.cpp */,
+				A4D1425F246764A600EA3B7A /* TerrainBoundingBox.cpp */,
 				B0C6445E245F34F4006BC486 /* Skybox.cpp */,
+
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -215,6 +220,7 @@
 				B07A7F7C24557A3E004C76D1 /* TerrainMesh.hpp */,
 				B03CDCA9244B92BF001D2FAB /* Wind.h */,
 				B0255A382443B8DC009BFB31 /* Window.h */,
+				A4D14260246764A600EA3B7A /* TerrainBoundingBox.hpp */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -313,6 +319,7 @@
 				B01FA8CE244BD513003EFCB0 /* imgui_widgets.cpp in Sources */,
 				B01FA8CF244BD513003EFCB0 /* imgui.cpp in Sources */,
 				B03CDCA7244B90E3001D2FAB /* Primitive.cpp in Sources */,
+				A4D14261246764A600EA3B7A /* TerrainBoundingBox.cpp in Sources */,
 				A425888224492AB60066B22A /* Client.cpp in Sources */,
 				B07A7F7A24550C06004C76D1 /* Terrain.cpp in Sources */,
 				A49FE87524553DF80014CF39 /* Camera.cpp in Sources */,
