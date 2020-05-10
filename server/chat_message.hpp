@@ -44,19 +44,18 @@ public:
 
     glm::mat4 transM1, transM2;
 
-    std::vector<float> v; // dummy height map for now
+    vector <float> height_map;
 
     chat_message() : x1(5), x2(5), y1(5), y2(5)
     {
-
-        for (int i = 0; i < 16300; i++){
-            v.push_back(i);
-        }
-
         transM1 = glm::mat4(1.0f);
-        transM1[3] = glm::vec4(0,-10,0,1);
+        transM1[3] = glm::vec4(56,2,-46,1);
         transM2 = glm::mat4(1.0f);
-        transM2[3] = glm::vec4(58,0,-54,1);
+        transM2[3] = glm::vec4(58,2,-54,1);
+
+        for (int i = 0; i < 16000; i++){
+            height_map.push_back(1);
+        }
 
     }
 
@@ -103,6 +102,12 @@ public:
         }
     }
 
+    void editTerrain(std::vector<glm::vec2> editPoints, float height){
+        //TODO: update height_map
+        std::cout << "Edit Points: " << std::endl;
+        std::cout << editPoints[0][0] << ","<< editPoints[0][1] << std::endl;
+        std::cout << editPoints[1][0] << ","<< editPoints[1][1] << std::endl;
+    }
     std::string data()
     {
         pt::ptree root;
@@ -118,7 +123,6 @@ public:
         pt::ptree matrix2[16];
 
         pt::ptree height_root;
-
 
         obj1.put("id", 1);
         for(int i=0;i<4;i++){
@@ -142,20 +146,20 @@ public:
         }
         obj2.add_child("transformation", m2);
 
-        
 
         obj.push_back(std::make_pair("", obj1));
         obj.push_back(std::make_pair("", obj2));
 
-        root.add_child("Obj", obj);
-
         // build and add current height map node to root
-        for(int i = 0; i < v.size(); i++){
+        for(int i = 0; i < height_map.size(); i++){
             pt::ptree node;
-            node.put("", v[i]);
+            node.put("", height_map[i]);
             height_root.push_back(std::make_pair("", node));
         }
-        root.add_child("Height_map", height_root);
+
+        root.add_child("Obj", obj);
+
+        root.add_child("height_map" ,height_root);
 
         stringstream ss;
         write_json(ss, root, false);

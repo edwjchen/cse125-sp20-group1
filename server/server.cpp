@@ -38,8 +38,6 @@ private:
 
     char info_buffer[1024];
 
-    std::vector<float> v;
-
     chat_message obj;
 
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
@@ -47,7 +45,7 @@ private:
             std::string msg = obj.data()+'\n';
             //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(30));
         }
     }
 
@@ -60,16 +58,18 @@ private:
             std::string key_op = "";
             std::string mouse_op = "";
             float temp[4];
-
+            std::vector<glm::vec2> editPoints;
+            float height = 10;
+            
             // Read JSON from client
             try{
                 if(data != ""){
                     stringstream ss;
                     ss << data;
-
+                        
                     pt::ptree tar;
                     pt::read_json(ss, tar);
-
+                        
                     int i = 0;
                     BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
                         if(i == 0){
@@ -95,23 +95,15 @@ private:
                                     index++;
                                 }
                             }
-
+                            
                         }
                         i++;
                     }
-
-                    // print heightmap passed from client
-                    // cout << "printing Height_map" << endl;
-                    // BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Height_map")) {
-                    //     cout << v.second.data();
-                    // }
-                    // cout << "-------------------" << endl;
-
                 }
             } catch (...){
-
+                    
             }
-
+            
             if(key_op != ""){
                 cout << "id: " << id << ", operation: "<< key_op << endl;
                 if(id == 1){
@@ -123,7 +115,9 @@ private:
             if(mouse_op != ""){
                 //cout << "id: " << id << ", button: " << mouse_op <<endl;
                 cout << mouse_op << ": " << temp[0] << ", " << temp[1] << ", " << temp[2] << ", " << temp[3] << endl;
-
+                editPoints.push_back(glm::vec2(temp[0],temp[1]));
+                editPoints.push_back(glm::vec2(temp[2],temp[3]));
+                obj.editTerrain(editPoints, 10);
             }
         }
     }
@@ -153,9 +147,6 @@ public:
     Server(boost::asio::io_service& io_service) : io_service_(io_service),
             acceptor_(io_service_, tcp::endpoint(tcp::v4(), 8888))
     {
-        for (int i = 0; i < 16300; i++){
-            v.push_back(i);
-        }
         start_accept();
     }
 };

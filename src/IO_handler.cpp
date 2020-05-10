@@ -66,7 +66,7 @@ void IO_handler::SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end)
     //ifClicked = true;
 }
 
-void IO_handler::SendPackage(chat_client* c, std::vector<glm::vec3>* terrainVec){
+void IO_handler::SendPackage(chat_client* c){
     pt::ptree root;
     pt::ptree cmd;
     
@@ -112,7 +112,7 @@ void IO_handler::SendPackage(chat_client* c, std::vector<glm::vec3>* terrainVec)
     cmd.push_back(std::make_pair("", cmd_mouse));
     
     root.add_child("cmd", cmd);
-    root.add_child("Height_map", parseTerrain(terrainVec));
+//    root.add_child("Height_map", parseTerrain(terrainVec));
     
     stringstream ss;
     write_json(ss, root, false);
