@@ -19,7 +19,7 @@ glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
@@ -102,12 +102,13 @@ bool Client::initializeObjects()
     
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
-        glm::vec2(1.0f, 1.0f),
+        glm::vec2(0.0f, 0.0f),
         glm::vec2(125.0f, 125.0f),
-        glm::vec2(135.0f, 125.0f),
+        glm::vec2(145.0f, 125.0f),
         glm::vec2(250.0f, 250.0f)
     };
     terrain->edit(tmp, 10);
+    
     
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     //terrain->terrainBuildMesh();
@@ -123,8 +124,8 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
 }
