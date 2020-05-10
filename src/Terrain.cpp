@@ -409,12 +409,14 @@ void Terrain::putpixel(int x, int y, int color){
            }
         }
     }
+
 }
 
 void Terrain::edit(std::vector<glm::vec2> editPoints, float height)
 {
     int color = height / 10 * 255.0f;
 
+    
     for (int i = 0; i < editPoints.size() - 1; i++){
         drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
     }
