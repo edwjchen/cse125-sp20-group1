@@ -221,3 +221,7 @@ void Sphere::move(const glm::vec3& pos){
     model[3] = glm::vec4(pos, 1);
     position = pos;
 }
+
+void Sphere::move(const glm::mat4& transform){
+    model = transform;
+}

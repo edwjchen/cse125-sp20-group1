@@ -49,6 +49,4 @@ void Primitive::move(const glm::vec3& pos){
     position = pos;
 }
 
-void Primitive::move(const glm::mat4& transform){
-    model = transform;
-}
+

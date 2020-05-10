@@ -25,6 +25,7 @@ public:
     glm::vec3 computeSurfaceV();
     void computeAreoForce(Wind* wind);
     virtual void move (const glm::vec3& pos);
+    virtual void move (const glm::mat4& transform);
     
     glm::vec3 getCenter() { return position; }
     float getRadius() { return radius; }

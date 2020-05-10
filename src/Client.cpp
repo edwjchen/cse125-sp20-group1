@@ -21,8 +21,7 @@ glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
-bool Client::mouseControl = true;
-
+bool Client::mouseControl = false;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -118,6 +117,9 @@ bool Client::initializeObjects()
         glm::vec2(250.0f, 250.0f)
     };
     terrain->edit(tmp, 10);
+    // NOTE: use this build mesh after connect with backend. Don't call
+    // edit anymore, instead put height map as argument.
+    //terrain->terrainBuildMesh(heightMap);
     terrain->computeBoundingBoxes(); 
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
 

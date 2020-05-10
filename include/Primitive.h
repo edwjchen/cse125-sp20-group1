@@ -61,7 +61,6 @@ public:
     virtual void computeAreoForce(Wind* wind){}
     
     virtual void move (const glm::vec3& pos);
-    virtual void move (const glm::mat4& transform);
     
 protected:
     float mass; // constant

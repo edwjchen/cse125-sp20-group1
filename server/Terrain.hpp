@@ -24,26 +24,23 @@ public:
     ~Terrain();
     
     void update (float deltaTime);
-    void draw (const glm::mat4& view, const glm::mat4& projection, GLuint shader);
     void setHeightsFromTexture(const char *file, float offset, float scale);
-    void terrainBuildMesh(std::vector<float> height);
+    void terrainBuildMesh();
     void computeBoundingBoxes(); // called once after building mesh for the first time
     float getHeightAt(float x, float z);
+    std::vector<float> getHeightMap();
     
     std::vector<unsigned int>* getIndices();
     std::vector<glm::vec3>* getVertices();
     std::vector<glm::vec3>* getNormals();
-    std::vector<TerrainBoundingBox>* getBoundingBoxes(); 
+    std::vector<TerrainBoundingBox>* getBoundingBoxes();
     
-    void edit(std::vector<glm::vec2> editPoints, float h);
+    void edit(std::vector<glm::vec2> editPoints, float height);
 
     
     SDL_Surface * surface;
 
     TerrainMesh * mesh;
-
-    glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
-    void applyGravity();
 
 private:
     unsigned num_indices;
@@ -54,15 +51,13 @@ private:
     glm::mat4 model = glm::mat4(1.0f);
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     std::vector<unsigned int> indices;
-    std::vector<TerrainBoundingBox> boundingBoxes; 
+    std::vector<TerrainBoundingBox> boundingBoxes;
     
     std::vector<float> height;
     int width;
     int depth;
     float step;
 
-    
-    void prepareDraw();
     float getHeight(unsigned int w, unsigned int d);
     void setHeight(unsigned int w, unsigned int d, float h);
     glm::vec3 calculateNormal(unsigned x, unsigned z);

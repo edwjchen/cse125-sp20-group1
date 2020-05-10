@@ -56,6 +56,11 @@ float Terrain::getHeight(unsigned int w, unsigned int d)
     return height[(w) * depth + (d)];
 }
 
+std::vector<float> Terrain::getHeightMap()
+{
+    return height;
+}
+
 void Terrain::setHeight(unsigned int w, unsigned int d, float h)
 {
     height[(w) * depth + (d)] = h;
@@ -140,9 +145,8 @@ glm::vec3 Terrain::calculateNormal(unsigned x, unsigned z)
    return n;
 }
 
-void Terrain::terrainBuildMesh(std::vector<float> h)
+void Terrain::terrainBuildMesh()
 {
-    height = h;
     /* GL's +Z axis goes towards the camera, so make the terrain's Z coordinates
     * negative so that larger (negative) Z coordinates are more distant.
     */
@@ -227,63 +231,6 @@ void Terrain::computeIndicesForClipVolume(ClipVolume *clip)
    }
 
    num_indices = index;
-}
-
-void Terrain::prepareDraw(){
-    
-    // Bind to the VAO.
-    glBindVertexArray(VAO);
-
-    // Bind to the first VBO - We will use it to store the vertices
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_positions);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * mesh->vertices.size(), mesh->vertices.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-
-    // Bind to the second VBO - We will use it to store the normals
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)* mesh->normals.size(), mesh->normals.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-    
-    // Generate EBO, bind the EBO to the bound VAO and send the data
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
-    
-    // Unbind the VBOs.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
-
-static void terrainUnbind()
-{
-   // Unbind the VAO and shader program
-   glBindVertexArray(0);
-   glUseProgram(0);
-}
-
-void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint shader){
-    
-    prepareDraw();
-    
-    // actiavte the shader program
-    glUseProgram(shader);
-
-    // get the locations and send the uniforms to the shader
-    glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, false, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, false, glm::value_ptr(projection));
-    glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniform3fv(glGetUniformLocation(shader, "color"), 1, glm::value_ptr(color));
-
-    // Bind the VAO
-    glBindVertexArray(VAO);
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    // draw the points using triangles, indexed with the EBO
-    glDrawElements(GL_TRIANGLE_STRIP, num_indices, GL_UNSIGNED_INT, 0);
-
-    // Unbind the VAO and shader program
-    terrainUnbind();
 }
 
 void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
@@ -458,9 +405,9 @@ void Terrain::putpixel(int x, int y, int color){
 
 }
 
-void Terrain::edit(std::vector<glm::vec2> editPoints, float h)
+std::vector<float> Terrain::edit(std::vector<glm::vec2> editPoints, float height)
 {
-    int color = h / 10 * 255.0f;
+    int color = height / 10 * 255.0f;
 
     
     for (int i = 0; i < editPoints.size() - 1; i++){
@@ -484,8 +431,8 @@ void Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 //    SDL_Delay(10000);
     
     setHeightsFromSurface(0.0f, 12.0f);
-    terrainBuildMesh(height);
     
+    return height;
     
 //    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
 //        SDL_Window* window = NULL;
@@ -513,10 +460,3 @@ void Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 //    SDL_Quit();
 }
 
-
-void Terrain::applyGravity(){
-//    for (auto& p : particles){
-//        glm::vec3 force = gravity * p->getMass();
-//        p->applyForce(force);
-//    }
-}
