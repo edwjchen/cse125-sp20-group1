@@ -11,6 +11,7 @@
 
 #include "core.h"
 #include "TerrainMesh.hpp"
+#include "TerrainBoundingBox.hpp"
 
 typedef struct {
    float x0, x1, y0, y1, z0, z1;
@@ -26,10 +27,13 @@ public:
     void draw (const glm::mat4& view, const glm::mat4& projection, GLuint shader);
     void setHeightsFromTexture(const char *file, float offset, float scale);
     void terrainBuildMesh();
+    void computeBoundingBoxes(); // called once after building mesh for the first time
+    float getHeightAt(float x, float z);
     
     std::vector<unsigned int>* getIndices();
     std::vector<glm::vec3>* getVertices();
     std::vector<glm::vec3>* getNormals();
+    std::vector<TerrainBoundingBox>* getBoundingBoxes(); 
     
     
 private:
@@ -41,6 +45,7 @@ private:
     glm::mat4 model = glm::mat4(1.0f);
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     std::vector<unsigned int> indices;
+    std::vector<TerrainBoundingBox> boundingBoxes; 
     
     std::vector<float> height;
     int width;
@@ -52,7 +57,6 @@ private:
     void prepareDraw();
     float getHeight(unsigned int w, unsigned int d);
     void setHeight(unsigned int w, unsigned int d, float h);
-    float getHeightAt(float x, float z);
     glm::vec3 calculateNormal(unsigned x, unsigned z);
     void computeIndicesForClipVolume(ClipVolume *clip);
 };

@@ -51,7 +51,7 @@ private:
     void setupOpenglSettings();
     void printVersions();
     void setupCallbacks();
-    static void checkCollisions(); 
+    static void checkCollisions(Sphere* sphere); 
 
     static void errorCallback(int error, const char* description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

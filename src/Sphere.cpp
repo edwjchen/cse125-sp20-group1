@@ -176,7 +176,7 @@ glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec
     }
     
     float t = -(glm::dot(a, n) - glm::dot(position, n));
-    if (t < -(radius + 0.001f) || t > (radius + 0.001f)) {
+    if (t < -(radius + 0.0001f) || t > (radius + 0.0001f)) {
         return glm::vec3(0);
     }
     
@@ -201,4 +201,23 @@ glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec
     } else {
         return glm::vec3(0);
     }
+}
+
+// translate to pos
+void Sphere::move(const glm::vec3& pos){
+    // actiavte the shader program
+    float len = glm::length(pos - position);
+    if (len > 0.0001f) {
+        glm::vec3 dir = glm::normalize(pos - position);
+        if (glm::length(glm::vec3(dir.x, 0, dir.z)) > 0.0001f) {
+            glm::vec3 up = glm::vec3(0, 1, 0);
+            glm::vec3 right = glm::cross(dir, up);
+            float angle = - len / radius;
+            glm::mat4 coef = glm::rotate(glm::mat4(1), angle, right);
+            model = coef * model;
+        }
+    }
+    std::cout << glm::to_string(model) << std::endl; 
+    model[3] = glm::vec4(pos, 1);
+    position = pos;
 }

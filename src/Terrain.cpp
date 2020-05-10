@@ -7,6 +7,7 @@
 //
 
 #include "Terrain.hpp"
+#define BOUNDING_BOX_STEP 20
 
 Terrain::Terrain(){
 }
@@ -307,4 +308,36 @@ std::vector<glm::vec3>* Terrain::getVertices() {
 
 std::vector<glm::vec3>* Terrain::getNormals() {
     return &mesh->normals;
+}
+
+std::vector<TerrainBoundingBox>* Terrain::getBoundingBoxes() {
+    return &boundingBoxes;
+}
+
+
+void Terrain::computeBoundingBoxes() {
+    std::vector<unsigned int>* indices = this->getIndices();
+    std::vector<glm::vec3>* vertices = this->getVertices();
+    
+    for (int vx = 0; vx < width; vx+=BOUNDING_BOX_STEP) {
+        for (int vz = 0; vz < depth; vz+=BOUNDING_BOX_STEP) {
+            TerrainBoundingBox box;
+            box.minPoint = glm::vec2(vx * step, -(vz+BOUNDING_BOX_STEP) * step);
+            box.maxPoint = glm::vec2((vx+BOUNDING_BOX_STEP) * step, -vz * step);
+            
+            for (int i = 2; i < indices->size(); i++) {
+                glm::vec3& a = (*vertices)[(*indices)[i-2]];
+                glm::vec3& b = (*vertices)[(*indices)[i-1]];
+                glm::vec3& c = (*vertices)[(*indices)[i]];
+
+                if ((a.x >= box.minPoint.x && a.x < box.maxPoint.x && a.z >= box.minPoint.y && a.z < box.maxPoint.y) ||
+                    (b.x >= box.minPoint.x && b.x < box.maxPoint.x && b.z >= box.minPoint.y && b.z < box.maxPoint.y) ||
+                    (c.x >= box.minPoint.x && c.x < box.maxPoint.x && c.z >= box.minPoint.y && c.z < box.maxPoint.y)) {
+                    box.indices2triangles.push_back(i);
+                }
+            }
+            
+            boundingBoxes.push_back(box);
+        }
+    }
 }

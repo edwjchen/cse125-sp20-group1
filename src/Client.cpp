@@ -7,6 +7,7 @@
 //
 
 #include "Client.h"
+
 namespace pt = boost::property_tree;
 
 Sphere* Client::sphere_player1;
@@ -74,14 +75,13 @@ bool Client::initializeObjects()
     terrain = new Terrain(251, 251, 0.5f);
     terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     terrain->terrainBuildMesh();
+    terrain->computeBoundingBoxes(); 
     return true;
 }
 
 void Client::idleCallback() {
-    glm::vec3 pos = sphere_player1->getCenter();
-    pos.y -= 0.1f;
-    sphere_player1->move(pos);
-    checkCollisions();
+    sphere_player1->force += glm::vec3(0, -0.1, 0);
+    checkCollisions(sphere_player1);
 }
 
 void Client::displayCallback() {
@@ -155,8 +155,8 @@ void Client::run() {
         while (!glfwWindowShouldClose(window->getWindow()))
         {
             // Main render display callback. Rendering of objects is done here. (Draw)
-            displayCallback();
             window->displayCallback();
+            displayCallback();
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
@@ -227,32 +227,30 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendInput(0);
-                glm::vec3 pos = sphere_player1->getCenter();
-                pos.x += 1.0f;
-                sphere_player1->move(pos);
+                glm::vec3 f = sphere_player1->force;
+                f.x += 0.5f;
+                sphere_player1->force = f;
                 break;
             }
             case GLFW_KEY_A:{
-                glm::vec3 pos = sphere_player1->getCenter();
-                pos.z += 1.0f;
-                sphere_player1->move(pos);
-
+                glm::vec3 f = sphere_player1->force;
+                f.z += 0.5f;
+                sphere_player1->force = f;
                 io_handler->SendInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                glm::vec3 pos = sphere_player1->getCenter();
-                pos.x -= 1.0f;
-                sphere_player1->move(pos);
-
+                glm::vec3 f = sphere_player1->force;
+                f.x -= 0.5f;
+                sphere_player1->force = f;
+                checkCollisions(sphere_player1);
                 io_handler->SendInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                glm::vec3 pos = sphere_player1->getCenter();
-                pos.z -= 1.0f;
-                sphere_player1->move(pos);
-
+                glm::vec3 f = sphere_player1->force;
+                f.z -= 0.5f;
+                sphere_player1->force = f;
                 io_handler->SendInput(3);
                 break;
             }
@@ -366,26 +364,55 @@ void Client::updateFromServer(string msg)
     
 }
 
-void Client::checkCollisions() {
+void Client::checkCollisions(Sphere* sphere) {
+    
     std::vector<unsigned int>* indices = terrain->getIndices();
     std::vector<glm::vec3>* vertices = terrain->getVertices();
-    // std::vector<glm::vec3>* normals = terrain->getNormals();
+    std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
     
-    for (int j = 0; j < 1; j++) {
-        glm::vec3 offset(0);
-        for (int i = 2; i < indices->size(); i++) {
-            glm::vec3& a = (*vertices)[(*indices)[i-2]];
-            glm::vec3& b = (*vertices)[(*indices)[i-1]];
-            glm::vec3& c = (*vertices)[(*indices)[i]];
-            glm::vec3 n = -glm::normalize(glm::cross(c-a, b-a));
-            // glm::vec3 n = glm::normalize(((*normals)[(*indices)[i-2]] + (*normals)[(*indices)[i-1]] + (*normals)[(*indices)[i]]) / 3.0f);
-            if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
-                n = -n;
+    // resolve force
+    sphere->move(sphere->getCenter() + sphere->force);
+    sphere->force = glm::vec3(0);
+
+    for (int k = 0; k < 20; k++) {
+        for (int j = 0; j < boxes->size(); j++) {
+            TerrainBoundingBox& box = (*boxes)[j];
+            glm::vec2& tminPoint = box.minPoint;
+            glm::vec2& tmaxPoint = box.maxPoint;
+            glm::vec2 sminPoint(sphere->getCenter().x, sphere->getCenter().z);
+            sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
+            glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
+            smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
+
+            if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
+                continue;
             }
-            
-            offset += sphere_player1->checkCollision(a, b, c, n);
+
+            for (int i = 0; i < box.indices2triangles.size(); i++) {
+                int curInd = box.indices2triangles[i];
+                glm::vec3& a = (*vertices)[(*indices)[curInd-2]];
+                glm::vec3& b = (*vertices)[(*indices)[curInd-1]];
+                glm::vec3& c = (*vertices)[(*indices)[curInd]];
+                glm::vec3 n = -glm::normalize(glm::cross(c-a, b-a));
+                if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
+                    n = -n;
+                }
+                
+                glm::vec3 offset = sphere->checkCollision(a, b, c, n);
+                if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
+                    offset = glm::vec3(0);
+                    continue;
+                }
+                sphere->move(sphere->getCenter() + offset); // move to right position
+            }
         }
-        sphere_player1->move(sphere_player1->getCenter() + offset);
     }
 
+    // if sphere has fallen off, freaking lift it up
+    float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
+    if (height > sphere->getCenter().y + sphere->getRadius()) {
+        glm::vec3 offset(0);
+        offset.y = height - (sphere->getCenter().y - sphere->getRadius());
+        sphere->move(sphere->getCenter() + offset);
+    }
 }
