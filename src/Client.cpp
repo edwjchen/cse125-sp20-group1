@@ -20,6 +20,7 @@ glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
 bool Client::mouseControl = false;
+
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
@@ -123,8 +124,10 @@ void Client::displayCallback() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the objects
-    //sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    //sphere_player2->draw(camera->getView(), projection, shaderProgram);
+
+    sphere_player1->draw(camera->getView(), projection, shaderProgram);
+    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
 }

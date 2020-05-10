@@ -387,38 +387,90 @@ void Terrain::putpixel(int x, int y, int color){
     float scale_z = ((float) surface->h) / (depth - 1);
     int img_x = (int) truncf(x * scale_x);
     int img_y = (int) truncf(y * scale_z);
-    uint32_t pixel = pixels[img_y * surface->pitch + img_x * 4];
-    uint8_t r ;
-    uint8_t g ;
-    uint8_t b ;
     
-    SDL_GetRGB( pixel, surface->format ,  &r, &g, &b );
+    //color /= 2;
+    int radius = 8;
     
-    r = std::min(r + (uint8_t)color, 255);
-    g = std::min(g + (uint8_t)color, 255);
-    b = std::min(b + (uint8_t)color, 255);
-    
-    pixels[img_y * surface->pitch + img_x * 4] = SDL_MapRGB(surface->format, r, g, b);
+    for (int i=-radius ; i<radius ; i++) {
+        for(int j=-radius; j<radius; j++) {
+            if((i*i + j*j)<(radius*radius)){
+                int x_coord = std::min(std::max(0, img_x + j), surface->w-1);
+                int y_coord = std::min(std::max(0, img_y + i), surface->h-1);
+                
+                uint32_t pixel = pixels[y_coord * surface->pitch + x_coord * 4];
+                uint8_t r, g, b;
+
+                SDL_GetRGB( pixel, surface->format ,  &r, &g, &b );
+
+                r = std::min(r + (uint8_t)color, 255);
+                g = std::min(g + (uint8_t)color, 255);
+                b = std::min(b + (uint8_t)color, 255);
+                pixels[y_coord * surface->pitch + x_coord * 4] = SDL_MapRGB(surface->format, r, g, b);
+           }
+        }
+    }
+
 }
 
 void Terrain::edit(std::vector<glm::vec2> editPoints, float height)
 {
     int color = height / 10 * 255.0f;
-//    Uint32 c_color = SDL_MapRGB(screen->format, color,color,color);
-    
-//    SDL_Renderer* renderer = NULL;
-//    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-//    SDL_RenderClear(renderer);
-//    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
     
     for (int i = 0; i < editPoints.size() - 1; i++){
         drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
     }
     
+    SDL_Surface *screen;
+    SDL_Window *window;
+    SDL_Init(SDL_INIT_VIDEO);
+
+    // create the window like normal
+    window = SDL_CreateWindow("SDL2 Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 260, 260, 0);
+    // but instead of creating a renderer, we can draw directly to the screen
+    screen = SDL_GetWindowSurface(window);
+    
+//    SDL_Surface *img = IMG_Load("textures/terrain-heightmap-01.png");
+    SDL_BlitSurface(surface, NULL, screen, NULL); // blit it to the screen
+    SDL_UpdateWindowSurface(window);
+
+    // show image for 2 seconds
+    SDL_Delay(10000);
+    
     setHeightsFromSurface(0.0f, 12.0f);
     terrainBuildMesh();
     
-//    if (renderer) {
-//        SDL_DestroyRenderer(renderer);
+    
+//    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
+//        SDL_Window* window = NULL;
+//        SDL_Renderer* renderer = NULL;
+//
+//
+//        if (SDL_CreateWindowAndRenderer(width, depth, 0, &window, &renderer) == 0) {
+//            surface = SDL_GetWindowSurface(window);
+//            SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+//            SDL_RenderClear(renderer);
+//
+//            SDL_SetRenderDrawColor(renderer, color, color, color, SDL_ALPHA_OPAQUE);
+//            for (int i = 0; i < editPoints.size() - 1; i++){
+//                SDL_RenderDrawLine(renderer, editPoints[i].x, editPoints[i].y, editPoints[i+1].x, editPoints[i+1].y);
+//            }
+//        }
+//
+//        if (renderer) {
+//            SDL_DestroyRenderer(renderer);
+//        }
+//        if (window) {
+//            SDL_DestroyWindow(window);
+//        }
+//    }
+//    SDL_Quit();
+}
+
+
+void Terrain::applyGravity(){
+//    for (auto& p : particles){
+//        glm::vec3 force = gravity * p->getMass();
+//        p->applyForce(force);
 //    }
 }

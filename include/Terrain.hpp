@@ -30,6 +30,8 @@ public:
     
     SDL_Surface * surface;
     
+    glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
+    void applyGravity();
 private:
     unsigned num_indices;
 
@@ -57,7 +59,6 @@ private:
     void setHeightsFromSurface(float offset, float scale);
     void drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color);
     void putpixel(int x, int y, int color);
-    
 };
 
 #endif /* Terrain_hpp */
