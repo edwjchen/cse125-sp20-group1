@@ -30,8 +30,8 @@ Client::Client(int width, int height) {
     std::pair<int, int> windowSize = window->getFrameBufferSize();
     this->width = windowSize.first;
     this->height = windowSize.second;
-    //camera = new Camera(glm::vec3(75, 10, -75), glm::vec3(30, 5, -30));
-    camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
+    camera = new Camera(glm::vec3(60, 79, 21), glm::vec3(60, 5, -30));
+    //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
     // Print OpenGL and GLSL versions.
@@ -99,7 +99,7 @@ bool Client::initializeObjects()
     sphere_player1 = new Sphere(5.0f, 2.0f);
     sphere_player2 = new Sphere(5.0f, 2.0f);
     // testing only
-    sphere_mouse = new Sphere(1.0f, 2.0f);
+    sphere_mouse = new Sphere(1.0f, 0.7f);
     
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
@@ -194,7 +194,7 @@ void Client::run() {
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == 1){
+            if(c.get_id() == -1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
@@ -385,7 +385,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     
     rayDir = glm::normalize(a*u + b*v - w);
     
-    t = glm::dot((glm::vec3(0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     
     finalPos = camera->getPos()+t * rayDir;
     
@@ -400,7 +400,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
     glm::mat4 mtx = glm::mat4(1.0f);
     glm::vec2 translatedMPos = screenPointToWorld(glm::vec2(xpos, ypos));
     if(translatedMPos.x >= 0 && translatedMPos.x <= 125 && translatedMPos.y <= 0 && translatedMPos.y >= -125){
-        mtx[3] = glm::vec4(translatedMPos.x,-1,translatedMPos.y,1);
+        mtx[3] = glm::vec4(translatedMPos.x,-10,translatedMPos.y,1);
         sphere_mouse->move(mtx);
     }
     
