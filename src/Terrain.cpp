@@ -365,6 +365,7 @@ void Terrain::computeBoundingBoxes() {
             boundingBoxes.push_back(box);
         }
     }
+}
 
 void Terrain::setHeightsFromSurface(float offset, float scale)
 {
