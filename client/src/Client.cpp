@@ -122,6 +122,7 @@ bool Client::initializeObjects()
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
     terrain->computeBoundingBoxes(); 
+
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     return true;
 }
