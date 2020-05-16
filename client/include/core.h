@@ -37,4 +37,8 @@
 #include "imgui_impl_opengl3.h"
 
 
+#include <boost/range/iterator_range.hpp>
+#include <SFML/Audio.hpp>
+#include <boost/filesystem.hpp>
+
 #endif

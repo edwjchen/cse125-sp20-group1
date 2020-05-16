@@ -42,6 +42,9 @@ class chat_message
 public:
     int x1, y1, x2, y2;
 
+    string time = "";
+    int score = -1;
+
     glm::mat4 transM1, transM2;
 
     vector <float> height_map;
@@ -108,6 +111,7 @@ public:
         std::cout << editPoints[0][0] << ","<< editPoints[0][1] << std::endl;
         std::cout << editPoints[1][0] << ","<< editPoints[1][1] << std::endl;
     }
+
     std::string data()
     {
         pt::ptree root;
@@ -123,6 +127,9 @@ public:
         pt::ptree matrix2[16];
 
         pt::ptree height_root;
+
+        pt::ptree timeNode;
+        pt::ptree scoreNode;
 
         obj1.put("id", 1);
         for(int i=0;i<4;i++){
@@ -157,9 +164,16 @@ public:
             height_root.push_back(std::make_pair("", node));
         }
 
+        scoreNode.put("", score);
+        timeNode.put("", time);
+
         root.add_child("Obj", obj);
 
         root.add_child("height_map" ,height_root);
+
+        root.add_child("Score", scoreNode);
+
+        root.add_child("Time", timeNode);
 
         stringstream ss;
         write_json(ss, root, false);

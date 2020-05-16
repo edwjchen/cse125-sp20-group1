@@ -20,23 +20,22 @@ Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-
 bool Client::mouseControl = false;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
 IO_handler* Client::io_handler;
+AudioManager* Client::audioManager;
 
 Client::Client(int width, int height) {
     window = new Window(width, height, "Window");
     std::pair<int, int> windowSize = window->getFrameBufferSize();
     this->width = windowSize.first;
     this->height = windowSize.second;
-
     camera = new Camera(glm::vec3(60, 79, 21), glm::vec3(60, 5, -30));
     //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
-
+    
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
     // Print OpenGL and GLSL versions.
@@ -85,6 +84,8 @@ bool Client::initializeProgram() {
 
     // Create io_handler (0 for balls)
     io_handler = new IO_handler(0);
+    
+    audioManager = new AudioManager();
 
     return true;
 }
@@ -106,7 +107,6 @@ bool Client::initializeObjects()
     sphere_player2 = new Sphere(5.0f, 2.0f);
     // testing only
     sphere_mouse = new Sphere(1.0f, 0.7f);
-
 
     terrain = new Terrain(251, 251, 0.5f);
 
@@ -213,7 +213,7 @@ void Client::run() {
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == -1){
+            if(c.get_id() == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
@@ -284,6 +284,11 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
                 io_handler->SendKeyBoardInput(3);
                 break;
             }
+            case GLFW_KEY_P:{
+                // DEBUG: REMEMBER TO DELETE FOR RELEASE
+                audioManager->PlaySounds(0);
+                audioManager->PlaySounds(1);
+            }
             default:
                 break;
         }
@@ -324,6 +329,7 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
                 io_handler->SendKeyBoardInput(3);
                 break;
             }
+
             default:
                 break;
         }
@@ -417,7 +423,6 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     rayDir = glm::normalize(a*u + b*v - w);
 
     t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
-
     finalPos = camera->getPos()+t * rayDir;
 
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
