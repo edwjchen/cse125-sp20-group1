@@ -26,6 +26,7 @@ int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
 IO_handler* Client::io_handler;
+AudioManager* Client::audioManager;
 
 Client::Client(int width, int height) {
     window = new Window(width, height, "Window");
@@ -34,7 +35,7 @@ Client::Client(int width, int height) {
     this->height = windowSize.second;
     camera = new Camera(glm::vec3(60, 79, 21), glm::vec3(60, 5, -30));
     //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
-
+    
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
 
     // Print OpenGL and GLSL versions.
@@ -83,6 +84,9 @@ bool Client::initializeProgram() {
 
     // Create io_handler (0 for balls)
     io_handler = new IO_handler(0);
+    
+    audioManager = new AudioManager();
+
     
     return true;
 }
@@ -281,6 +285,11 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
                 io_handler->SendKeyBoardInput(3);
                 break;
             }
+            case GLFW_KEY_P:{
+                // DEBUG: REMEMBER TO DELETE FOR RELEASE
+                audioManager->PlaySounds(0);
+                audioManager->PlaySounds(1);
+            }
             default:
                 break;
         }
@@ -321,6 +330,7 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
                 io_handler->SendKeyBoardInput(3);
                 break;
             }
+
             default:
                 break;
         }
