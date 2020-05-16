@@ -11,7 +11,6 @@
 		613A462E244BE3F3005F07E9 /* IO_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613A462D244BE3F3005F07E9 /* IO_handler.cpp */; };
 		613A4630244BE42A005F07E9 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 613A462F244BE42A005F07E9 /* libboost_thread-mt.dylib */; };
 		614B14B6246F515D00688A4A /* libsfml-audio.2.5.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 614B14B5246F515D00688A4A /* libsfml-audio.2.5.1.dylib */; };
-		614B14B7246F515D00688A4A /* libsfml-audio.2.5.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 614B14B5246F515D00688A4A /* libsfml-audio.2.5.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		614B14BB246F521B00688A4A /* AudioManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614B14B9246F521B00688A4A /* AudioManager.cpp */; };
 		614B14BE246F61BC00688A4A /* audio in CopyFiles */ = {isa = PBXBuildFile; fileRef = 614B14BD246F58B500688A4A /* audio */; };
 		614B14C0246F6D3200688A4A /* libboost_filesystem-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 614B14BF246F6D3200688A4A /* libboost_filesystem-mt.dylib */; };
@@ -42,17 +41,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		614B14B8246F515D00688A4A /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				614B14B7246F515D00688A4A /* libsfml-audio.2.5.1.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B0255A422443C231009BFB31 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -289,7 +277,6 @@
 				A42588162441261E0066B22A /* Sources */,
 				A42588172441261E0066B22A /* Frameworks */,
 				B0255A422443C231009BFB31 /* CopyFiles */,
-				614B14B8246F515D00688A4A /* Embed Libraries */,
 			);
 			buildRules = (
 			);
