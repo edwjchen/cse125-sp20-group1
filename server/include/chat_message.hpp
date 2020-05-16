@@ -192,8 +192,7 @@ public:
         return ss.str();
     }
 
-    void decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints)
-    {
+    void decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints) {
         float temp[4];
         //std::cout << data << std::endl;
         // Read JSON from client
@@ -235,6 +234,7 @@ public:
                 }
             }
         }catch(...){
+            // Might Mysterically Enter here
             std::cout << "decode exception" << std::endl;
         }
         if(mouse_op != ""){

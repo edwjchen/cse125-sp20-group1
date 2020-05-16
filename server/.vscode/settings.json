@@ -87,5 +87,11 @@
         "memory_resource": "cpp",
         "cfenv": "cpp",
         "cinttypes": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+
+    // "includePath": [
+    //     "${workspaceRoot}",
+    //     ""
+    // ]
 }

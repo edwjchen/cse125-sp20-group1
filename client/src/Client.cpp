@@ -288,6 +288,18 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
                 // DEBUG: REMEMBER TO DELETE FOR RELEASE
                 audioManager->PlaySounds(0);
                 audioManager->PlaySounds(1);
+                break;
+            }
+            case GLFW_KEY_M:{
+                // DEBUG: REMEMBER TO DELETE FOR RELEASE
+                if(audioManager->volumeControl == 0){
+                    audioManager->volumeControl = 1;
+                    audioManager->VolumeControl();
+                } else {
+                    audioManager->volumeControl = 0;
+                    audioManager->VolumeControl();
+                }
+                break;
             }
             default:
                 break;
