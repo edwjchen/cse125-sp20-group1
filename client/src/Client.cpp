@@ -214,7 +214,7 @@ void Client::run() {
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == -1){
+            if(c.get_id() == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
