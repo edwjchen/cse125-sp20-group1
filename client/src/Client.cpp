@@ -66,14 +66,14 @@ bool Client::initializeProgram() {
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
     skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
     terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag");
-    
+
     // Check the shader program.
     if (!shaderProgram)
     {
         std::cerr << "Failed to initialize shader program" << std::endl;
         return false;
     }
-    
+
     // Check the shader program.
     if (!skyboxProgram)
     {
@@ -87,7 +87,6 @@ bool Client::initializeProgram() {
     
     audioManager = new AudioManager();
 
-    
     return true;
 }
 
@@ -108,7 +107,7 @@ bool Client::initializeObjects()
     sphere_player2 = new Sphere(5.0f, 2.0f);
     // testing only
     sphere_mouse = new Sphere(1.0f, 0.7f);
-    
+
     terrain = new Terrain(251, 251, 0.5f);
 
     std::vector<glm::vec2> tmp = {
@@ -121,7 +120,7 @@ bool Client::initializeObjects()
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
-    terrain->computeBoundingBoxes(); 
+    terrain->computeBoundingBoxes();
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
 
     return true;
@@ -168,7 +167,7 @@ void Client::setupOpenglSettings()
 
     // Set clear color to black.
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    
+
     // glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED); // hide cursor
 
     // glEnable(GL_CULL_FACE);
@@ -225,7 +224,7 @@ void Client::run() {
             else{
                 // camera for terrian player is fixed
             }
-            
+
             //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
             //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
 
@@ -344,9 +343,9 @@ void Client::setupCallbacks()
 
     // Set the key callback.
     glfwSetKeyCallback(window->getWindow(), keyCallback);
-  
+
     glfwSetCursorPosCallback(window->getWindow(), cursorPositionCallback);
-    
+
     glfwSetMouseButtonCallback(window->getWindow(), setMouseButtonCallback);
 }
 
@@ -355,13 +354,13 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
     double xpos, ypos;
     //getting cursor position
     glfwGetCursorPos(window, &xpos, &ypos);
-    
+
     if(action == GLFW_PRESS){
         // Check to see if we need to set click start position
         if(clickPos.x == INFINITY && clickPos.y == INFINITY){
             clickPos = glm::vec2((float)xpos, (float)ypos);
         }
-        
+
         if(button==GLFW_MOUSE_BUTTON_RIGHT){
             //cout << "RIGHT!!" << endl;
             isMouseButtonDown = 2;
@@ -373,7 +372,7 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         else{
             cout << "unknown click?" << endl;
         }
-            
+
 //        if(isMouseButtonDown > 0){
 //            string leftOrRight = "left";
 //            if(isMouseButtonDown == 2){
@@ -386,7 +385,7 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         releasePos = glm::vec2((float)xpos, (float)ypos);
         //cout << "drag start: " << clickPos[0] << ", " << clickPos[1] << endl;
         //cout << "drag end: " << releasePos[0] << ", " << releasePos[1] << endl;
-        
+
         // send i/o to server
         //io_handler->SendMouseInput(isMouseButtonDown, clickPos, releasePos);
 
@@ -412,43 +411,43 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
     glm::vec3 rayDir;
     glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 finalPos;
-    
+
     w = glm::normalize(camera->getPos() - camera->getLookAtPos());
     u = glm::normalize(glm::cross(camera->getUpVector(), w));
     v = glm::cross(w,u);
-    
+
     // Finally worked version
     a = glm::tan(fov/2) * (wWidth /wHeight) * ((mousePos.x - (float)wWidth/2) / (wWidth/2));
     b = glm::tan(fov/2) * (((wHeight/2) - mousePos.y)/ (wHeight/2));
-    
+
     rayDir = glm::normalize(a*u + b*v - w);
-    
+
     t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     finalPos = camera->getPos()+t * rayDir;
-    
+
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
-    
+
     return glm::vec2(finalPos.x, finalPos.z);
 }
 
 
 void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) {
-    
+
     glm::mat4 mtx = glm::mat4(1.0f);
     glm::vec2 translatedMPos = screenPointToWorld(glm::vec2(xpos, ypos));
     if(translatedMPos.x >= 0 && translatedMPos.x <= 125 && translatedMPos.y <= 0 && translatedMPos.y >= -125){
         mtx[3] = glm::vec4(translatedMPos.x,-10,translatedMPos.y,1);
         sphere_mouse->move(mtx);
     }
-    
+
     if (mousePos.x  == INFINITY || mousePos.y == INFINITY) {
         mousePos.x = xpos;
         mousePos.y = ypos;
-        
+
         return;
     }
-    
-    
+
+
 //    if(isMouseButtonDown > 0){
 //        string leftOrRight = "left";
 //        if(isMouseButtonDown == 2){
@@ -473,28 +472,28 @@ void Client::updateFromServer(string msg) {
         if(msg != ""){
             stringstream ss;
             ss << msg;
-            
+
             pt::ptree tar;
             pt::read_json(ss, tar);
 
             glm::mat4 matrix1, matrix2;
-            
+
             vector <float> height_map;
-            
+
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
                           tar.get_child("Obj")) {
-                
+
                 if (id == 1){
                     int i=0;
                     BOOST_FOREACH(const pt::ptree::value_type& m,
                                   child.second.get_child("transformation")) {
-                
+
                         matrix1[i/4][i%4] = stof(m.second.data());
                         i++;
                         //cout << matrix1[i/4][i%4] << endl;
                     }
-                    
+
                     // Store the absolute position
                     sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
                     //sphere_player1->move(matrix1);
@@ -529,24 +528,24 @@ void Client::updateFromServer(string msg) {
                 height_map.push_back(stof(v.second.data()));
                 i++;
             }
-            
+
             //build mesh based on height map from server
             //TODO: different signature
             //setHeightsFromTexture(height_map, offset, scale);
 
         }
     } catch (...){
-        
+
     }
-    
+
 }
 
 void Client::checkCollisions(Sphere* sphere) {
-    
+
     std::vector<unsigned int>* indices = terrain->getIndices();
     std::vector<glm::vec3>* vertices = terrain->getVertices();
     std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
-    
+
     // resolve force
     sphere->move(sphere->getCenter() + sphere->force);
     sphere->force = glm::vec3(0);
@@ -574,7 +573,7 @@ void Client::checkCollisions(Sphere* sphere) {
                 if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
                     n = -n;
                 }
-                
+
                 glm::vec3 offset = sphere->checkCollision(a, b, c, n);
                 if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
                     offset = glm::vec3(0);
