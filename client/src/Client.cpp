@@ -202,7 +202,9 @@ void Client::run() {
         chat_client c(io_service, endpoint);
 
         boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-
+        
+        
+        
         std::string msg;
 
         // Loop while GLFW window should stay open.
@@ -232,6 +234,14 @@ void Client::run() {
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
+            
+            // For Client Local Test Only
+            glm::vec2 sT = glm::vec2(io_handler->startPos.x*2, io_handler->startPos.y*-2);
+            glm::vec2 eT = glm::vec2(io_handler->endPos.x*2, io_handler->endPos.y*-2);
+            std::vector<glm::vec2> tmpp = {sT, eT};
+            terrain->edit(tmpp, 10);
+            
+            
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         }
