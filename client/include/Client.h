@@ -96,6 +96,10 @@ private:
     
     // Audio
     static AudioManager* audioManager;
+    
+    // GameManager
+    static string time;
+    static int score;
 };
 
 #endif /* Client_h */

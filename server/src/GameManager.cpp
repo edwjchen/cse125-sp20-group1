@@ -5,15 +5,28 @@ using namespace std;
 GameManager::GameManager(){
     time = "";
     score = -1;
+    startTime = clock();
+    totalGameTime = 300.0f;
     //terrain = new Terrain(251, 251, 0.5f);
 }
 
 void GameManager::UpdateScore(){
-    obj.score++;
+    //obj.score++;
+    // Need to determine which team to add score
 }
 
 void GameManager::UpdateTime(){
-    obj.time = "5:00";
+    string finishedTime = "";
+    endTime = clock();
+    float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+    if(duration <= 0){
+        // Send a signal to announce game ends
+        duration = 0;
+        finishedTime = "0:00";
+    }
+   //obj.time = to_string(duration);
+   obj.time = finishedTime;
 }
 
 void GameManager::KeyUpdate1(char op){

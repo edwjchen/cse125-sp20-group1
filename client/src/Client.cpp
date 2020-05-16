@@ -15,6 +15,8 @@ Sphere* Client::sphere_player2;
 Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
+string Client::time = "Time shoud not be this";
+int Client::score = -100;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
@@ -534,7 +536,31 @@ void Client::updateFromServer(string msg) {
                 }
                 id++;
             }
+
+            int indexForScore = 0;
+            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
+                // Team 1 get their score
+                if((id == 1 || id == 3) && indexForScore == 0){
+                    score = stoi(v.second.data());
+                }
+                else if((id == 2 || id == 4) && indexForScore == 1){
+                    score = stoi(v.second.data());
+                }
+                indexForScore++;
+            }
+
+            //cout << "Score: " << score << endl;
+            
+            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
+                time = v.second.data();
+            }
+            
+            // DEBUG:: Message for Time 
+            cout << "Time: " << time << endl;
+            
+            
             int i=0;
+            
             BOOST_FOREACH(const pt::ptree::value_type& v,
             tar.get_child("height_map")) {
                 height_map.push_back(stof(v.second.data()));

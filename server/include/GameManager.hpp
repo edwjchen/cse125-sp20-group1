@@ -4,6 +4,7 @@
 #include "core.h"
 #include "chat_message.hpp"
 #include "Terrain.hpp"
+#include <ctime>
 
 using namespace std;
 
@@ -25,6 +26,10 @@ public:
 
     string time;
     int score;
+
+    clock_t startTime;
+    clock_t endTime;
+    float totalGameTime;
 };
 
 

@@ -62,8 +62,10 @@ class chat_message
 public:
     int x1, y1, x2, y2;
 
-    string time = "";
-    int score = -1;
+    string time = "5:00";
+    int scoreT1 = -1;
+    int scoreT2 = -2;
+
 
     glm::mat4 transM1, transM2;
 
@@ -176,16 +178,28 @@ public:
             height_root.push_back(std::make_pair("", node));
         }
 
-        scoreNode.put("", score);
-        timeNode.put("", time);
+        // Add score to root
+        pt::ptree tempNodeS1;
+        pt::ptree tempNodeS2;
+        tempNodeS1.put("", scoreT1);
+        tempNodeS2.put("", scoreT2);
+        scoreNode.push_back(std::make_pair("", tempNodeS1));
+        scoreNode.push_back(std::make_pair("", tempNodeS2));
+        
+
+        // Add time to root
+        pt::ptree tempNodeT;
+        tempNodeT.put("", time);
+        timeNode.push_back(std::make_pair("",tempNodeT));
 
         root.add_child("Obj", obj);
-
-        root.add_child("height_map" ,height_root);
 
         root.add_child("Score", scoreNode);
 
         root.add_child("Time", timeNode);
+
+        root.add_child("height_map" ,height_root);
+
 
         stringstream ss;
         write_json(ss, root, false);
