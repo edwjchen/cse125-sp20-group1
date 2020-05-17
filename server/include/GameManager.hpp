@@ -1,37 +1,67 @@
 #ifndef GameManager_hpp
 #define GameManager_hpp
 
-#include "core.h"
-#include "chat_message.hpp"
-#include "Terrain.hpp"
+#include <boost/enable_shared_from_this.hpp>
+#include <chrono>
 #include <ctime>
+#include <iostream>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <iomanip>
+#include <array>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/foreach.hpp>
+#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <sstream>
+
+#include "core.h"
+#include "Terrain.hpp"
+#include "Sphere.h"
 
 using namespace std;
 
 class GameManager{
 public:
     GameManager();
-    chat_message obj;
-    Terrain * terrain;
 
     void UpdateTime();
     void UpdateScore();    
 
-    void KeyUpdate1(char op);
-    void KeyUpdate2(char op);
+    void update1(char op);
+    void update2(char op);
 
-    void editTerrain(std::vector<glm::vec2> editPoints, float height);
-    string encode();
+    void editTerrain(std::vector<glm::vec2> & editPoints, float height);
     void handle_input(string data, int id);
+    void checkTerrainCollisions(Sphere* sphere);
+    void checkSphereCollisions();
 
+    string encode();
+    void decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints);
+
+    Terrain * terrain;
     string time;
-    int score;
+    int scoreT1 = -1;
+    int scoreT2 = -2;
 
     clock_t startTime;
     clock_t endTime;
     float totalGameTime;
+
+    Sphere* sphere1;
+    Sphere* sphere2;
+    
+    glm::mat4 transM1, transM2; 
+
+    bool updateTerrain;
 };
 
-
-
-#endif 
+#endif

@@ -24,3 +24,9 @@ void TerrainMesh::addVertex(float x, float y, float z,
    vertices.push_back(v);
    normals.push_back(n);
 }
+
+//void TerrainMesh::convertLowPoly(unsigned int ul, unsigned int ur,
+//                                 unsigned int ll, unsigned int lr){
+//    glm::vec3 upperEdge = vertices[ul] - vertices[ur];
+//    glm::vec3 diagonal
+//}

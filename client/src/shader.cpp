@@ -1,15 +1,22 @@
 #include "shader.h"
 
-enum ShaderType { vertex, fragment };
+enum ShaderType { vertex, fragment, geometry };
 
 GLuint LoadSingleShader(const char * shaderFilePath, ShaderType type) 
 {
 	// Create a shader id.
 	GLuint shaderID = 0;
+    
+    if (shaderFilePath == NULL){
+        return 0;
+    }
+    
 	if (type == vertex) 
 		shaderID = glCreateShader(GL_VERTEX_SHADER);
 	else if (type == fragment) 
 		shaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    else if (type == geometry)
+        shaderID = glCreateShader(GL_GEOMETRY_SHADER);
 
 	// Try to read shader codes from the shader file.
 	std::string shaderCode;
@@ -56,16 +63,20 @@ GLuint LoadSingleShader(const char * shaderFilePath, ShaderType type)
 			printf("Successfully compiled vertex shader!\n");
 		else if (type == fragment) 
 			printf("Successfully compiled fragment shader!\n");
+        else if (type == geometry)
+            printf("Successfully compiled geometry shader!\n");
 	}
 
 	return shaderID;
 }
 
-GLuint LoadShaders(const char * vertexFilePath, const char * fragmentFilePath) 
+GLuint LoadShaders(const char * vertexFilePath, const char * fragmentFilePath,
+                   const char * geometryFilePath)
 {
 	// Create the vertex shader and fragment shader.
 	GLuint vertexShaderID = LoadSingleShader(vertexFilePath, vertex);
 	GLuint fragmentShaderID = LoadSingleShader(fragmentFilePath, fragment);
+    GLuint geometryShaderID = LoadSingleShader(geometryFilePath, geometry);
 
 	// Check both shaders.
 	if (vertexShaderID == 0 || fragmentShaderID == 0) return 0;
@@ -77,6 +88,9 @@ GLuint LoadShaders(const char * vertexFilePath, const char * fragmentFilePath)
 	printf("Linking program\n");
 	GLuint programID = glCreateProgram();
 	glAttachShader(programID, vertexShaderID);
+    if (geometryShaderID){
+        glAttachShader(programID, geometryShaderID);
+    }
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 
@@ -102,6 +116,11 @@ GLuint LoadShaders(const char * vertexFilePath, const char * fragmentFilePath)
 	glDetachShader(programID, fragmentShaderID);
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
+    
+    if (geometryShaderID){
+        glDetachShader(programID, geometryShaderID);
+        glDeleteShader(geometryShaderID);
+    }
 
 	return programID;
 }

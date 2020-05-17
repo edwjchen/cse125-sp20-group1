@@ -28,13 +28,14 @@ public:
     void terrainBuildMesh();
     void computeBoundingBoxes(); // called once after building mesh for the first time
     float getHeightAt(float x, float z);
-    std::vector<float> getHeightMap();
     
     std::vector<unsigned int>* getIndices();
     std::vector<glm::vec3>* getVertices();
     std::vector<glm::vec3>* getNormals();
-    std::vector<TerrainBoundingBox>* getBoundingBoxes();
+    std::vector<TerrainBoundingBox>* getBoundingBoxes(); 
     
+    std::vector<float> getHeightMap();
+        
     std::vector<float> edit(std::vector<glm::vec2> editPoints, float h);
 
     
@@ -45,8 +46,8 @@ public:
 private:
     unsigned num_indices;
 
-    GLuint VAO;
-    GLuint VBO_positions, VBO_normals, EBO;
+    //GLuint VAO;
+    //GLuint VBO_positions, VBO_normals, EBO;
     
     glm::mat4 model = glm::mat4(1.0f);
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);

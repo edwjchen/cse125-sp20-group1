@@ -47,6 +47,7 @@ private:
     GLuint shaderProgram;
     GLuint skyboxProgram;
     GLuint terrainProgram;
+    GLuint toonProgram;
     
     // Constructors and Destructors
     bool initializeProgram();
@@ -54,7 +55,6 @@ private:
     void setupOpenglSettings();
     void printVersions();
     void setupCallbacks();
-    static void checkCollisions(Sphere* sphere); 
 
     static void errorCallback(int error, const char* description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -73,7 +73,6 @@ private:
     static Sphere* sphere_mouse; // for testing purpose
     static Terrain* terrain;
     static Camera* camera;
-
     static Skybox* skybox;
   
     // Store sphere absolute position for camera, since the position stored is always 0

@@ -28,6 +28,7 @@ bool Client::mouseControl = false;
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
+
 IO_handler* Client::io_handler;
 AudioManager* Client::audioManager;
 
@@ -68,7 +69,10 @@ bool Client::initializeProgram() {
     // Create a shader program with a vertex shader and a fragment shader.
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
     skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
-    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag");
+    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
+    toonProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
+//    terrainProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
+
 
     // Check the shader program.
     if (!shaderProgram)
@@ -114,24 +118,32 @@ bool Client::initializeObjects()
     terrain = new Terrain(251, 251, 0.5f);
 
     std::vector<glm::vec2> tmp = {
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(125.0f, 125.0f),
-        glm::vec2(135.0f, 125.0f),
-        glm::vec2(250.0f, 250.0f)
+        glm::vec2(0.0f, 0.0f),
+        glm::vec2(16.0f, 16.0f),
+        glm::vec2(20.0f, 16.0f),
+        glm::vec2(32.0f, 32.0f)
+    };
+    std::vector<glm::vec2> tmp2 = {
+        glm::vec2(0.0f, 32.0f),
+        glm::vec2(16.0f, 16.0f),
+        glm::vec2(20.0f, 16.0f),
+        glm::vec2(32.0f, 0.0f)
     };
     terrain->edit(tmp, 10);
+//
+    terrain->edit(tmp, -10);
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
-    terrain->computeBoundingBoxes();
-    //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
+//    terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
 
+    // terrain->computeBoundingBoxes();
+    //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     return true;
 }
 
 void Client::idleCallback() {
-    sphere_player1->force += glm::vec3(0, -0.1, 0);
-    checkCollisions(sphere_player1);
+
 }
 
 void Client::displayCallback() {
@@ -140,8 +152,8 @@ void Client::displayCallback() {
 
     // Render the objects
 
-    sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, toonProgram);
+    sphere_player2->draw(camera->getView(), projection, toonProgram);
 
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
@@ -149,6 +161,7 @@ void Client::displayCallback() {
     window->setId(player_id);
     window->setTime(time);
     window->setScore(score);
+
 
 }
 
@@ -331,30 +344,17 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendKeyBoardInput(0);
-                glm::vec3 f = sphere_player1->force;
-                f.x += 0.5f;
-                sphere_player1->force = f;
                 break;
             }
             case GLFW_KEY_A:{
-                glm::vec3 f = sphere_player1->force;
-                f.z += 0.5f;
-                sphere_player1->force = f;
                 io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                glm::vec3 f = sphere_player1->force;
-                f.x -= 0.5f;
-                sphere_player1->force = f;
-                checkCollisions(sphere_player1);
                 io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                glm::vec3 f = sphere_player1->force;
-                f.z -= 0.5f;
-                sphere_player1->force = f;
                 io_handler->SendKeyBoardInput(3);
                 break;
             }
@@ -451,7 +451,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
 
     rayDir = glm::normalize(a*u + b*v - w);
 
-    t = glm::dot((glm::vec3(0.0f, -12.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    t = glm::dot((glm::vec3(0.0f, 0.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     finalPos = camera->getPos()+t * rayDir;
 
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
@@ -497,6 +497,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
 
 
 void Client::updateFromServer(string msg) {
+    //cout << msg << endl;
     try{
         if(msg != ""){
             stringstream ss;
@@ -581,66 +582,17 @@ void Client::updateFromServer(string msg) {
                 i++;
             }
 
-            //build mesh based on height map from server
-            //TODO: different signature
-            //setHeightsFromTexture(height_map, offset, scale);
+            if(!height_map.empty()){
+                //std::cout << msg << std::endl;
+                std::cout << "building..." << std::endl;
+                //build mesh based on height map from server
+                terrain->terrainBuildMesh(height_map);
+            }
+
 
         }
     } catch (...){
 
     }
 
-}
-
-void Client::checkCollisions(Sphere* sphere) {
-
-    std::vector<unsigned int>* indices = terrain->getIndices();
-    std::vector<glm::vec3>* vertices = terrain->getVertices();
-    std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
-
-    // resolve force
-    sphere->move(sphere->getCenter() + sphere->force);
-    sphere->force = glm::vec3(0);
-
-    for (int k = 0; k < 20; k++) {
-        for (int j = 0; j < boxes->size(); j++) {
-            TerrainBoundingBox& box = (*boxes)[j];
-            glm::vec2& tminPoint = box.minPoint;
-            glm::vec2& tmaxPoint = box.maxPoint;
-            glm::vec2 sminPoint(sphere->getCenter().x, sphere->getCenter().z);
-            sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
-            glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
-            smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
-
-            if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
-                continue;
-            }
-
-            for (int i = 0; i < box.indices2triangles.size(); i++) {
-                int curInd = box.indices2triangles[i];
-                glm::vec3& a = (*vertices)[(*indices)[curInd-2]];
-                glm::vec3& b = (*vertices)[(*indices)[curInd-1]];
-                glm::vec3& c = (*vertices)[(*indices)[curInd]];
-                glm::vec3 n = -glm::normalize(glm::cross(c-a, b-a));
-                if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
-                    n = -n;
-                }
-
-                glm::vec3 offset = sphere->checkCollision(a, b, c, n);
-                if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
-                    offset = glm::vec3(0);
-                    continue;
-                }
-                sphere->move(sphere->getCenter() + offset); // move to right position
-            }
-        }
-    }
-
-    // if sphere has fallen off, freaking lift it up
-    float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
-    if (height > sphere->getCenter().y + sphere->getRadius()) {
-        glm::vec3 offset(0);
-        offset.y = height - (sphere->getCenter().y - sphere->getRadius());
-        sphere->move(sphere->getCenter() + offset);
-    }
 }
