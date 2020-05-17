@@ -39,8 +39,6 @@ bin/*
 xcuserdata/
 *.xcuserdatad
 
-#
-
 .DS_Store
 
 ## User settings
@@ -65,3 +63,4 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+server/bin/server
