@@ -448,7 +448,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
 
     rayDir = glm::normalize(a*u + b*v - w);
 
-    t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    t = glm::dot((glm::vec3(0.0f, -12.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     finalPos = camera->getPos()+t * rayDir;
 
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
