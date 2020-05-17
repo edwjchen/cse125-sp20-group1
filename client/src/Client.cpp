@@ -21,7 +21,7 @@ glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
-bool Client::mouseControl = true;
+bool Client::mouseControl = false;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -67,9 +67,9 @@ bool Client::initializeProgram() {
     // Create a shader program with a vertex shader and a fragment shader.
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
     skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
-    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
-    //terrainProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
-    
+//    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
+    terrainProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
+//    terrainProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
 
     
     // Check the shader program.
@@ -126,8 +126,8 @@ bool Client::initializeObjects()
         glm::vec2(20.0f, 16.0f),
         glm::vec2(32.0f, 0.0f)
     };
-    terrain->edit(tmp2, 10);
-    
+    terrain->edit(tmp, 10);
+//
     terrain->edit(tmp, -10);
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
