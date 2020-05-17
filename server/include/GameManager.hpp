@@ -23,7 +23,8 @@ public:
     void editTerrain(std::vector<glm::vec2> editPoints, float height);
     string encode();
     void handle_input(string data, int id);
-    void checkTerrainCollisions(Sphere* sphere); 
+    void checkTerrainCollisions(Sphere* sphere);
+    void checkSphereCollisions();
 
     string time;
     int score;

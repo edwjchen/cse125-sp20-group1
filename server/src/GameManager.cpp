@@ -109,6 +109,7 @@ void GameManager::handle_input(string data, int id){
     editTerrain(editPoints, height);
     checkTerrainCollisions(sphere1);
     checkTerrainCollisions(sphere2);
+    checkSphereCollisions(); 
 }
 
 void GameManager::checkTerrainCollisions(Sphere* sphere) {
@@ -162,4 +163,18 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
         offset.y = height - (sphere->getCenter().y - sphere->getRadius());
         sphere->move(sphere->getCenter() + offset);
     }
+}
+
+void GameManager::checkSphereCollisions() {
+    glm::vec3 sphere1Pos = sphere1->getCenter();
+    glm::vec3 sphere2Pos = sphere2->getCenter();
+    float sphere1Radius = sphere1->getRadius();
+    float sphere2Radius = sphere2->getRadius();
+    float delta = glm::length(sphere1Pos - sphere2Pos);
+    if (delta < sphere1Radius + sphere2Radius) {
+        glm::vec3 dir = glm::normalize(sphere1Pos - sphere2Pos);
+        sphere1->move(sphere1Pos + delta / 2.0f * dir);
+        sphere2->move(sphere1Pos - delta / 2.0f * dir);
+    }
+    // TODO: further physics effect
 }
