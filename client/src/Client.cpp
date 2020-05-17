@@ -468,6 +468,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
 
 
 void Client::updateFromServer(string msg) {
+    //cout << msg << endl;
     try{
         if(msg != ""){
             stringstream ss;
@@ -529,9 +530,13 @@ void Client::updateFromServer(string msg) {
                 i++;
             }
 
-            //build mesh based on height map from server
-            //TODO: different signature
-            //setHeightsFromTexture(height_map, offset, scale);
+            if(!height_map.empty()){
+                //std::cout << msg << std::endl;
+                std::cout << "building..." << std::endl;
+                //build mesh based on height map from server
+                terrain->terrainBuildMesh(height_map);
+            }
+
 
         }
     } catch (...){
