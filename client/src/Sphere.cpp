@@ -165,44 +165,6 @@ void Sphere::setRadius(float r){
     createIndices();
 }
 
-/*
- * a, b, c forms a triangle and n is normal. Return a vector to translate the sphere to just
- * resolve intersection. Return vec3(0) if no collision.
- */
-glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 n) {
-    position = model[3]; 
-    if (a == b || a == c || b == c) {
-        return glm::vec3(0);
-    }
-    
-    float t = -(glm::dot(a, n) - glm::dot(position, n));
-    if (t < -(radius + 0.0001f) || t > (radius + 0.0001f)) {
-        return glm::vec3(0);
-    }
-    
-    glm::vec3 P = position + t * (-n);
-    
-    glm::vec3 e1 = b - a;
-    glm::vec3 e2 = c - b;
-    glm::vec3 e3 = a - c;
-    glm::vec3 A = P - a;
-    glm::vec3 B = P - b;
-    glm::vec3 C = P - c;
-    
-    //if P is inside triangle
-    if (glm::dot(n, glm::cross(e1, A)) >= 0 &&
-        glm::dot(n, glm::cross(e2, B)) >= 0 &&
-        glm::dot(n, glm::cross(e3, C)) >= 0) {
-        if (t > 0) {
-            return P - (position + radius * glm::normalize(P - position));
-        } else {
-            return P - (position + radius * glm::normalize(position - P));
-        }
-    } else {
-        return glm::vec3(0);
-    }
-}
-
 // translate to pos
 void Sphere::move(const glm::vec3& pos){
     // actiavte the shader program

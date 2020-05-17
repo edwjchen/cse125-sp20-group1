@@ -113,6 +113,9 @@ void GameManager::handle_input(string data, int id){
         editTerrain(editPoints, height);
         updateTerrain = true;
     }
+    // hardcode to add gravity for now
+    sphere1->move(sphere1->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
+    sphere2->move(sphere2->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
     checkTerrainCollisions(sphere1);
     checkTerrainCollisions(sphere2);
     checkSphereCollisions();
