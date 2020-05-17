@@ -4,6 +4,7 @@
 #include "core.h"
 #include "chat_message.hpp"
 #include "Terrain.hpp"
+#include "Sphere.h"
 
 using namespace std;
 
@@ -22,9 +23,13 @@ public:
     void editTerrain(std::vector<glm::vec2> editPoints, float height);
     string encode();
     void handle_input(string data, int id);
+    void checkTerrainCollisions(Sphere* sphere); 
 
     string time;
     int score;
+    
+    Sphere* sphere1;
+    Sphere* sphere2;
 };
 
 

@@ -121,7 +121,7 @@ bool Client::initializeObjects()
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
-    terrain->computeBoundingBoxes();
+    // terrain->computeBoundingBoxes();
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
 
     return true;
@@ -315,30 +315,17 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendKeyBoardInput(0);
-                glm::vec3 f = sphere_player1->force;
-                f.x += 0.5f;
-                sphere_player1->force = f;
                 break;
             }
             case GLFW_KEY_A:{
-                glm::vec3 f = sphere_player1->force;
-                f.z += 0.5f;
-                sphere_player1->force = f;
                 io_handler->SendKeyBoardInput(1);
                 break;
             }
             case GLFW_KEY_S:{
-                glm::vec3 f = sphere_player1->force;
-                f.x -= 0.5f;
-                sphere_player1->force = f;
-                checkCollisions(sphere_player1);
                 io_handler->SendKeyBoardInput(2);
                 break;
             }
             case GLFW_KEY_D:{
-                glm::vec3 f = sphere_player1->force;
-                f.z -= 0.5f;
-                sphere_player1->force = f;
                 io_handler->SendKeyBoardInput(3);
                 break;
             }

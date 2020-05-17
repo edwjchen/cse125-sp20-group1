@@ -82,46 +82,12 @@ public:
 
     }
   
-    void update1(char op){
-        switch (op) {
-            case 'w':
-                y1++;
-                transM1[3][2]--;
-                break;
-            case 'a':
-                x1--;
-                transM1[3][0]--;
-                break;
-            case 's':
-                y1--;
-                transM1[3][2]++;
-                break;
-            case 'd':
-                x1++;
-                transM1[3][0]++;
-                break;
-        }
+    void update1(glm::mat4 trans){
+        transM1 = trans;
     }
     
-    void update2(char op){
-        switch (op) {
-            case 'w':
-                y2++;
-                transM2[3][2]--;
-                break;
-            case 'a':
-                x2--;
-                transM2[3][0]--;
-                break;
-            case 's':
-                y2--;
-                transM2[3][2]++;
-                break;
-            case 'd':
-                x2++;
-                transM2[3][0]++;
-                break;
-        }
+    void update2(glm::mat4 trans){
+        transM2 = trans;
     }
 
     std::string encode()

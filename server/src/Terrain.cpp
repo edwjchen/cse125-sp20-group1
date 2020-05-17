@@ -15,12 +15,6 @@ Terrain::Terrain(){
 Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth), step(step){
     
     height.resize(width * depth, 0);
-    
-    // Generate a vertex array (VAO) and two vertex buffer objects (VBO).
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO_positions);
-    glGenBuffers(1, &VBO_normals);
-
 
     Uint32 rmask, gmask, bmask, amask;
 

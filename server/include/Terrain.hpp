@@ -46,8 +46,8 @@ public:
 private:
     unsigned num_indices;
 
-    GLuint VAO;
-    GLuint VBO_positions, VBO_normals, EBO;
+    //GLuint VAO;
+    //GLuint VBO_positions, VBO_normals, EBO;
     
     glm::mat4 model = glm::mat4(1.0f);
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
