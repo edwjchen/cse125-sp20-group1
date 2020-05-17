@@ -243,6 +243,7 @@ void Client::run() {
             std::vector<glm::vec2> tmpp = {sT, eT};
             terrain->edit(tmpp, 10);
             
+            cerr << "太迷惑了" << endl;
             
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
