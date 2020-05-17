@@ -21,6 +21,7 @@ AudioManager::AudioManager(){
     volumeControl = 1;
     defaultSFVolume = 100.0f;
     defaultMusicVolume = 3.0f;
+
     
     for(int i=0; i<128; i++){
         soundList.push_back(sf::Sound());
@@ -89,3 +90,4 @@ void AudioManager::VolumeControl(){
             
     }
 }
+

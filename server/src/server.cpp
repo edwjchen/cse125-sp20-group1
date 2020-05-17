@@ -36,6 +36,7 @@ class Server : public boost::enable_shared_from_this<Server>
 private:
     boost::asio::io_service& io_service_;
     tcp::acceptor acceptor_;
+    vector <std::shared_ptr<tcp::socket>> sockets;
     int i = 0;
 
     GameManager gm;
@@ -43,6 +44,10 @@ private:
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
             gm.UpdateTime();
+
+            if(sockets[id-1] == nullptr){
+                return;
+            }
             std::string msg = gm.encode();
             //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
@@ -54,7 +59,17 @@ private:
     {
         while(1){
             boost::asio::streambuf buf;
-            boost::asio::read_until( *socket, buf, "\n" );
+            boost::system::error_code ec;
+            boost::asio::read_until( *socket, buf, "\n" , ec);
+            
+            // TODO: handle player exits
+            if(ec ==  boost::asio::error::eof){
+                cout << "player "<< id << " exit" << endl;
+                sockets[id-1]->close();
+                sockets[id-1] = nullptr;
+                break;
+            }
+
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
             gm.handle_input(data, id);
         }
@@ -73,10 +88,16 @@ private:
 
             cout << "accepted: " << i << endl;
             boost::asio::write( *socket_1, boost::asio::buffer(std::to_string(i)+'\n') );
+            sockets.push_back(socket_1);
             //update(i, socket_1);
             boost::thread send_thread(&Server::send_info, this, i, socket_1);
             boost::thread read_thread(&Server::read_info, this, i, socket_1);
         }
+        // cout << "4 players ready" << endl;
+        // for(int j=0;j<4;j++){
+        //     boost::thread send_thread(&Server::send_info, this, j, sockets[j]);
+        //     boost::thread read_thread(&Server::read_info, this, j, sockets[j]);
+        // }
         while(1){}
     }
 
