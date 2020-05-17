@@ -530,8 +530,13 @@ void Client::updateFromServer(string msg) {
                 i++;
             }
 
-            //build mesh based on height map from server
-            terrain->terrainBuildMesh(height_map);
+            if(!height_map.empty()){
+                //std::cout << msg << std::endl;
+                std::cout << "building..." << std::endl;
+                //build mesh based on height map from server
+                terrain->terrainBuildMesh(height_map);
+            }
+
 
         }
     } catch (...){

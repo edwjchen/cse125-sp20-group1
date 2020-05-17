@@ -3,7 +3,7 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
-GameManager::GameManager(): x1(5), x2(5), y1(5), y2(5){
+GameManager::GameManager(): x1(5), x2(5), y1(5), y2(5), updateTerrain(false){
     time = "";
     score = -1;
     terrain = new Terrain(251, 251, 0.5f);
@@ -94,6 +94,7 @@ void GameManager::handle_input(string data, int id){
     }
     if(!editPoints.empty()){
         editTerrain(editPoints, height);
+        updateTerrain = true;
     }
 }
 
@@ -143,12 +144,15 @@ string GameManager::encode()
     obj.push_back(std::make_pair("", obj1));
     obj.push_back(std::make_pair("", obj2));
 
-    vector <float> height_map = terrain->getHeightMap();
-    // build and add current height map node to root
-    for(int i = 0; i < height_map.size(); i++){
-        pt::ptree node;
-        node.put("", height_map[i]);
-        height_root.push_back(std::make_pair("", node));
+    if(updateTerrain){
+        vector <float> height_map = terrain->getHeightMap();
+        // build and add current height map node to root
+        for(int i = 0; i < height_map.size(); i++){
+            pt::ptree node;
+            node.put("", height_map[i]);
+            height_root.push_back(std::make_pair("", node));
+        }
+        updateTerrain = false;
     }
 
     scoreNode.put("", score);

@@ -29,6 +29,8 @@ public:
     int x1, y1, x2, y2;
 
     glm::mat4 transM1, transM2;
+
+    bool updateTerrain;
 };
 
 
