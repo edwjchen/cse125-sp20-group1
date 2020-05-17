@@ -3,17 +3,24 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
-GameManager::GameManager(): x1(5), x2(5), y1(5), y2(5), updateTerrain(false){
+GameManager::GameManager(): updateTerrain(false){
     time = "";
     score = -1;
     terrain = new Terrain(251, 251, 0.5f);
-    string time = "";
-    int score = -1;
-
-    transM1 = glm::mat4(1.0f);
-    transM1[3] = glm::vec4(64,-10,-65,1);
-    transM2 = glm::mat4(1.0f);
-    transM2[3] = glm::vec4(58,0,-54,1);
+    std::vector<glm::vec2> tmp = {
+        glm::vec2(1.0f, 1.0f),
+        glm::vec2(125.0f, 125.0f),
+        glm::vec2(135.0f, 125.0f),
+        glm::vec2(250.0f, 250.0f)
+    };
+    terrain->edit(tmp, 10);
+    terrain->terrainBuildMesh();
+    terrain->computeBoundingBoxes();
+    
+    sphere1 = new Sphere(5.0f, 2.0f);
+    sphere1->move(glm::vec3(64,-10,-65));
+    sphere2 = new Sphere(5.0f, 2.0f);
+    sphere1->move(glm::vec3(58,0,-54));
 }
 
 void GameManager::UpdateScore(){
@@ -25,43 +32,53 @@ void GameManager::UpdateTime(){
 }
 
 void GameManager::update1(char op){
+    glm::vec3 newPos;
     switch (op) {
         case 'w':
-            y1++;
-            transM1[3][2]--;
+            newPos = sphere1->getCenter();
+            newPos.z -= 1;
+            sphere1->move(newPos);
             break;
         case 'a':
-            x1--;
-            transM1[3][0]--;
+            newPos = sphere1->getCenter();
+            newPos.x -= 1;
+            sphere1->move(newPos);
             break;
         case 's':
-            y1--;
-            transM1[3][2]++;
+            newPos = sphere1->getCenter();
+            newPos.z += 1;
+            sphere1->move(newPos);
             break;
         case 'd':
-            x1++;
-            transM1[3][0]++;
+            newPos = sphere1->getCenter();
+            newPos.x += 1;
+            sphere1->move(newPos);
             break;
     }
 }
 
 void GameManager::update2(char op){
+    glm::vec3 newPos;
     switch (op) {
         case 'w':
-            y2++;
-            transM2[3][2]--;
+            newPos = sphere2->getCenter();
+            newPos.z -= 1;
+            sphere2->move(newPos);
             break;
         case 'a':
-            x2--;
-            transM2[3][0]--;
+            newPos = sphere2->getCenter();
+            newPos.x -= 1;
+            sphere2->move(newPos);
             break;
         case 's':
-            y2--;
-            transM2[3][2]++;
+            newPos = sphere2->getCenter();
+            newPos.z += 1;
+            sphere2->move(newPos);
             break;
         case 'd':
-            x2++;
-            transM2[3][0]++;
+            newPos = sphere2->getCenter();
+            newPos.x += 1;
+            sphere2->move(newPos);
             break;
     }
 }
@@ -96,11 +113,19 @@ void GameManager::handle_input(string data, int id){
         editTerrain(editPoints, height);
         updateTerrain = true;
     }
+    // hardcode to add gravity for now
+    sphere1->move(sphere1->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
+    sphere2->move(sphere2->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
+    checkTerrainCollisions(sphere1);
+    checkTerrainCollisions(sphere2);
+    checkSphereCollisions();
 }
 
 
 string GameManager::encode()
 {
+    transM1 = sphere1->getModel();
+    transM2 = sphere2->getModel();
     pt::ptree root;
     pt::ptree obj;
 
@@ -135,11 +160,11 @@ string GameManager::encode()
         matrix2[4*i+j].put("", transM2[i][j]);
         }
     }
+
     for(int i=0;i<16;i++){
         m2.push_back(std::make_pair("", matrix2[i]));
     }
     obj2.add_child("transformation", m2);
-
 
     obj.push_back(std::make_pair("", obj1));
     obj.push_back(std::make_pair("", obj2));
@@ -155,20 +180,74 @@ string GameManager::encode()
         updateTerrain = false;
     }
 
+    
     scoreNode.put("", score);
     timeNode.put("", time);
-
+    
     root.add_child("Obj", obj);
-
+    
     root.add_child("height_map" ,height_root);
-
+    
     root.add_child("Score", scoreNode);
-
+    
     root.add_child("Time", timeNode);
 
     stringstream ss;
     write_json(ss, root, false);
     return ss.str() + '\n';
+}
+
+void GameManager::checkTerrainCollisions(Sphere* sphere) {
+    
+    std::vector<unsigned int>* indices = terrain->getIndices();
+    std::vector<glm::vec3>* vertices = terrain->getVertices();
+    std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
+    
+    // resolve force
+    // sphere->move(sphere->getCenter() + sphere->force);
+    // sphere->force = glm::vec3(0);
+    
+    for (int k = 0; k < 20; k++) {
+        for (int j = 0; j < boxes->size(); j++) {
+            TerrainBoundingBox& box = (*boxes)[j];
+            glm::vec2& tminPoint = box.minPoint;
+            glm::vec2& tmaxPoint = box.maxPoint;
+            glm::vec2 sminPoint(sphere->getCenter().x, sphere->getCenter().z);
+            sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
+            glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
+            smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
+            
+            if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
+                continue;
+            }
+            
+            for (int i = 0; i < box.indices2triangles.size(); i++) {
+                int curInd = box.indices2triangles[i];
+                glm::vec3& a = (*vertices)[(*indices)[curInd-2]];
+                glm::vec3& b = (*vertices)[(*indices)[curInd-1]];
+                glm::vec3& c = (*vertices)[(*indices)[curInd]];
+                glm::vec3 n = -glm::normalize(glm::cross(c-a, b-a));
+                if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
+                    n = -n;
+                }
+                
+                glm::vec3 offset = sphere->checkCollision(a, b, c, n);
+                if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
+                    offset = glm::vec3(0);
+                    continue;
+                }
+                sphere->move(sphere->getCenter() + offset); // move to right position
+            }
+        }
+    }
+    
+    // if sphere has fallen off, freaking lift it up
+    float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
+    if (height > sphere->getCenter().y + sphere->getRadius()) {
+        glm::vec3 offset(0);
+        offset.y = height - (sphere->getCenter().y - sphere->getRadius());
+        sphere->move(sphere->getCenter() + offset);
+    }
 }
 
 void GameManager::decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints)
@@ -221,5 +300,19 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, vector
         editPoints.push_back(glm::vec2(temp[0],temp[1]));
         editPoints.push_back(glm::vec2(temp[2],temp[3]));
     }
+}
+
+void GameManager::checkSphereCollisions() {
+    glm::vec3 sphere1Pos = sphere1->getCenter();
+    glm::vec3 sphere2Pos = sphere2->getCenter();
+    float sphere1Radius = sphere1->getRadius();
+    float sphere2Radius = sphere2->getRadius();
+    float delta = glm::length(sphere1Pos - sphere2Pos);
+    if (delta < sphere1Radius + sphere2Radius) {
+        glm::vec3 dir = glm::normalize(sphere1Pos - sphere2Pos);
+        sphere1->move(sphere1Pos + delta / 2.0f * dir);
+        sphere2->move(sphere1Pos - delta / 2.0f * dir);
+    }
+    // TODO: further physics effect
 }
 

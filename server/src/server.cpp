@@ -46,6 +46,7 @@ private:
             if(sockets[id-1] == nullptr){
                 return;
             }
+
             std::string msg = gm.encode();
             //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
@@ -67,6 +68,7 @@ private:
                 sockets[id-1] = nullptr;
                 break;
             }
+
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
             gm.handle_input(data, id);
         }

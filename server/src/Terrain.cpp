@@ -15,7 +15,6 @@ Terrain::Terrain(){
 Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth), step(step){
     
     height.resize(width * depth, 0);
-    
     Uint32 rmask, gmask, bmask, amask;
 
     /* SDL interprets each pixel as a 32-bit number, so our masks must depend

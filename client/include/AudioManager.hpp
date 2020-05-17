@@ -24,13 +24,13 @@ public:
     AudioManager();
     void PlaySounds(int index);
     void LoadSounds();
+    void VolumeControl();
+    int volumeControl;   // 0 for mute, 1 for unmute
 
 private:
     sf::Music music;
     std::vector<sf::Sound> soundList;
-    float maxMusicVolume, maxSFVolume;
-    bool muted;
-    
+    float defaultMusicVolume, defaultSFVolume;
 };
 
 #endif /* AudioManager_hpp */

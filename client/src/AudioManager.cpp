@@ -18,9 +18,9 @@ const std::string AudioManager::SF2HIT = "audio/sound/hit.wav";
 
 
 AudioManager::AudioManager(){
-    muted = false;
-    maxSFVolume = 100.0f;
-    maxMusicVolume = 100.0f;
+    volumeControl = 1;
+    defaultSFVolume = 100.0f;
+    defaultMusicVolume = 10.0f;
     
     for(int i=0; i<128; i++){
         soundList.push_back(sf::Sound());
@@ -32,7 +32,7 @@ AudioManager::AudioManager(){
     if(!music.openFromFile(BACKGROUND_MUSIC1)){
         std::cerr << "Failed to load background music file" << std::endl;
     }
-    music.setVolume(30.0f);
+    music.setVolume(defaultMusicVolume);
     music.setLoop(true);
     
     music.play();
@@ -43,13 +43,15 @@ void AudioManager::PlaySounds(int index){
     switch(index){
         case 0:
             soundList[index].setBuffer(soundBuffer[SF1POINTS]);
-            soundList[index].setVolume(maxSFVolume);
+            soundList[index].setVolume(defaultSFVolume);
+            VolumeControl();
             soundList[index].setLoop(false);
             soundList[index].play();
             break;
         case 1:
             soundList[index].setBuffer(soundBuffer[SF2HIT]);
-            soundList[index].setVolume(maxSFVolume);
+            soundList[index].setVolume(defaultSFVolume);
+            VolumeControl();
             soundList[index].setLoop(false);
             soundList[index].play();
             break;
@@ -65,5 +67,24 @@ void AudioManager::LoadSounds() {
         if (!soundBuffer[filename].loadFromFile(filename)) {
             std::cerr << "AudioManager: Cannot open " << filename << std::endl;
         }
+    }
+}
+
+void AudioManager::VolumeControl(){
+    switch(volumeControl){
+        case 0:
+            music.setVolume(0.0f);
+            for(int i=0; i<soundList.size(); i++){
+                soundList[i].setVolume(0.0f);
+            }
+            break;
+            
+        case 1:
+            music.setVolume(defaultMusicVolume);
+            for(int i=0; i<soundList.size(); i++){
+                soundList[i].setVolume(defaultSFVolume);
+            }
+            break;
+            
     }
 }
