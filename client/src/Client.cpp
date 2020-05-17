@@ -15,6 +15,9 @@ Sphere* Client::sphere_player2;
 Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
+int Client::player_id = 0;
+string Client::time = "Time shoud not be this";
+int Client::score = -100;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
@@ -142,6 +145,9 @@ void Client::displayCallback() {
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
+    window->setId(player_id);
+    window->setTime(time);
+    window->setScore(score);
 
 
 }
@@ -200,7 +206,9 @@ void Client::run() {
         chat_client c(io_service, endpoint);
 
         boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-
+        
+        
+        
         std::string msg;
 
         // Loop while GLFW window should stay open.
@@ -209,15 +217,16 @@ void Client::run() {
             // Main render display callback. Rendering of objects is done here. (Draw)
             displayCallback();
             window->displayCallback();
+            player_id = c.get_id();
 
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == 1){
+            if(player_id == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
-            else if(c.get_id() == 2){
+            else if(player_id == 2){
                 camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
             }
@@ -230,6 +239,14 @@ void Client::run() {
 
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
+            
+            // For Client Local Test Only
+//            glm::vec2 sT = glm::vec2(io_handler->startPos.x*2, io_handler->startPos.y*-2);
+//            glm::vec2 eT = glm::vec2(io_handler->endPos.x*2, io_handler->endPos.y*-2);
+//            std::vector<glm::vec2> tmpp = {sT, eT};
+//            terrain->edit(tmpp, 10);
+            
+            
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         }
@@ -421,7 +438,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
 
     rayDir = glm::normalize(a*u + b*v - w);
 
-    t = glm::dot((glm::vec3(0.0f, -10.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    t = glm::dot((glm::vec3(0.0f, -12.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     finalPos = camera->getPos()+t * rayDir;
 
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
@@ -522,7 +539,30 @@ void Client::updateFromServer(string msg) {
                 }
                 id++;
             }
+
+            int indexForScore = 0;
+            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
+                // Team 1 get their score
+                if((id == 1 || id == 3) && indexForScore == 0){
+                    score = stoi(v.second.data());
+                }
+                else if((id == 2 || id == 4) && indexForScore == 1){
+                    score = stoi(v.second.data());
+                }
+                indexForScore++;
+            }
+            //cout << "Score: " << score << endl;
+            
+            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
+                time = v.second.data();
+            }
+            
+            // DEBUG:: Message for Time 
+            //cout << "Time: " << time << endl;
+            
+            
             int i=0;
+            
             BOOST_FOREACH(const pt::ptree::value_type& v,
             tar.get_child("height_map")) {
                 height_map.push_back(stof(v.second.data()));

@@ -3,6 +3,7 @@
 
 #include "core.h"
 #include "Terrain.hpp"
+#include <ctime>
 #include "Sphere.h"
 
 using namespace std;
@@ -28,7 +29,11 @@ public:
     Terrain * terrain;
     string time;
     int score;
-    
+
+    clock_t startTime;
+    clock_t endTime;
+    float totalGameTime;
+
     Sphere* sphere1;
     Sphere* sphere2;
     
