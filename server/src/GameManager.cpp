@@ -5,7 +5,6 @@ namespace pt = boost::property_tree;
 
 GameManager::GameManager(): updateTerrain(false){
     time = "";
-    score = -1;
     startTime = clock();
     totalGameTime = 300.0f;
     terrain = new Terrain(251, 251, 0.5f);
@@ -193,8 +192,16 @@ string GameManager::encode()
     }
 
     
-    scoreNode.put("", score);
-    timeNode.put("", time);
+    pt::ptree tempNodeS1;
+    pt::ptree tempNodeS2;
+    tempNodeS1.put("", scoreT1);
+    tempNodeS2.put("", scoreT2);
+    scoreNode.push_back(std::make_pair("", tempNodeS1));
+    scoreNode.push_back(std::make_pair("", tempNodeS2));
+    // Add time to root
+    pt::ptree tempNodeT;
+    tempNodeT.put("", time);
+    timeNode.push_back(std::make_pair("",tempNodeT));
     
     root.add_child("Obj", obj);
     

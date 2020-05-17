@@ -49,7 +49,8 @@ public:
 
     Terrain * terrain;
     string time;
-    int score;
+    int scoreT1 = -1;
+    int scoreT2 = -2;
 
     clock_t startTime;
     clock_t endTime;

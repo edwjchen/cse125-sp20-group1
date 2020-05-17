@@ -47,6 +47,7 @@ private:
     GLuint shaderProgram;
     GLuint skyboxProgram;
     GLuint terrainProgram;
+    GLuint toonProgram;
     
     // Constructors and Destructors
     bool initializeProgram();

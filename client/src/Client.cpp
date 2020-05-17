@@ -69,8 +69,8 @@ bool Client::initializeProgram() {
     // Create a shader program with a vertex shader and a fragment shader.
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
     skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
-//    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
-    terrainProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
+    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
+    toonProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
 //    terrainProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
 
 
@@ -152,8 +152,8 @@ void Client::displayCallback() {
 
     // Render the objects
 
-    sphere_player1->draw(camera->getView(), projection, shaderProgram);
-    sphere_player2->draw(camera->getView(), projection, shaderProgram);
+    sphere_player1->draw(camera->getView(), projection, toonProgram);
+    sphere_player2->draw(camera->getView(), projection, toonProgram);
 
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
@@ -451,7 +451,7 @@ glm::vec2 Client::screenPointToWorld(glm::vec2 mousePos){
 
     rayDir = glm::normalize(a*u + b*v - w);
 
-    t = glm::dot((glm::vec3(0.0f, -12.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
+    t = glm::dot((glm::vec3(0.0f, 0.0f, 0.0f) - camera->getPos()), normal)/glm::dot(rayDir, normal);
     finalPos = camera->getPos()+t * rayDir;
 
     //cout << "finalPos x: " << finalPos.x << " finalPos y: " << finalPos.y << " finalPos z: " << finalPos.z << endl;
