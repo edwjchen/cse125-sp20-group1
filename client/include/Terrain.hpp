@@ -57,6 +57,7 @@ private:
     std::vector<TerrainBoundingBox> boundingBoxes; 
     
     std::vector<float> height;
+    std::vector<float> colorMap;
     int width;
     int depth;
     float step;
@@ -68,8 +69,10 @@ private:
     void computeIndicesForClipVolume(ClipVolume *clip);
     
     void setHeightsFromSurface(float offset, float scale);
-    void drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color);
-    void putpixel(int x, int y, int color);
+    void setHeightsFromColorMap(float offset, float scale);
+    void drawLineOnSurface(glm::vec2 start, glm::vec2 end, float color);
+    void putpixel(int x, int y, float color);
+    void putpixel2(int x, int y, float color);
 };
 
 #endif /* Terrain_hpp */

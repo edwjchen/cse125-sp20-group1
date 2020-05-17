@@ -217,7 +217,6 @@ void Sphere::move(const glm::vec3& pos){
             model = coef * model;
         }
     }
-    std::cout << glm::to_string(model) << std::endl; 
     model[3] = glm::vec4(pos, 1);
     position = pos;
 }
