@@ -86,18 +86,18 @@ void IO_handler::SendPackage(chat_client* c){
     allPos[2].put("", endPos.x);
     allPos[3].put("", endPos.y);
         
-    if(currBut.compare("l")){
+    if(currBut.compare("l") == 0){
         for(int i=0; i<4; i++){
             mouse_l.push_back(std::make_pair("", allPos[i]));
         }
     }
-    else if (currBut.compare("r")) {
+    else if (currBut.compare("r") == 0) {
         for(int i=0; i<4; i++){
             mouse_r.push_back(std::make_pair("", allPos[i]));
         }
     }
     else {
-        cerr << "string comparision error in io_handller 96" << endl;
+        //cerr << "string comparision error in io_handller 100" << endl;
     }
     
     currBut = "";

@@ -15,6 +15,7 @@ Sphere* Client::sphere_player2;
 Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
+int Client::player_id = 0;
 string Client::time = "Time shoud not be this";
 int Client::score = -100;
 
@@ -145,6 +146,7 @@ void Client::displayCallback() {
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
+    window->setId(player_id);
     window->setTime(time);
     window->setScore(score);
 
@@ -215,15 +217,16 @@ void Client::run() {
             // Main render display callback. Rendering of objects is done here. (Draw)
             displayCallback();
             window->displayCallback();
+            player_id = c.get_id();
 
             //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
 
             // Sphere player and Terrian player Camera Logic
-            if(c.get_id() == 1){
+            if(player_id == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
-            else if(c.get_id() == 2){
+            else if(player_id == 2){
                 camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
             }

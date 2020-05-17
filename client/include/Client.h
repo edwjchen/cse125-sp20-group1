@@ -98,6 +98,7 @@ private:
     static AudioManager* audioManager;
     
     // GameManager
+    static int player_id;
     static string time;
     static int score;
 };

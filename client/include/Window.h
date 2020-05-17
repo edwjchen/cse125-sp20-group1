@@ -10,6 +10,7 @@ public:
     GLFWwindow* getWindow();
     void displayCallback();
     std::pair<int, int> getFrameBufferSize();
+    void setId(int player_id);
     void setTime(std::string t);
     void setScore(int s);
   
@@ -20,6 +21,7 @@ private:
     std::string title;
     bool closed;
     
+    int user_id;
     std::string time;
     int score;
 
