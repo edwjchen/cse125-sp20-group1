@@ -25,6 +25,7 @@ bool Client::mouseControl = false;
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
 glm::vec2 Client::releasePos = glm::vec2(INFINITY, INFINITY);
+
 IO_handler* Client::io_handler;
 AudioManager* Client::audioManager;
 
@@ -122,7 +123,6 @@ bool Client::initializeObjects()
     //terrain->terrainBuildMesh(heightMap);
     terrain->computeBoundingBoxes();
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
-
     return true;
 }
 
@@ -143,6 +143,7 @@ void Client::displayCallback() {
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
+
 
 }
 
