@@ -1,9 +1,30 @@
 #ifndef GameManager_hpp
 #define GameManager_hpp
 
+#include <boost/enable_shared_from_this.hpp>
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <iomanip>
+#include <array>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/foreach.hpp>
+#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <sstream>
+
 #include "core.h"
 #include "Terrain.hpp"
-#include <ctime>
 #include "Sphere.h"
 
 using namespace std;

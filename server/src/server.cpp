@@ -22,7 +22,6 @@
 #include <boost/thread/thread.hpp>
 #include <boost/foreach.hpp>
 
-#include "chat_message.hpp"
 #include "Terrain.hpp"
 #include "GameManager.hpp"
 

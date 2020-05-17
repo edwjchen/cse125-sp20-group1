@@ -296,7 +296,7 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint sh
     
     // Bind the VAO
     glBindVertexArray(VAO);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+//    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     // draw the points using triangles, indexed with the EBO
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
