@@ -145,6 +145,8 @@ void Client::displayCallback() {
     terrain->draw(camera->getView(), projection, terrainProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
+    window->setTime(time);
+    window->setScore(score);
 
 }
 
@@ -548,7 +550,6 @@ void Client::updateFromServer(string msg) {
                 }
                 indexForScore++;
             }
-
             //cout << "Score: " << score << endl;
             
             BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){

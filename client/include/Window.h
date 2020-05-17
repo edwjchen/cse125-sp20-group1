@@ -10,6 +10,8 @@ public:
     GLFWwindow* getWindow();
     void displayCallback();
     std::pair<int, int> getFrameBufferSize();
+    void setTime(std::string t);
+    void setScore(int s);
   
 private:
     GLFWwindow* window;
@@ -17,6 +19,9 @@ private:
     int height;
     std::string title;
     bool closed;
+    
+    std::string time;
+    int score;
 
     GLFWwindow* createWindow(int width, int height, std::string title);
     void setupGui();

@@ -85,6 +85,13 @@ GLFWwindow* Window::getWindow() {
   return this->window;
 }
 
+void Window::setTime(std::string t){
+    time = t;
+}
+void Window::setScore(int s){
+    score = s;
+}
+
 void Window::displayCallback()
 {
   // feed inputs to dear imgui, start new frame
@@ -92,8 +99,9 @@ void Window::displayCallback()
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   
-  ImGui::Begin("Control Panel");
-  ImGui::Text("Hello, world %d", 123);
+  ImGui::Begin("Time");
+  ImGui::Text("Remaining time: %s", time.c_str());
+  ImGui::Text("Current score: %d", score);
   ImGui::End();
   
   ImGui::Render();
