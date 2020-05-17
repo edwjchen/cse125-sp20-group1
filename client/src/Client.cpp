@@ -238,12 +238,11 @@ void Client::run() {
             idleCallback();
             
             // For Client Local Test Only
-            glm::vec2 sT = glm::vec2(io_handler->startPos.x*2, io_handler->startPos.y*-2);
-            glm::vec2 eT = glm::vec2(io_handler->endPos.x*2, io_handler->endPos.y*-2);
-            std::vector<glm::vec2> tmpp = {sT, eT};
-            terrain->edit(tmpp, 10);
+//            glm::vec2 sT = glm::vec2(io_handler->startPos.x*2, io_handler->startPos.y*-2);
+//            glm::vec2 eT = glm::vec2(io_handler->endPos.x*2, io_handler->endPos.y*-2);
+//            std::vector<glm::vec2> tmpp = {sT, eT};
+//            terrain->edit(tmpp, 10);
             
-            cerr << "太迷惑了" << endl;
             
             io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
@@ -568,7 +567,7 @@ void Client::updateFromServer(string msg) {
             }
             
             // DEBUG:: Message for Time 
-            cout << "Time: " << time << endl;
+            //cout << "Time: " << time << endl;
             
             
             int i=0;
