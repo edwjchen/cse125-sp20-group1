@@ -15,13 +15,6 @@ Terrain::Terrain(){
 Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth), step(step){
     
     height.resize(width * depth, 0);
-    
-    // Generate a vertex array (VAO) and two vertex buffer objects (VBO).
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO_positions);
-    glGenBuffers(1, &VBO_normals);
-
-
     Uint32 rmask, gmask, bmask, amask;
 
     /* SDL interprets each pixel as a 32-bit number, so our masks must depend
@@ -37,10 +30,8 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
         bmask = 0x00ff0000;
         amask = 0xff000000;
     #endif
-    
     surface = SDL_CreateRGBSurface(0, width, depth, 32, rmask, gmask, bmask, amask);
     setHeightsFromSurface(0.0f, 12.0f);
-    
     if (surface == NULL) {
         SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
         exit(1);
@@ -407,9 +398,9 @@ void Terrain::putpixel(int x, int y, int color){
 
 std::vector<float> Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 {
+    //std::cout << editPoints[0][0] << ", " << editPoints[0][1] << " & " << editPoints[1][0] << ", " << editPoints[1][1] << std::endl;
     int color = h / 10 * 255.0f;
 
-    
     for (int i = 0; i < editPoints.size() - 1; i++){
         drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
     }
@@ -431,6 +422,7 @@ std::vector<float> Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 //    SDL_Delay(10000);
     
     setHeightsFromSurface(0.0f, 12.0f);
+    //std::cout << "finsih editing..." << std::endl;
     
     return height;
     

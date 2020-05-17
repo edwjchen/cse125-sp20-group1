@@ -22,15 +22,15 @@ private:
     int ctype = -1;
     std::string currDir = "";
     std::string currBut = "";
-    glm::vec2 startPos = glm::vec2(0.0);
-    glm::vec2 endPos = glm::vec2(0.0);
+    
     bool ifPressed = false;
     bool ifClicked = false;
     
 public:
     
     IO_handler(int type);
-    
+    glm::vec2 startPos = glm::vec2(0.0);
+    glm::vec2 endPos = glm::vec2(0.0);
     void SendKeyBoardInput(int direction);
     void SendMouseInput(int leftOrRight, glm::vec2 start, glm::vec2 end);
     void SendPackage(chat_client* c);
