@@ -37,14 +37,20 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
         bmask = 0x00ff0000;
         amask = 0xff000000;
     #endif
-    
+
     surface = SDL_CreateRGBSurface(0, width, depth, 32, rmask, gmask, bmask, amask);
+    Uint32 color = SDL_MapRGB(surface->format, 127.5f, 127.5f,127.5f);
+    SDL_FillRect(surface, 0, color);
+
     setHeightsFromSurface(0.0f, 12.0f);
-    
+
     if (surface == NULL) {
         SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
         exit(1);
     }
+    colorMap.resize(width * depth, 127.5f);
+    
+    setHeightsFromColorMap(0.0f, 12.0f);
 }
 
 Terrain::~Terrain(){
@@ -164,26 +170,37 @@ void Terrain::terrainBuildMesh(std::vector<float> h)
              mesh->addVertex(v0.x, v0.y, v0.z, n0.x, n0.y, n0.z);
         }
     }
-
-    /* Build the indices to render the terrain using a single triangle strip
-    * (using degenerate triangles) since that yields much better performance
-    * than rendering triangles.
-    */
-    unsigned numIdx =
-      (vertices_w - 1) * (vertices_d * 2) + (vertices_w - 2) + (vertices_d - 2);
-    indices.resize(numIdx, 0);
-
-    /* Initialize the number of rendering indices so it covers the entire
-    * terrain.
-    */
-    ClipVolume clip;
-    clip.x0 = 0.0f;
-    clip.x1 = (width - 1) * step;
-    clip.z1 = 0.0f;
-    clip.z0 = -(depth - 1) * step;
-    computeIndicesForClipVolume(&clip);
     
-    assert(numIdx = num_indices);
+    for (int i = 0; i < vertices_w - 1; i++){
+       for (int j = 0; j < vertices_d - 1; j++){
+           unsigned int upperLeftIdx = i * vertices_w + j;
+           unsigned int upperRightIdx = i * vertices_w + (j + 1);
+           unsigned int lowerLeftIdx = (i + 1) * vertices_w + j;
+           unsigned int lowerRightIdx = (i + 1) * vertices_w + (j + 1);
+
+           indices.insert(indices.end(), {upperLeftIdx, upperRightIdx, lowerLeftIdx, upperRightIdx, lowerRightIdx, lowerLeftIdx});
+       }
+    }
+
+//    /* Build the indices to render the terrain using a single triangle strip
+//    * (using degenerate triangles) since that yields much better performance
+//    * than rendering triangles.
+//    */
+//    unsigned numIdx =
+//      (vertices_w - 1) * (vertices_d * 2) + (vertices_w - 2) + (vertices_d - 2);
+//    indices.resize(numIdx, 0);
+//
+//    /* Initialize the number of rendering indices so it covers the entire
+//    * terrain.
+//    */
+//    ClipVolume clip;
+//    clip.x0 = 0.0f;
+//    clip.x1 = (width - 1) * step;
+//    clip.z1 = 0.0f;
+//    clip.z0 = -(depth - 1) * step;
+//    computeIndicesForClipVolume(&clip);
+//
+//    assert(numIdx = num_indices);
 }
 
 void Terrain::computeIndicesForClipVolume(ClipVolume *clip)
@@ -274,14 +291,15 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& projection, GLuint sh
     glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, false, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, false, glm::value_ptr(projection));
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniform3fv(glGetUniformLocation(shader, "color"), 1, glm::value_ptr(color));
-
+    
+    glUniform3fv(glGetUniformLocation(shader, "CameraPosition"), 1, glm::value_ptr(color));
+    
     // Bind the VAO
     glBindVertexArray(VAO);
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     // draw the points using triangles, indexed with the EBO
-    glDrawElements(GL_TRIANGLE_STRIP, num_indices, GL_UNSIGNED_INT, 0);
-
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
     // Unbind the VAO and shader program
     terrainUnbind();
 }
@@ -322,6 +340,8 @@ void Terrain::setHeightsFromTexture(const char *file, float offset, float scale)
             setHeight(x, z, h);
         }
     }
+    
+    terrainBuildMesh(height);
 }
 
 std::vector<unsigned int>* Terrain::getIndices() {
@@ -394,7 +414,27 @@ void Terrain::setHeightsFromSurface(float offset, float scale)
     }
 }
 
-void Terrain::drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color){
+void Terrain::setHeightsFromColorMap(float offset, float scale)
+{
+    for (int x = 0; x < width; x++) {
+        for (int z = 0; z < depth; z++) {
+            float h = colorMap[x * depth + z];
+
+            /* Normalize height to [-1, 1] */
+            h = h / 127.5f - 1.0f;
+
+            /* Apply scale */
+            h *= scale;
+
+            /* Apply height offset */
+            h += offset;
+
+            setHeight(x, z, h);
+        }
+    }
+}
+
+void Terrain::drawLineOnSurface(glm::vec2 start, glm::vec2 end, float color){
     int x0 = start.x;
     int y0 = start.y;
     int x1 = end.x;
@@ -414,20 +454,20 @@ void Terrain::drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color){
     {
         if(p >= 0)
         {
-            putpixel(x,y,color);
+            putpixel2(x,y,color);
             y = y+1;
             p = p + 2 * dy - 2 * dx;
         }
         else
         {
-            putpixel(x,y,color);
+            putpixel2(x,y,color);
             p = p + 2 * dy;
         }
         x = x + 1;
     }
 }
 
-void Terrain::putpixel(int x, int y, int color){
+void Terrain::putpixel(int x, int y, float color){
     uint8_t *pixels = (uint8_t *) surface->pixels;
     float scale_x = ((float) surface->w) / (width - 1);
     float scale_z = ((float) surface->h) / (depth - 1);
@@ -435,7 +475,8 @@ void Terrain::putpixel(int x, int y, int color){
     int img_y = (int) truncf(y * scale_z);
     
     //color /= 2;
-    int radius = 8;
+    int radius = 2;
+    
     
     for (int i=-radius ; i<radius ; i++) {
         for(int j=-radius; j<radius; j++) {
@@ -444,14 +485,37 @@ void Terrain::putpixel(int x, int y, int color){
                 int y_coord = std::min(std::max(0, img_y + i), surface->h-1);
                 
                 uint32_t pixel = pixels[y_coord * surface->pitch + x_coord * 4];
-                uint8_t r, g, b;
+                uint8_t r, g, b = 127;
 
                 SDL_GetRGB( pixel, surface->format ,  &r, &g, &b );
 
-                r = std::min(r + (uint8_t)color, 255);
-                g = std::min(g + (uint8_t)color, 255);
-                b = std::min(b + (uint8_t)color, 255);
+                r = std::min(std::max(0.0f,r + color), 255.0f);
+                g = std::min(std::max(0.0f,g + color), 255.0f);
+                b = std::min(std::max(0.0f,b + color), 255.0f);
+                
                 pixels[y_coord * surface->pitch + x_coord * 4] = SDL_MapRGB(surface->format, r, g, b);
+           }
+        }
+    }
+}
+
+void Terrain::putpixel2(int x, int y, float color){
+    //color /= 2;
+    int radius = 2;
+    
+    
+    for (int i=-radius ; i<radius ; i++) {
+        for(int j=-radius; j<radius; j++) {
+            if((i*i + j*j)<(radius*radius)){
+                int x_coord = std::min(std::max(0, x + i), width-1);
+                int y_coord = std::min(std::max(0, y + j), depth-1);
+                
+                
+                float h = colorMap[x_coord * depth + y_coord];
+                
+                h += color;
+                
+                colorMap[x_coord * depth + y_coord] = h;
            }
         }
     }
@@ -459,7 +523,7 @@ void Terrain::putpixel(int x, int y, int color){
 
 void Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 {
-    int color = h / 10 * 255.0f;
+    float color = h / 10 * 127.5f;
 
     for (int i = 0; i < editPoints.size() - 1; i++){
         drawLineOnSurface(editPoints[i], editPoints[i + 1], color);
@@ -480,7 +544,8 @@ void Terrain::edit(std::vector<glm::vec2> editPoints, float h)
 //    // show image for 2 seconds
 //    SDL_Delay(10000);
     
-    setHeightsFromSurface(0.0f, 12.0f);
+//    setHeightsFromSurface(0.0f, 10.0f);
+    setHeightsFromColorMap(0.0f, 10.0f);
     terrainBuildMesh(height);
     
     

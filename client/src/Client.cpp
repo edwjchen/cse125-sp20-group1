@@ -69,7 +69,10 @@ bool Client::initializeProgram() {
     // Create a shader program with a vertex shader and a fragment shader.
     shaderProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
     skyboxProgram = LoadShaders("shaders/skybox.vert", "shaders/skybox.frag");
-    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag");
+//    terrainProgram = LoadShaders("shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.geom");
+    terrainProgram = LoadShaders("shaders/toon.vert", "shaders/toon.frag");
+//    terrainProgram = LoadShaders("shaders/shader.vert", "shaders/shader.frag");
+
 
     // Check the shader program.
     if (!shaderProgram)
@@ -115,15 +118,25 @@ bool Client::initializeObjects()
     terrain = new Terrain(251, 251, 0.5f);
 
     std::vector<glm::vec2> tmp = {
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(125.0f, 125.0f),
-        glm::vec2(135.0f, 125.0f),
-        glm::vec2(250.0f, 250.0f)
+        glm::vec2(0.0f, 0.0f),
+        glm::vec2(16.0f, 16.0f),
+        glm::vec2(20.0f, 16.0f),
+        glm::vec2(32.0f, 32.0f)
+    };
+    std::vector<glm::vec2> tmp2 = {
+        glm::vec2(0.0f, 32.0f),
+        glm::vec2(16.0f, 16.0f),
+        glm::vec2(20.0f, 16.0f),
+        glm::vec2(32.0f, 0.0f)
     };
     terrain->edit(tmp, 10);
+//
+    terrain->edit(tmp, -10);
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
+//    terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
+
     // terrain->computeBoundingBoxes();
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     return true;
