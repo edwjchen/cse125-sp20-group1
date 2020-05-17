@@ -24,6 +24,7 @@
 
 #include "chat_message.hpp"
 #include "Terrain.hpp"
+#include "GameManager.hpp"
 
 using namespace boost::asio;
 using ip::tcp;
@@ -35,15 +36,17 @@ class Server : public boost::enable_shared_from_this<Server>
 private:
     boost::asio::io_service& io_service_;
     tcp::acceptor acceptor_;
+    vector <std::shared_ptr<tcp::socket>> sockets;
     int i = 0;
 
-    char info_buffer[1024];
-
-    chat_message obj;
+    GameManager gm;
 
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
-            std::string msg = obj.data()+'\n';
+            if(sockets[id-1] == nullptr){
+                return;
+            }
+            std::string msg = gm.encode();
             //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );
             std::this_thread::sleep_for(std::chrono::milliseconds(30));
@@ -54,72 +57,18 @@ private:
     {
         while(1){
             boost::asio::streambuf buf;
-            boost::asio::read_until( *socket, buf, "\n" );
+            boost::system::error_code ec;
+            boost::asio::read_until( *socket, buf, "\n" , ec);
+            
+            // TODO: handle player exits
+            if(ec ==  boost::asio::error::eof){
+                cout << "player "<< id << " exit" << endl;
+                sockets[id-1]->close();
+                sockets[id-1] = nullptr;
+                break;
+            }
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
-            std::string key_op = "";
-            std::string mouse_op = "";
-            float temp[4];
-            std::vector<glm::vec2> editPoints;
-            float height = 10;
-            
-            // Read JSON from client
-            try{
-                if(data != ""){
-                    stringstream ss;
-                    ss << data;
-                        
-                    pt::ptree tar;
-                    pt::read_json(ss, tar);
-                        
-                    int i = 0;
-                    BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
-                        if(i == 0){
-                            key_op = child.second.get<std::string>("key");
-                        }
-                        else{
-                            // Mouse
-                            mouse_op = child.second.get<std::string>("mouse");
-                            if(mouse_op.compare("l")){
-                                int index = 0;
-                                BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_l")){
-                                    temp[index] = stof(t.second.data());
-                                    index++;
-//                                    if(temp[index]!= 0){
-//                                        cout << temp[index] << " ";
-//                                    }
-                                }
-                                //cout << endl;
-                            } else if(mouse_op.compare("r")){
-                                int index = 0;
-                                BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_r")){
-                                    temp[index] = stof(t.second.data());
-                                    index++;
-                                }
-                            }
-                            
-                        }
-                        i++;
-                    }
-                }
-            } catch (...){
-                    
-            }
-            
-            if(key_op != ""){
-                cout << "id: " << id << ", operation: "<< key_op << endl;
-                if(id == 1){
-                    obj.update1(key_op.at(0));
-                }else if(id == 2){
-                    obj.update2(key_op.at(0));
-                }
-            }
-            if(mouse_op != ""){
-                //cout << "id: " << id << ", button: " << mouse_op <<endl;
-                cout << mouse_op << ": " << temp[0] << ", " << temp[1] << ", " << temp[2] << ", " << temp[3] << endl;
-                editPoints.push_back(glm::vec2(temp[0],temp[1]));
-                editPoints.push_back(glm::vec2(temp[2],temp[3]));
-                obj.editTerrain(editPoints, 10);
-            }
+            gm.handle_input(data, id);
         }
     }
 
@@ -136,10 +85,16 @@ private:
 
             cout << "accepted: " << i << endl;
             boost::asio::write( *socket_1, boost::asio::buffer(std::to_string(i)+'\n') );
+            sockets.push_back(socket_1);
             //update(i, socket_1);
             boost::thread send_thread(&Server::send_info, this, i, socket_1);
             boost::thread read_thread(&Server::read_info, this, i, socket_1);
         }
+        // cout << "4 players ready" << endl;
+        // for(int j=0;j<4;j++){
+        //     boost::thread send_thread(&Server::send_info, this, j, sockets[j]);
+        //     boost::thread read_thread(&Server::read_info, this, j, sockets[j]);
+        // }
         while(1){}
     }
 

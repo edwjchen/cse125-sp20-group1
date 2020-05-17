@@ -22,6 +22,7 @@
 #include "shader.h"
 #include "IO_handler.hpp"
 #include "Camera.hpp"
+#include "AudioManager.hpp"
 
 class Client {
 public:
@@ -90,6 +91,10 @@ private:
     
     // Transform screen coordinate to world coordinate
     static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
+    
+    
+    // Audio
+    static AudioManager* audioManager;
 };
 
 #endif /* Client_h */
