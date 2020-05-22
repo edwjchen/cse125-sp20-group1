@@ -31,6 +31,9 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
         amask = 0xff000000;
     #endif
     surface = SDL_CreateRGBSurface(0, width, depth, 32, rmask, gmask, bmask, amask);
+    Uint32 color = SDL_MapRGB(surface->format, 127.5f, 127.5f,127.5f);
+    SDL_FillRect(surface, 0, color);
+    
     setHeightsFromSurface(0.0f, 12.0f);
     if (surface == NULL) {
         SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());

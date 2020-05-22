@@ -85,6 +85,17 @@ GLFWwindow* Window::getWindow() {
   return this->window;
 }
 
+void Window::setId(int player_id){
+    user_id = player_id;
+}
+
+void Window::setTime(std::string t){
+    time = t;
+}
+void Window::setScore(int s){
+    score = s;
+}
+
 void Window::displayCallback()
 {
   // feed inputs to dear imgui, start new frame
@@ -92,8 +103,37 @@ void Window::displayCallback()
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   
-  ImGui::Begin("Control Panel");
-  ImGui::Text("Hello, world %d", 123);
+    std::string player_type = "uninitialize";
+    std::string player_team = "uninitialize";
+    ImGui::Begin("Player Info");
+    if(user_id == 1 || user_id == 2){
+        player_type = "Ball Player";
+    }
+    else if(user_id == 3 || user_id == 4){
+        player_type = "Terrian Player";
+    }
+    else{
+        std::cout << "unrecognized id" << std::endl;
+    }
+    if(user_id == 1 || user_id == 3){
+        player_team = "Team 1";
+    }
+    else if(user_id == 2 || user_id == 4){
+        player_team = "Team 2";
+    }
+    else{
+        std::cout << "unrecognized id" << std::endl;
+    }
+    ImGui::Text("Player Type: %s", player_type.c_str());
+    ImGui::Text("Player Team: %s", player_team.c_str());
+    ImGui::End();
+    
+  ImGui::Begin("Time");
+  ImGui::Text("Remaining time: %s", time.c_str());
+  ImGui::End();
+    
+  ImGui::Begin("Score");
+  ImGui::Text("Current score: %d", score);
   ImGui::End();
   
   ImGui::Render();

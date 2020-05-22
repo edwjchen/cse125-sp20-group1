@@ -97,7 +97,7 @@ void IO_handler::SendPackage(chat_client* c){
         }
     }
     else {
-        //cerr << "string comparision error in io_handller 96" << endl;
+        //cerr << "string comparision error in io_handller 100" << endl;
     }
     
     currBut = "";

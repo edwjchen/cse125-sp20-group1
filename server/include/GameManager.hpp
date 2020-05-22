@@ -1,8 +1,29 @@
 #ifndef GameManager_hpp
 #define GameManager_hpp
 
+#include <boost/enable_shared_from_this.hpp>
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <iomanip>
+#include <array>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/foreach.hpp>
+#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <sstream>
+
 #include "core.h"
-#include "chat_message.hpp"
 #include "Terrain.hpp"
 #include "Sphere.h"
 
@@ -28,8 +49,14 @@ public:
 
     Terrain * terrain;
     string time;
-    int score;
     
+    int scoreT1 = -1;
+    int scoreT2 = -2;
+
+    clock_t startTime;
+    clock_t endTime;
+    float totalGameTime;
+
     Sphere* sphere1;
     Sphere* sphere2;
     
@@ -37,7 +64,5 @@ public:
 
     bool updateTerrain;
 };
-
-
 
 #endif 

@@ -5,7 +5,8 @@ namespace pt = boost::property_tree;
 
 GameManager::GameManager(): updateTerrain(false){
     time = "";
-    score = -1;
+    startTime = clock();
+    totalGameTime = 300.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
         glm::vec2(1.0f, 1.0f),
@@ -24,11 +25,21 @@ GameManager::GameManager(): updateTerrain(false){
 }
 
 void GameManager::UpdateScore(){
-    score++;
+    //obj.score++;
+    // Need to determine which team to add score
 }
 
 void GameManager::UpdateTime(){
-    time = "5:00";
+    string finishedTime = "";
+    endTime = clock();
+    float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+    if(duration <= 0){
+        // Send a signal to announce game ends
+        duration = 0;
+        finishedTime = "0:00";
+    }
+   time = finishedTime;
 }
 
 void GameManager::update1(char op){
@@ -160,13 +171,11 @@ string GameManager::encode()
         matrix2[4*i+j].put("", transM2[i][j]);
         }
     }
-    
+
     for(int i=0;i<16;i++){
         m2.push_back(std::make_pair("", matrix2[i]));
     }
     obj2.add_child("transformation", m2);
-    
-    
     obj.push_back(std::make_pair("", obj1));
     obj.push_back(std::make_pair("", obj2));
     
@@ -181,8 +190,16 @@ string GameManager::encode()
         updateTerrain = false;
     }
     
-    scoreNode.put("", score);
-    timeNode.put("", time);
+    pt::ptree tempNodeS1;
+    pt::ptree tempNodeS2;
+    tempNodeS1.put("", scoreT1);
+    tempNodeS2.put("", scoreT2);
+    scoreNode.push_back(std::make_pair("", tempNodeS1));
+    scoreNode.push_back(std::make_pair("", tempNodeS2));
+    // Add time to root
+    pt::ptree tempNodeT;
+    tempNodeT.put("", time);
+    timeNode.push_back(std::make_pair("",tempNodeT));
     
     root.add_child("Obj", obj);
     

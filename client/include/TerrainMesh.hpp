@@ -21,6 +21,8 @@ public:
     
     void addVertex(float x, float y, float z,
                    float nx, float ny, float nz);
+    void convertLowPoly(unsigned int ul, unsigned int ur,
+                        unsigned int ll, unsigned int lr);
 };
 
 #endif /* TerrainMesh_hpp */

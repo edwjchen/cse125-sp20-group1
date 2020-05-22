@@ -47,6 +47,7 @@ private:
     GLuint shaderProgram;
     GLuint skyboxProgram;
     GLuint terrainProgram;
+    GLuint toonProgram;
     
     // Constructors and Destructors
     bool initializeProgram();
@@ -72,7 +73,6 @@ private:
     static Sphere* sphere_mouse; // for testing purpose
     static Terrain* terrain;
     static Camera* camera;
-
     static Skybox* skybox;
   
     // Store sphere absolute position for camera, since the position stored is always 0
@@ -95,6 +95,11 @@ private:
     
     // Audio
     static AudioManager* audioManager;
+    
+    // GameManager
+    static int player_id;
+    static string time;
+    static int score;
 };
 
 #endif /* Client_h */
