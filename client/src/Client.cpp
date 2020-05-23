@@ -24,6 +24,13 @@ int Client::totalTime = 300;
 bool Client::inGame = false;
 bool Client::hasCamBeenSet = false;
 
+boost::asio::io_service Client::io_service;
+tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
+chat_client Client::c(io_service, endpoint);
+boost::thread Client::t(boost::bind(&boost::asio::io_service::run, &io_service));
+std::string Client::msg;
+
+
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
@@ -218,11 +225,11 @@ void Client::run() {
     // Client Try
     try
     {
-        boost::asio::io_service io_service;
-        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
-        chat_client c(io_service, endpoint);
-        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-        std::string msg;
+//        boost::asio::io_service io_service;
+//        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
+//        chat_client c(io_service, endpoint);
+//        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+//        std::string msg;
 
         // Loop while GLFW window should stay open.
         while (!glfwWindowShouldClose(window->getWindow()))
@@ -234,12 +241,16 @@ void Client::run() {
 
             player_id = c.get_id();
             
-            if(player_id == 1 && !hasCamBeenSet){
-                hasCamBeenSet = true;
+//            if(player_id == 1 && !hasCamBeenSet){
+//                hasCamBeenSet = true;
+//                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+//            }
+//            else if(player_id == 1){
+//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+//            }
+            if(player_id == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
-                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
-            }
-            else if(player_id == 1){
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
             else if(player_id == 2){
@@ -270,7 +281,7 @@ void Client::run() {
 //            terrain->edit(tmpp, 10);
             
             
-            io_handler -> SendPackage(&c);
+//            io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         }
 
@@ -310,18 +321,26 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // take user's io
             case GLFW_KEY_W:{
                 io_handler->SendKeyBoardInput(0, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_A:{
                 io_handler->SendKeyBoardInput(1, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_S:{
                 io_handler->SendKeyBoardInput(2, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_D:{
                 io_handler->SendKeyBoardInput(3, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_P:{
@@ -354,18 +373,26 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             // Contineous movement
             case GLFW_KEY_W:{
                 io_handler->SendKeyBoardInput(0, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_A:{
                 io_handler->SendKeyBoardInput(1, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_S:{
                 io_handler->SendKeyBoardInput(2, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_D:{
                 io_handler->SendKeyBoardInput(3, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
 
@@ -431,6 +458,8 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         glm::vec2 translatedCPos = screenPointToWorld(clickPos);
         glm::vec2 translatedRPos = screenPointToWorld(releasePos);
         io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
+        io_handler -> SendPackage(&c);
+
 
         cout << "finalPos x: " << translatedRPos.x << " finalPos y: " << translatedRPos.y << endl;
         isMouseButtonDown = 0;

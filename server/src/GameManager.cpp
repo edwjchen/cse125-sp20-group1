@@ -20,7 +20,7 @@ GameManager::GameManager(): updateTerrain(false){
     terrain->computeBoundingBoxes();
     
     sphere1 = new Sphere(5.0f, 2.0f);
-    sphere1->move(glm::vec3(64,-10,-65));
+    sphere1->move(glm::vec3(64,0,-65));
     sphere2 = new Sphere(5.0f, 2.0f);
     sphere1->move(glm::vec3(58,0,-54));
 }
@@ -57,10 +57,10 @@ void GameManager::update1(char op, glm::vec3 lookat){
     switch (op) {
         case 'w':
             newPos = sphere1->getCenter();
-            //newPos.z -= 1;
-            newPos.x += lookat.x/(lookat.x + lookat.z);
+            newPos.z -= 1;
+            //newPos.x += lookat.x/(lookat.x + lookat.z);
             //newPos.y += lookat.y/(lookat.x + lookat.y + lookat.z);
-            newPos.z += lookat.z/(lookat.x + lookat.z);
+            //newPos.z += lookat.z/(lookat.x + lookat.z);
 
             sphere1->move(newPos);
             break;
@@ -118,7 +118,7 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 }
 
 void GameManager::handle_input(string data, int id){
-    
+    cout << data << endl;
     std::string key_op = "";
     std::string mouse_op = "";
     
@@ -348,7 +348,7 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, glm::v
 
         }
     }catch(...){
-        //std::cout << "decode exception" << std::endl;
+        std::cout << "decode exception" << std::endl;
     }
     if(mouse_op != ""){
         editPoints.push_back(glm::vec2(temp[0],temp[1]));

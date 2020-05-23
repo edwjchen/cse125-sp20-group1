@@ -108,6 +108,14 @@ private:
     static int player_id;
     static string currTime;
     static int score;
+    
+    // Network
+    static boost::asio::io_service io_service;
+    static tcp::endpoint endpoint;
+    static chat_client c;
+    static boost::thread t;
+    static std::string msg;
+    
 };
 
 #endif /* Client_h */
