@@ -48,12 +48,13 @@ public:
     void decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints);
 
     Terrain * terrain;
-    string time;
+    string currTime;
+    int timeSignal = 0;
     int scoreT1 = -1;
     int scoreT2 = -2;
 
-    clock_t startTime;
-    clock_t endTime;
+    time_t startTime;
+    time_t endTime;
     float totalGameTime;
 
     Sphere* sphere1;

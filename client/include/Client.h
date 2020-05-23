@@ -23,6 +23,7 @@
 #include "IO_handler.hpp"
 #include "Camera.hpp"
 #include "AudioManager.hpp"
+#include <ctime>
 
 class Client {
 public:
@@ -88,6 +89,12 @@ private:
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
     
+    // Timer
+    static void updateTime();
+    static time_t timeStart;
+    static time_t timeNow;
+    static int totalTime;
+    static bool inGame;
     
     // Transform screen coordinate to world coordinate
     static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
@@ -98,7 +105,7 @@ private:
     
     // GameManager
     static int player_id;
-    static string time;
+    static string currTime;
     static int score;
 };
 

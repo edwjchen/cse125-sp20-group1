@@ -42,11 +42,11 @@ private:
 
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
-            gm.UpdateTime();
 
             if(sockets[id-1] == nullptr){
                 return;
             }
+            gm.UpdateTime();
             std::string msg = gm.encode();
             //std::cout << msg ;
             boost::asio::write( *socket, boost::asio::buffer(msg) );

@@ -16,8 +16,12 @@ Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
 int Client::player_id = 0;
-string Client::time = "Time shoud not be this";
+string Client::currTime = "Time shoud not be this";
 int Client::score = -100;
+time_t Client::timeStart;
+time_t Client::timeNow;
+int Client::totalTime = 300;
+bool Client::inGame = false;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
@@ -159,7 +163,7 @@ void Client::displayCallback() {
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
     window->setId(player_id);
-    window->setTime(time);
+    window->setTime(currTime);
     window->setScore(score);
 
 
@@ -566,9 +570,26 @@ void Client::updateFromServer(string msg) {
             }
             //cout << "Score: " << score << endl;
             
+            //int timeSignal = 0;
+            
             BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
-                time = v.second.data();
+                currTime = v.second.data();
             }
+            
+            // Local Timer Logic, save for now
+//            if(timeSignal == 0 && !inGame){
+//                inGame = true;
+//                timeStart = time(NULL);
+//            }
+//            else if(timeSignal != 0) {
+//                inGame = false;
+//            }
+//
+//            if(inGame){
+//                updateTime();
+//            } else {
+//                currTime = "00:00";
+//            }
             
             // DEBUG:: Message for Time 
             //cout << "Time: " << time << endl;
@@ -595,4 +616,19 @@ void Client::updateFromServer(string msg) {
 
     }
 
+}
+
+// Local Timer Logic, save for now.
+void Client::updateTime(){
+     string finishedTime = "";
+     timeNow = time(NULL);
+     //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+     double duration = difftime(timeNow, timeStart);
+     finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+     if(duration <= 0){
+         // Send a signal to announce game ends
+         duration = 0;
+         finishedTime = "0:00";
+     }
+    currTime = finishedTime;
 }

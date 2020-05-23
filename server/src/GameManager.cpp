@@ -4,8 +4,9 @@ using namespace std;
 namespace pt = boost::property_tree;
 
 GameManager::GameManager(): updateTerrain(false){
-    time = "";
-    startTime = clock();
+    currTime = "";
+    //startTime = clock();
+    startTime = time(NULL);
     totalGameTime = 300.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
@@ -31,15 +32,24 @@ void GameManager::UpdateScore(){
 
 void GameManager::UpdateTime(){
     string finishedTime = "";
-    endTime = clock();
-    float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
-    finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+    endTime = time(NULL);
+    //timeSignal = 1;
+    //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    double duration = totalGameTime - difftime(endTime, startTime); 
+    finishedTime = finishedTime + to_string((int)duration/60);
+    if((int)duration % 60 < 10){
+        finishedTime += ":0" + to_string((int)duration%60);
+    } else {
+        finishedTime += ":" + to_string((int)duration%60);
+    }
     if(duration <= 0){
         // Send a signal to announce game ends
         duration = 0;
+        //timeSignal = 0;
         finishedTime = "0:00";
     }
-   time = finishedTime;
+    //cout << finishedTime << endl;
+    currTime = finishedTime;
 }
 
 void GameManager::update1(char op){
@@ -157,7 +167,7 @@ string GameManager::encode()
     obj1.put("id", 1);
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-        matrix1[4*i+j].put("", transM1[i][j]);
+            matrix1[4*i+j].put("", transM1[i][j]);
         }
     }
     for(int i=0;i<16;i++){
@@ -168,7 +178,7 @@ string GameManager::encode()
     obj2.put("id", 2);
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-        matrix2[4*i+j].put("", transM2[i][j]);
+            matrix2[4*i+j].put("", transM2[i][j]);
         }
     }
 
@@ -200,7 +210,7 @@ string GameManager::encode()
     scoreNode.push_back(std::make_pair("", tempNodeS2));
     // Add time to root
     pt::ptree tempNodeT;
-    tempNodeT.put("", time);
+    tempNodeT.put("", currTime);
     timeNode.push_back(std::make_pair("",tempNodeT));
     
     root.add_child("Obj", obj);
