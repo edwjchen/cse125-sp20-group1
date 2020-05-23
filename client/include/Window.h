@@ -10,6 +10,8 @@ public:
     GLFWwindow* getWindow();
     void displayCallback();
     std::pair<int, int> getFrameBufferSize();
+    void setGameStart(bool start);
+    void setGameOver(bool over);
     void setId(int player_id);
     void setTime(std::string t);
     void setScore(int s);
@@ -21,6 +23,8 @@ private:
     std::string title;
     bool closed;
     
+    bool game_start;
+    bool game_over;
     int user_id;
     std::string time;
     int score;

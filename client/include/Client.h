@@ -104,6 +104,8 @@ private:
     static AudioManager* audioManager;
     
     // GameManager
+    static bool game_start;
+    static bool game_over;
     static int player_id;
     static string currTime;
     static int score;

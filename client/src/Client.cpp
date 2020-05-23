@@ -22,6 +22,8 @@ time_t Client::timeStart;
 time_t Client::timeNow;
 int Client::totalTime = 300;
 bool Client::inGame = false;
+bool Client::game_start = false;
+bool Client::game_over = false;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
@@ -165,8 +167,8 @@ void Client::displayCallback() {
     window->setId(player_id);
     window->setTime(currTime);
     window->setScore(score);
-
-
+    window->setGameStart(game_start);
+    window->setGameOver(game_over);
 }
 
 bool Client::initialize() {
@@ -513,6 +515,10 @@ void Client::updateFromServer(string msg) {
             glm::mat4 matrix1, matrix2;
 
             vector <float> height_map;
+            
+            // TODO:: Need more condition later
+            game_start = true;
+            //cout << player_id << "start!" << endl;
 
             int id = 1;
             BOOST_FOREACH(const pt::ptree::value_type& child,
