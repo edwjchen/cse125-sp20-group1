@@ -23,10 +23,10 @@ public:
     glm::mat4 getView();
     glm::vec3 getLookAtPos();
     glm::vec3 getUpVector(){return upVector;}
+    glm::vec3 eyePos, frontVector, upVector;
 private:
     // Camera Matrices
     glm::mat4 view;
-    glm::vec3 eyePos, frontVector, upVector;
     float sensitivity;
     glm::vec3 lookAtPos;
     

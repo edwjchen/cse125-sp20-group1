@@ -81,7 +81,8 @@ private:
     static glm::vec3 sphere2_pos;
     
     static glm::vec2 mousePos;
-    static bool mouseControl; 
+    static bool mouseControl;
+    static bool hasCamBeenSet;
 
     // IO Handler
     static IO_handler* io_handler;
@@ -109,6 +110,14 @@ private:
     static int player_id;
     static string currTime;
     static int score;
+    
+    // Network
+    static boost::asio::io_service io_service;
+    static tcp::endpoint endpoint;
+    static chat_client c;
+    static boost::thread t;
+    static std::string msg;
+    
 };
 
 #endif /* Client_h */
