@@ -54,29 +54,31 @@ void GameManager::UpdateTime(){
 
 void GameManager::update1(char op, glm::vec3 lookat){
     glm::vec3 newPos;
+    glm::vec3 right = glm::normalize(glm::cross(lookat, glm::vec3(0.0f, 1.0f, 0.0f)));
+
     switch (op) {
         case 'w':
             newPos = sphere1->getCenter();
-            newPos.z -= 1;
-            //newPos.x += lookat.x/(lookat.x + lookat.z);
-            //newPos.y += lookat.y/(lookat.x + lookat.y + lookat.z);
-            //newPos.z += lookat.z/(lookat.x + lookat.z);
-
+            newPos.x += lookat.x;
+            newPos.z += lookat.z;
             sphere1->move(newPos);
             break;
         case 'a':
             newPos = sphere1->getCenter();
-            newPos.x -= 1;
+            newPos.x -= right.x;
+            newPos.z -= right.z;
             sphere1->move(newPos);
             break;
         case 's':
             newPos = sphere1->getCenter();
-            newPos.z += 1;
+            newPos.x -= lookat.x;
+            newPos.z -= lookat.z;
             sphere1->move(newPos);
             break;
         case 'd':
             newPos = sphere1->getCenter();
-            newPos.x += 1;
+            newPos.x += right.x;
+            newPos.z += right.z;
             sphere1->move(newPos);
             break;
     }
@@ -84,25 +86,31 @@ void GameManager::update1(char op, glm::vec3 lookat){
 
 void GameManager::update2(char op, glm::vec3 lookat){
     glm::vec3 newPos;
+    glm::vec3 right = glm::normalize(glm::cross(lookat, glm::vec3(0.0f, 1.0f, 0.0f)));
+
     switch (op) {
         case 'w':
             newPos = sphere2->getCenter();
-            newPos.z -= 1;
+            newPos.x += lookat.x;
+            newPos.z += lookat.z;            
             sphere2->move(newPos);
             break;
         case 'a':
             newPos = sphere2->getCenter();
-            newPos.x -= 1;
+            newPos.x -= right.x;
+            newPos.z -= right.z;
             sphere2->move(newPos);
             break;
         case 's':
             newPos = sphere2->getCenter();
-            newPos.z += 1;
+            newPos.x -= lookat.x;
+            newPos.z -= lookat.z;
             sphere2->move(newPos);
             break;
         case 'd':
             newPos = sphere2->getCenter();
-            newPos.x += 1;
+            newPos.x += right.x;
+            newPos.z += right.z;
             sphere2->move(newPos);
             break;
     }
@@ -118,7 +126,7 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 }
 
 void GameManager::handle_input(string data, int id){
-    cout << data << endl;
+    //cout << data << endl;
     std::string key_op = "";
     std::string mouse_op = "";
     

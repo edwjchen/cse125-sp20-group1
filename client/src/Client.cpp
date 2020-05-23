@@ -22,7 +22,6 @@ time_t Client::timeStart;
 time_t Client::timeNow;
 int Client::totalTime = 300;
 bool Client::inGame = false;
-bool Client::hasCamBeenSet = false;
 
 boost::asio::io_service Client::io_service;
 tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
@@ -50,6 +49,8 @@ Client::Client(int width, int height) {
     this->width = windowSize.first;
     this->height = windowSize.second;
     camera = new Camera(glm::vec3(60, 79, 21), glm::vec3(60, 5, -30));
+
+
     //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
     
     projection = glm::perspective(glm::radians(60.0), double(width) / (double)height, 1.0, 1000.0);
@@ -241,21 +242,16 @@ void Client::run() {
 
             player_id = c.get_id();
             
-//            if(player_id == 1 && !hasCamBeenSet){
-//                hasCamBeenSet = true;
-//                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
-//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
-//            }
-//            else if(player_id == 1){
-//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
-//            }
             if(player_id == 1){
-                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+                
+                // Might not need to be in while loop, save for now, might optimize later
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+                camera->eyePos = sphere1_pos + glm::normalize(camera->eyePos - camera->lookAtPos)* 30.0f;
+
             }
             else if(player_id == 2){
-                camera->setPos(glm::vec3(sphere2_pos.x, sphere2_pos.y + 10,sphere2_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere2_pos.x, sphere2_pos.y,sphere2_pos.z));
+                camera->eyePos = sphere2_pos + glm::normalize(camera->eyePos - camera->lookAtPos)* 30.0f;
             }
             else{
                 // camera for terrian player is fixed
@@ -274,18 +270,9 @@ void Client::run() {
             // Idle callback. Updating objects, etc. can be done here. (Update)
             idleCallback();
             
-            // For Client Local Test Only
-//            glm::vec2 sT = glm::vec2(io_handler->startPos.x*2, io_handler->startPos.y*-2);
-//            glm::vec2 eT = glm::vec2(io_handler->endPos.x*2, io_handler->endPos.y*-2);
-//            std::vector<glm::vec2> tmpp = {sT, eT};
-//            terrain->edit(tmpp, 10);
-            
-            
 //            io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         }
-
-
         c.close();
         t.join();
     }
@@ -562,7 +549,14 @@ void Client::updateFromServer(string msg) {
                         i++;
                         //cout << matrix1[i/4][i%4] << endl;
                     }
-
+                    
+                    //Store the difference for camera
+                    glm::vec3 newPos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                    glm::vec3 diffPos = newPos - sphere1_pos;
+                    
+                    if(player_id == 1){
+                        camera->eyePos += diffPos;
+                    }
                     // Store the absolute position
                     sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
                     //sphere_player1->move(matrix1);
@@ -576,6 +570,15 @@ void Client::updateFromServer(string msg) {
                         matrix2[i/4][i%4] = stof(m.second.data());
                         i++;
                     }
+                    
+                    //Store the difference for camera
+                    glm::vec3 newPos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
+                    glm::vec3 diffPos = newPos - sphere2_pos;
+                    
+                    if(player_id == 2){
+                        camera->eyePos += diffPos;
+                    }
+                    
                     // Store the absolute position
                     sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
                     //sphere_player2->move(matrix2);
@@ -595,10 +598,10 @@ void Client::updateFromServer(string msg) {
             int indexForScore = 0;
             BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
                 // Team 1 get their score
-                if((id == 1 || id == 3) && indexForScore == 0){
+                if((player_id == 1 || player_id == 3) && indexForScore == 0){
                     score = stoi(v.second.data());
                 }
-                else if((id == 2 || id == 4) && indexForScore == 1){
+                else if((player_id == 2 || player_id == 4) && indexForScore == 1){
                     score = stoi(v.second.data());
                 }
                 indexForScore++;

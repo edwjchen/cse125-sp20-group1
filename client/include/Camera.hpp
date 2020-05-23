@@ -24,11 +24,12 @@ public:
     glm::vec3 getLookAtPos();
     glm::vec3 getUpVector(){return upVector;}
     glm::vec3 eyePos, frontVector, upVector;
+    glm::vec3 lookAtPos;
+    glm::vec3 rotateRadius;
 private:
     // Camera Matrices
     glm::mat4 view;
     float sensitivity;
-    glm::vec3 lookAtPos;
     
 };
 
