@@ -33,7 +33,7 @@ class GameManager{
 public:
     GameManager();
 
-    void UpdateTime();
+    int UpdateTime();
     void UpdateScore();    
 
     void update1(char op, glm::vec3 lookat);

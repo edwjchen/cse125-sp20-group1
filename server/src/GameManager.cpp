@@ -9,7 +9,7 @@ GameManager::GameManager(): updateTerrain(false){
     currTime = "";
     //startTime = clock();
     startTime = time(NULL);
-    totalGameTime = 300.0f;
+    totalGameTime = 100.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
         glm::vec2(1.0f, 1.0f),
@@ -32,7 +32,7 @@ void GameManager::UpdateScore(){
     // Need to determine which team to add score
 }
 
-void GameManager::UpdateTime(){
+int GameManager::UpdateTime(){
     string finishedTime = "";
     endTime = time(NULL);
     //timeSignal = 1;
@@ -49,9 +49,11 @@ void GameManager::UpdateTime(){
         duration = 0;
         //timeSignal = 0;
         finishedTime = "0:00";
+        return 0;
     }
     //cout << finishedTime << endl;
     currTime = finishedTime;
+    return 1;
 }
 
 void GameManager::update1(char op, glm::vec3 lookat){
@@ -120,7 +122,8 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 }
 
 void GameManager::handle_input(string data, int id){
-    cout << data << endl;
+    //cout << data << endl;
+    time1 = std::chrono::high_resolution_clock::now();
     std::string key_op = "";
     std::string mouse_op = "";
 
@@ -130,7 +133,9 @@ void GameManager::handle_input(string data, int id){
     decode(data, key_op, mouse_op, camLookatFront, editPoints);
 
     //cout << camLookatFront.x << " " << camLookatFront.y << " " << camLookatFront.z << " " << endl;
-
+    time2 = std::chrono::high_resolution_clock::now();
+    cout << "Finish decoding : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    time1 = time2;
     if(key_op != ""){
         cout << "id: " << id << ", operation: "<< key_op << endl;
         if(id == 1){
@@ -151,13 +156,17 @@ void GameManager::handle_input(string data, int id){
     // hardcode to add gravity for now
     sphere1->move(sphere1->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
     sphere2->move(sphere2->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
+    time2 = std::chrono::high_resolution_clock::now();
+    cout << "Before checking collisions : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    time1 = time2;
     checkTerrainCollisions(sphere1);
     checkTerrainCollisions(sphere2);
     checkSphereCollisions();
 
     time2 = std::chrono::high_resolution_clock::now();
-    cout << "Finish updating : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    cout << "Finish updating : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
     time1 = time2;
+    cout << endl;
 }
 
 
@@ -239,6 +248,8 @@ string GameManager::encode()
 
     root.add_child("Time", timeNode);
 
+    root.put("Header", "update");
+
     stringstream ss;
     write_json(ss, root, false);
     return ss.str() + '\n';
@@ -299,9 +310,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
 
 void GameManager::decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
 {
-    //cout << data << endl;
     float temp[4];
-    //std::cout << data << std::endl;
     // Read JSON from client
     try{
         if(data != ""){

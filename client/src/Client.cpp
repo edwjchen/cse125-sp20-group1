@@ -10,6 +10,9 @@
 
 namespace pt = boost::property_tree;
 
+std::chrono::time_point<std::chrono::high_resolution_clock> time1;
+std::chrono::time_point<std::chrono::high_resolution_clock> time2;
+
 Sphere* Client::sphere_player1;
 Sphere* Client::sphere_player2;
 Sphere* Client::sphere_mouse; // testing only
@@ -538,114 +541,143 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
 void Client::updateFromServer(string msg) {
     //cout << msg << endl;
     try{
+        time1 = std::chrono::high_resolution_clock::now();
         if(msg != ""){
             stringstream ss;
             ss << msg;
-
+//            time2 = std::chrono::high_resolution_clock::now();
+//            cout << "stringstream : "<< std::chrono::duration_cast<std::chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+//            time1 = time2;
+//
             pt::ptree tar;
             pt::read_json(ss, tar);
+            
+//            time2 = std::chrono::high_resolution_clock::now();
+//            cout << "read json : "<< std::chrono::duration_cast<std::chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+//            time1 = time2;
+            
+            string header = tar.get<string>("Header");
+            // waiting room
+            if(header.compare("wait") == 0){
+                string player = tar.get<string>("players");
+                cout << "total players:" <<  player << endl;
+            }
+            // game ends
+            else if(header.compare("end") == 0){
+                cout << "Game Ends" << endl;
+            }
+            else if(header.compare("update") == 0){
+                glm::mat4 matrix1, matrix2;
 
-            glm::mat4 matrix1, matrix2;
+                vector <float> height_map;
 
-            vector <float> height_map;
+                int id = 1;
+                BOOST_FOREACH(const pt::ptree::value_type& child,
+                              tar.get_child("Obj")) {
 
-            int id = 1;
-            BOOST_FOREACH(const pt::ptree::value_type& child,
-                          tar.get_child("Obj")) {
+                    if (id == 1){
+                        int i=0;
+                        BOOST_FOREACH(const pt::ptree::value_type& m,
+                                      child.second.get_child("transformation")) {
 
-                if (id == 1){
-                    int i=0;
-                    BOOST_FOREACH(const pt::ptree::value_type& m,
-                                  child.second.get_child("transformation")) {
+                            matrix1[i/4][i%4] = stof(m.second.data());
+                            i++;
+                            //cout << matrix1[i/4][i%4] << endl;
+                        }
 
-                        matrix1[i/4][i%4] = stof(m.second.data());
-                        i++;
-                        //cout << matrix1[i/4][i%4] << endl;
+                        // Store the absolute position
+                        sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                        //sphere_player1->move(matrix1);
+                        sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
+                        //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
                     }
+                    else if(id == 2){
+                        int i=0;
+                        BOOST_FOREACH(const pt::ptree::value_type& m,
+                                      child.second.get_child("transformation")) {
+                            matrix2[i/4][i%4] = stof(m.second.data());
+                            i++;
+                        }
+                        // Store the absolute position
+                        sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
+                        //sphere_player2->move(matrix2);
+                        sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+    //                    float x2 = stof(child.second.get<std::string>("x"));
+    //                    float y2 = stof(child.second.get<std::string>("y"));
+    //                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+    //                    sphere_player2->move(pos2);
 
-                    // Store the absolute position
-                    sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
-                    //sphere_player1->move(matrix1);
-                    sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
-                    //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
-                }
-                else if(id == 2){
-                    int i=0;
-                    BOOST_FOREACH(const pt::ptree::value_type& m,
-                                  child.second.get_child("transformation")) {
-                        matrix2[i/4][i%4] = stof(m.second.data());
-                        i++;
                     }
-                    // Store the absolute position
-                    sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
-                    //sphere_player2->move(matrix2);
-                    sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
-//                    float x2 = stof(child.second.get<std::string>("x"));
-//                    float y2 = stof(child.second.get<std::string>("y"));
-//                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-//                    sphere_player2->move(pos2);
-
+                    else{
+                        // id 3, 4 for terrian
+                    }
+                    id++;
                 }
-                else{
-                    // id 3, 4 for terrian
+
+                int indexForScore = 0;
+                BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
+                    // Team 1 get their score
+                    if((id == 1 || id == 3) && indexForScore == 0){
+                        score = stoi(v.second.data());
+                    }
+                    else if((id == 2 || id == 4) && indexForScore == 1){
+                        score = stoi(v.second.data());
+                    }
+                    indexForScore++;
                 }
-                id++;
-            }
-
-            int indexForScore = 0;
-            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
-                // Team 1 get their score
-                if((id == 1 || id == 3) && indexForScore == 0){
-                    score = stoi(v.second.data());
+                //cout << "Score: " << score << endl;
+                
+                //int timeSignal = 0;
+                
+                BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
+                    currTime = v.second.data();
                 }
-                else if((id == 2 || id == 4) && indexForScore == 1){
-                    score = stoi(v.second.data());
+                
+                // Local Timer Logic, save for now
+    //            if(timeSignal == 0 && !inGame){
+    //                inGame = true;
+    //                timeStart = time(NULL);
+    //            }
+    //            else if(timeSignal != 0) {
+    //                inGame = false;
+    //            }
+    //
+    //            if(inGame){
+    //                updateTime();
+    //            } else {
+    //                currTime = "00:00";
+    //            }
+                
+                // DEBUG:: Message for Time
+                //cout << "Time: " << time << endl;
+                
+                
+                int i=0;
+//                time2 = std::chrono::high_resolution_clock::now();
+//                cout << "Before decode height map : "<< std::chrono::duration_cast<std::chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+//                time1 = time2;
+                BOOST_FOREACH(const pt::ptree::value_type& v,
+                tar.get_child("height_map")) {
+                    height_map.push_back(stof(v.second.data()));
+                    i++;
                 }
-                indexForScore++;
-            }
-            //cout << "Score: " << score << endl;
-            
-            //int timeSignal = 0;
-            
-            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
-                currTime = v.second.data();
-            }
-            
-            // Local Timer Logic, save for now
-//            if(timeSignal == 0 && !inGame){
-//                inGame = true;
-//                timeStart = time(NULL);
-//            }
-//            else if(timeSignal != 0) {
-//                inGame = false;
-//            }
-//
-//            if(inGame){
-//                updateTime();
-//            } else {
-//                currTime = "00:00";
-//            }
-            
-            // DEBUG:: Message for Time 
-            //cout << "Time: " << time << endl;
-            
-            
-            int i=0;
-            
-            BOOST_FOREACH(const pt::ptree::value_type& v,
-            tar.get_child("height_map")) {
-                height_map.push_back(stof(v.second.data()));
-                i++;
-            }
 
-            if(!height_map.empty()){
-                //std::cout << msg << std::endl;
-                std::cout << "building..." << std::endl;
-                //build mesh based on height map from server
-                terrain->terrainBuildMesh(height_map);
+                if(!height_map.empty()){
+                    time2 = std::chrono::high_resolution_clock::now();
+                    cout << "decode height map: "<< std::chrono::duration_cast<std::chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+                    time1 = time2;
+                    
+                    std::cout << "building..." << std::endl;
+                    //build mesh based on height map from server
+                    terrain->terrainBuildMesh(height_map);
+                    
+                    time2 = std::chrono::high_resolution_clock::now();
+                    cout << "Finish build : "<< std::chrono::duration_cast<std::chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+                    time1 = time2;
+                    cout << endl;
+                }
             }
-
-
+        
         }
     } catch (...){
 

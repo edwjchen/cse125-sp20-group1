@@ -31,10 +31,6 @@ public:
 
     string getMsg()
     {
-        // For testing only
-        //        istream buffer(&read_msg_);
-        //        string msg;
-        //        buffer >> msg;
         string update = "";
         if(!msg.empty()){
             update = msg.front();
@@ -77,7 +73,7 @@ private:
     {
         if (!error)
         {
-            std::string id_str{buffers_begin(read_msg_.data()),         buffers_end(read_msg_.data())};
+            std::string id_str{buffers_begin(read_msg_.data()), buffers_end(read_msg_.data())};
             read_msg_.consume(read_msg_.size());
             id = std::stoi(id_str);
             std::cout << "id : " << id << std::endl;
