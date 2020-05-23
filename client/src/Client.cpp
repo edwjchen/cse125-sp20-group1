@@ -22,12 +22,13 @@ time_t Client::timeStart;
 time_t Client::timeNow;
 int Client::totalTime = 300;
 bool Client::inGame = false;
+bool Client::hasCamBeenSet = false;
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -219,28 +220,26 @@ void Client::run() {
     {
         boost::asio::io_service io_service;
         tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
-
         chat_client c(io_service, endpoint);
-
         boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-        
-        
-        
         std::string msg;
 
         // Loop while GLFW window should stay open.
         while (!glfwWindowShouldClose(window->getWindow()))
         {
+            
+
+            
             // Main render display callback. Rendering of objects is done here. (Draw)
-            displayCallback();
-            window->displayCallback();
+
             player_id = c.get_id();
-
-            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
-
-            // Sphere player and Terrian player Camera Logic
-            if(player_id == 1){
+            
+            if(player_id == 1 && !hasCamBeenSet){
+                hasCamBeenSet = true;
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+            }
+            else if(player_id == 1){
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
             }
             else if(player_id == 2){
@@ -250,6 +249,13 @@ void Client::run() {
             else{
                 // camera for terrian player is fixed
             }
+            
+            displayCallback();
+            window->displayCallback();
+            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
+
+            // Sphere player and Terrian player Camera Logic
+
 
             //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
             //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
@@ -303,19 +309,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             // take user's io
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                io_handler->SendKeyBoardInput(0, camera->frontVector);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                io_handler->SendKeyBoardInput(1, camera->frontVector);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                io_handler->SendKeyBoardInput(2, camera->frontVector);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                io_handler->SendKeyBoardInput(3, camera->frontVector);
                 break;
             }
             case GLFW_KEY_P:{
@@ -347,19 +353,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         {
             // Contineous movement
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                io_handler->SendKeyBoardInput(0, camera->frontVector);
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                io_handler->SendKeyBoardInput(1, camera->frontVector);
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                io_handler->SendKeyBoardInput(2, camera->frontVector);
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                io_handler->SendKeyBoardInput(3, camera->frontVector);
                 break;
             }
 
@@ -477,7 +483,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
         mousePos.x = xpos;
         mousePos.y = ypos;
 
-        return;
+        //return;
     }
 
 

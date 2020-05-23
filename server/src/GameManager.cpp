@@ -52,12 +52,16 @@ void GameManager::UpdateTime(){
     currTime = finishedTime;
 }
 
-void GameManager::update1(char op){
+void GameManager::update1(char op, glm::vec3 lookat){
     glm::vec3 newPos;
     switch (op) {
         case 'w':
             newPos = sphere1->getCenter();
-            newPos.z -= 1;
+            //newPos.z -= 1;
+            newPos.x += lookat.x/(lookat.x + lookat.z);
+            //newPos.y += lookat.y/(lookat.x + lookat.y + lookat.z);
+            newPos.z += lookat.z/(lookat.x + lookat.z);
+
             sphere1->move(newPos);
             break;
         case 'a':
@@ -78,7 +82,7 @@ void GameManager::update1(char op){
     }
 }
 
-void GameManager::update2(char op){
+void GameManager::update2(char op, glm::vec3 lookat){
     glm::vec3 newPos;
     switch (op) {
         case 'w':
@@ -120,18 +124,26 @@ void GameManager::handle_input(string data, int id){
     
     std::vector<glm::vec2> editPoints;
     float height = 10;
-    decode(data, key_op, mouse_op, editPoints);
+    glm::vec3 camLookatFront = glm::vec3(0.0);
+    decode(data, key_op, mouse_op, camLookatFront, editPoints);
     
+    //cout << camLookatFront.x << " " << camLookatFront.y << " " << camLookatFront.z << " " << endl;
+
     if(key_op != ""){
         cout << "id: " << id << ", operation: "<< key_op << endl;
         if(id == 1){
-            update1(key_op.at(0));
+            update1(key_op.at(0), camLookatFront);
         }else if(id == 2){
-            update2(key_op.at(0));
+            update2(key_op.at(0), camLookatFront);
         }
     }
     if(!editPoints.empty()){
-        editTerrain(editPoints, height);
+        if(mouse_op.compare("l") == 0){
+            editTerrain(editPoints, height);
+        } 
+        else if(mouse_op.compare("r") == 0){
+            editTerrain(editPoints, height * -1);
+        }
         updateTerrain = true;
     }
     // hardcode to add gravity for now
@@ -279,7 +291,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
     }
 }
 
-void GameManager::decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints)
+void GameManager::decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
 {
     //cout << data << endl;
     float temp[4];
@@ -298,7 +310,7 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, vector
                 if(i == 0){
                     key_op = child.second.get<std::string>("key");
                 }
-                else{
+                else if (i == 1){
                     // Mouse
                     mouse_op = child.second.get<std::string>("mouse");
 
@@ -319,11 +331,24 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, vector
                         }
                     }
                 }
+                else if( i == 2){
+                    // Cam
+                    float temp1[3];
+                    int index = 0;
+                        BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("cam_lookatfront")){
+                            temp1[index] = stof(t.second.data());
+                            index++;
+                        }
+                    camLookatFront.x = temp1[0];
+                    camLookatFront.y = temp1[1];
+                    camLookatFront.z = temp1[2];
+                }
                 i++;
             }
+
         }
     }catch(...){
-        std::cout << "decode exception" << std::endl;
+        //std::cout << "decode exception" << std::endl;
     }
     if(mouse_op != ""){
         editPoints.push_back(glm::vec2(temp[0],temp[1]));

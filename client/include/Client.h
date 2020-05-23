@@ -81,7 +81,8 @@ private:
     static glm::vec3 sphere2_pos;
     
     static glm::vec2 mousePos;
-    static bool mouseControl; 
+    static bool mouseControl;
+    static bool hasCamBeenSet;
 
     // IO Handler
     static IO_handler* io_handler;
