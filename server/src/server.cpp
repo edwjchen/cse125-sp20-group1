@@ -89,14 +89,14 @@ private:
             boost::asio::write( *socket_1, boost::asio::buffer(std::to_string(i)+'\n') );
             sockets.push_back(socket_1);
             //update(i, socket_1);
-            boost::thread send_thread(&Server::send_info, this, i, socket_1);
-            boost::thread read_thread(&Server::read_info, this, i, socket_1);
+            // boost::thread send_thread(&Server::send_info, this, i, socket_1);
+            // boost::thread read_thread(&Server::read_info, this, i, socket_1);
         }
-        // cout << "4 players ready" << endl;
-        // for(int j=0;j<4;j++){
-        //     boost::thread send_thread(&Server::send_info, this, j, sockets[j]);
-        //     boost::thread read_thread(&Server::read_info, this, j, sockets[j]);
-        // }
+        cout << "4 players ready" << endl;
+         for(int j=0;j<4;j++){
+             boost::thread send_thread(&Server::send_info, this, j+1, sockets[j]);
+             boost::thread read_thread(&Server::read_info, this, j+1, sockets[j]);
+         }
         while(1){}
     }
 
