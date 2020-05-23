@@ -16,14 +16,26 @@ Sphere* Client::sphere_mouse; // testing only
 Terrain* Client::terrain;
 Skybox* Client::skybox;
 int Client::player_id = 0;
-string Client::time = "Time shoud not be this";
+string Client::currTime = "Time shoud not be this";
 int Client::score = -100;
+time_t Client::timeStart;
+time_t Client::timeNow;
+int Client::totalTime = 300;
+bool Client::inGame = false;
+bool Client::hasCamBeenSet = false;
+
+boost::asio::io_service Client::io_service;
+tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
+chat_client Client::c(io_service, endpoint);
+boost::thread Client::t(boost::bind(&boost::asio::io_service::run, &io_service));
+std::string Client::msg;
+
 
 Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -159,7 +171,7 @@ void Client::displayCallback() {
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
     window->setId(player_id);
-    window->setTime(time);
+    window->setTime(currTime);
     window->setScore(score);
 
 
@@ -213,28 +225,30 @@ void Client::run() {
     // Client Try
     try
     {
-        boost::asio::io_service io_service;
-        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
-
-        chat_client c(io_service, endpoint);
-
-        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-        
-        
-        
-        std::string msg;
+//        boost::asio::io_service io_service;
+//        tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"),8888);
+//        chat_client c(io_service, endpoint);
+//        boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+//        std::string msg;
 
         // Loop while GLFW window should stay open.
         while (!glfwWindowShouldClose(window->getWindow()))
         {
+            
+
+            
             // Main render display callback. Rendering of objects is done here. (Draw)
-            displayCallback();
-            window->displayCallback();
+
             player_id = c.get_id();
-
-            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
-
-            // Sphere player and Terrian player Camera Logic
+            
+//            if(player_id == 1 && !hasCamBeenSet){
+//                hasCamBeenSet = true;
+//                camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
+//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+//            }
+//            else if(player_id == 1){
+//                camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
+//            }
             if(player_id == 1){
                 camera->setPos(glm::vec3(sphere1_pos.x, sphere1_pos.y + 10,sphere1_pos.z+15));
                 camera->setLookAt(glm::vec3(sphere1_pos.x, sphere1_pos.y,sphere1_pos.z));
@@ -246,6 +260,13 @@ void Client::run() {
             else{
                 // camera for terrian player is fixed
             }
+            
+            displayCallback();
+            window->displayCallback();
+            //camera = new Camera(glm::vec3(60, 59, 21), glm::vec3(60, 5, -30));
+
+            // Sphere player and Terrian player Camera Logic
+
 
             //cout << camera->getLookAtPos().x << " " << camera->getLookAtPos().y << " " << camera->getLookAtPos().z << endl;
             //cout << camera->getPos().x << " " << camera->getPos().y << " " << camera->getPos().z << endl;
@@ -260,7 +281,7 @@ void Client::run() {
 //            terrain->edit(tmpp, 10);
             
             
-            io_handler -> SendPackage(&c);
+//            io_handler -> SendPackage(&c);
             updateFromServer(c.getMsg());
         }
 
@@ -299,19 +320,27 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             // take user's io
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                io_handler->SendKeyBoardInput(0, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                io_handler->SendKeyBoardInput(1, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                io_handler->SendKeyBoardInput(2, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                io_handler->SendKeyBoardInput(3, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_P:{
@@ -343,19 +372,27 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         {
             // Contineous movement
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                io_handler->SendKeyBoardInput(0, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                io_handler->SendKeyBoardInput(1, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                io_handler->SendKeyBoardInput(2, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                io_handler->SendKeyBoardInput(3, camera->frontVector);
+                io_handler -> SendPackage(&c);
+
                 break;
             }
 
@@ -421,6 +458,8 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
         glm::vec2 translatedCPos = screenPointToWorld(clickPos);
         glm::vec2 translatedRPos = screenPointToWorld(releasePos);
         io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
+        io_handler -> SendPackage(&c);
+
 
         cout << "finalPos x: " << translatedRPos.x << " finalPos y: " << translatedRPos.y << endl;
         isMouseButtonDown = 0;
@@ -473,7 +512,7 @@ void Client::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos
         mousePos.x = xpos;
         mousePos.y = ypos;
 
-        return;
+        //return;
     }
 
 
@@ -566,9 +605,26 @@ void Client::updateFromServer(string msg) {
             }
             //cout << "Score: " << score << endl;
             
+            //int timeSignal = 0;
+            
             BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
-                time = v.second.data();
+                currTime = v.second.data();
             }
+            
+            // Local Timer Logic, save for now
+//            if(timeSignal == 0 && !inGame){
+//                inGame = true;
+//                timeStart = time(NULL);
+//            }
+//            else if(timeSignal != 0) {
+//                inGame = false;
+//            }
+//
+//            if(inGame){
+//                updateTime();
+//            } else {
+//                currTime = "00:00";
+//            }
             
             // DEBUG:: Message for Time 
             //cout << "Time: " << time << endl;
@@ -595,4 +651,19 @@ void Client::updateFromServer(string msg) {
 
     }
 
+}
+
+// Local Timer Logic, save for now.
+void Client::updateTime(){
+     string finishedTime = "";
+     timeNow = time(NULL);
+     //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+     double duration = difftime(timeNow, timeStart);
+     finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+     if(duration <= 0){
+         // Send a signal to announce game ends
+         duration = 0;
+         finishedTime = "0:00";
+     }
+    currTime = finishedTime;
 }

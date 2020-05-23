@@ -23,6 +23,7 @@
 #include "IO_handler.hpp"
 #include "Camera.hpp"
 #include "AudioManager.hpp"
+#include <ctime>
 
 class Client {
 public:
@@ -80,7 +81,8 @@ private:
     static glm::vec3 sphere2_pos;
     
     static glm::vec2 mousePos;
-    static bool mouseControl; 
+    static bool mouseControl;
+    static bool hasCamBeenSet;
 
     // IO Handler
     static IO_handler* io_handler;
@@ -88,6 +90,12 @@ private:
     // Decode message from server and update client side graphic
     static void updateFromServer(std::string msg);
     
+    // Timer
+    static void updateTime();
+    static time_t timeStart;
+    static time_t timeNow;
+    static int totalTime;
+    static bool inGame;
     
     // Transform screen coordinate to world coordinate
     static glm::vec2 screenPointToWorld(glm::vec2 mousePos);
@@ -98,8 +106,16 @@ private:
     
     // GameManager
     static int player_id;
-    static string time;
+    static string currTime;
     static int score;
+    
+    // Network
+    static boost::asio::io_service io_service;
+    static tcp::endpoint endpoint;
+    static chat_client c;
+    static boost::thread t;
+    static std::string msg;
+    
 };
 
 #endif /* Client_h */

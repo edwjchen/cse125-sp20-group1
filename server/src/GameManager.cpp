@@ -6,8 +6,9 @@ std::chrono::time_point<std::chrono::high_resolution_clock> time1;
 std::chrono::time_point<std::chrono::high_resolution_clock> time2;
 
 GameManager::GameManager(): updateTerrain(false){
-    time = "";
-    hres_startTime = std::chrono::high_resolution_clock::now();
+    currTime = "";
+    //startTime = clock();
+    startTime = time(NULL);
     totalGameTime = 300.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
@@ -19,9 +20,9 @@ GameManager::GameManager(): updateTerrain(false){
     terrain->edit(tmp, 10);
     terrain->terrainBuildMesh();
     terrain->computeBoundingBoxes();
-    
+
     sphere1 = new Sphere(5.0f, 2.0f);
-    sphere1->move(glm::vec3(64,-10,-65));
+    sphere1->move(glm::vec3(64,0,-65));
     sphere2 = new Sphere(5.0f, 2.0f);
     sphere1->move(glm::vec3(58,0,-54));
 }
@@ -33,24 +34,36 @@ void GameManager::UpdateScore(){
 
 void GameManager::UpdateTime(){
     string finishedTime = "";
-    hres_endTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> d = hres_endTime - hres_startTime;
-    float duration = totalGameTime - d.count();
-    finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
+    endTime = time(NULL);
+    //timeSignal = 1;
+    //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    double duration = totalGameTime - difftime(endTime, startTime);
+    finishedTime = finishedTime + to_string((int)duration/60);
+    if((int)duration % 60 < 10){
+        finishedTime += ":0" + to_string((int)duration%60);
+    } else {
+        finishedTime += ":" + to_string((int)duration%60);
+    }
     if(duration <= 0){
         // Send a signal to announce game ends
         duration = 0;
+        //timeSignal = 0;
         finishedTime = "0:00";
     }
-   time = finishedTime;
+    //cout << finishedTime << endl;
+    currTime = finishedTime;
 }
 
-void GameManager::update1(char op){
+void GameManager::update1(char op, glm::vec3 lookat){
     glm::vec3 newPos;
     switch (op) {
         case 'w':
             newPos = sphere1->getCenter();
             newPos.z -= 1;
+            //newPos.x += lookat.x/(lookat.x + lookat.z);
+            //newPos.y += lookat.y/(lookat.x + lookat.y + lookat.z);
+            //newPos.z += lookat.z/(lookat.x + lookat.z);
+
             sphere1->move(newPos);
             break;
         case 'a':
@@ -71,7 +84,7 @@ void GameManager::update1(char op){
     }
 }
 
-void GameManager::update2(char op){
+void GameManager::update2(char op, glm::vec3 lookat){
     glm::vec3 newPos;
     switch (op) {
         case 'w':
@@ -107,35 +120,32 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 }
 
 void GameManager::handle_input(string data, int id){
-    time1 = std::chrono::high_resolution_clock::now();
-    //cout << "Receive input : "<< time1 << endl;
     cout << data << endl;
     std::string key_op = "";
     std::string mouse_op = "";
-    
+
     std::vector<glm::vec2> editPoints;
     float height = 10;
+    glm::vec3 camLookatFront = glm::vec3(0.0);
+    decode(data, key_op, mouse_op, camLookatFront, editPoints);
 
-    time2 = std::chrono::high_resolution_clock::now();
-    cout << "Start decoding : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
-    time1 = time2;
+    //cout << camLookatFront.x << " " << camLookatFront.y << " " << camLookatFront.z << " " << endl;
 
-    decode(data, key_op, mouse_op, editPoints);
-
-    time2 = std::chrono::high_resolution_clock::now();
-    cout << "Finish decoding : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
-    time1 = time2;
-    
     if(key_op != ""){
         cout << "id: " << id << ", operation: "<< key_op << endl;
         if(id == 1){
-            update1(key_op.at(0));
+            update1(key_op.at(0), camLookatFront);
         }else if(id == 2){
-            update2(key_op.at(0));
+            update2(key_op.at(0), camLookatFront);
         }
     }
     if(!editPoints.empty()){
-        editTerrain(editPoints, height);
+        if(mouse_op.compare("l") == 0){
+            editTerrain(editPoints, height);
+        }
+        else if(mouse_op.compare("r") == 0){
+            editTerrain(editPoints, height * -1);
+        }
         updateTerrain = true;
     }
     // hardcode to add gravity for now
@@ -175,7 +185,7 @@ string GameManager::encode()
     obj1.put("id", 1);
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-        matrix1[4*i+j].put("", transM1[i][j]);
+            matrix1[4*i+j].put("", transM1[i][j]);
         }
     }
     for(int i=0;i<16;i++){
@@ -186,7 +196,7 @@ string GameManager::encode()
     obj2.put("id", 2);
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
-        matrix2[4*i+j].put("", transM2[i][j]);
+            matrix2[4*i+j].put("", transM2[i][j]);
         }
     }
 
@@ -209,7 +219,7 @@ string GameManager::encode()
         updateTerrain = false;
     }
 
-    
+
     pt::ptree tempNodeS1;
     pt::ptree tempNodeS2;
     tempNodeS1.put("", scoreT1);
@@ -218,15 +228,15 @@ string GameManager::encode()
     scoreNode.push_back(std::make_pair("", tempNodeS2));
     // Add time to root
     pt::ptree tempNodeT;
-    tempNodeT.put("", time);
+    tempNodeT.put("", currTime);
     timeNode.push_back(std::make_pair("",tempNodeT));
-    
+
     root.add_child("Obj", obj);
-    
+
     root.add_child("height_map" ,height_root);
-    
+
     root.add_child("Score", scoreNode);
-    
+
     root.add_child("Time", timeNode);
 
     stringstream ss;
@@ -235,15 +245,15 @@ string GameManager::encode()
 }
 
 void GameManager::checkTerrainCollisions(Sphere* sphere) {
-    
+
     std::vector<unsigned int>* indices = terrain->getIndices();
     std::vector<glm::vec3>* vertices = terrain->getVertices();
     std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
-    
+
     // resolve force
     // sphere->move(sphere->getCenter() + sphere->force);
     // sphere->force = glm::vec3(0);
-    
+
     for (int k = 0; k < 20; k++) {
         for (int j = 0; j < boxes->size(); j++) {
             TerrainBoundingBox& box = (*boxes)[j];
@@ -253,11 +263,11 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
             sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
             glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
             smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
-            
+
             if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
                 continue;
             }
-            
+
             for (int i = 0; i < box.indices2triangles.size(); i++) {
                 int curInd = box.indices2triangles[i];
                 glm::vec3& a = (*vertices)[(*indices)[curInd-2]];
@@ -267,7 +277,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
                 if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
                     n = -n;
                 }
-                
+
                 glm::vec3 offset = sphere->checkCollision(a, b, c, n);
                 if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
                     offset = glm::vec3(0);
@@ -277,7 +287,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
             }
         }
     }
-    
+
     // if sphere has fallen off, freaking lift it up
     float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
     if (height > sphere->getCenter().y + sphere->getRadius()) {
@@ -287,7 +297,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
     }
 }
 
-void GameManager::decode(string data, string & key_op, string & mouse_op, vector<glm::vec2> & editPoints)
+void GameManager::decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
 {
     //cout << data << endl;
     float temp[4];
@@ -306,7 +316,7 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, vector
                 if(i == 0){
                     key_op = child.second.get<std::string>("key");
                 }
-                else{
+                else if (i == 1){
                     // Mouse
                     mouse_op = child.second.get<std::string>("mouse");
 
@@ -327,8 +337,21 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, vector
                         }
                     }
                 }
+                else if( i == 2){
+                    // Cam
+                    float temp1[3];
+                    int index = 0;
+                        BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("cam_lookatfront")){
+                            temp1[index] = stof(t.second.data());
+                            index++;
+                        }
+                    camLookatFront.x = temp1[0];
+                    camLookatFront.y = temp1[1];
+                    camLookatFront.z = temp1[2];
+                }
                 i++;
             }
+
         }
     }catch(...){
         std::cout << "decode exception" << std::endl;
@@ -352,4 +375,3 @@ void GameManager::checkSphereCollisions() {
     }
     // TODO: further physics effect
 }
-
