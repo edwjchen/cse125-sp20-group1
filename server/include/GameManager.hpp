@@ -62,6 +62,9 @@ public:
     glm::mat4 transM1, transM2; 
 
     bool updateTerrain;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> hres_startTime;
+    std::chrono::time_point<std::chrono::high_resolution_clock> hres_endTime;
 };
 
 #endif

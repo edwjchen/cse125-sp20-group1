@@ -2,10 +2,12 @@
 
 using namespace std;
 namespace pt = boost::property_tree;
+std::chrono::time_point<std::chrono::high_resolution_clock> time1;
+std::chrono::time_point<std::chrono::high_resolution_clock> time2;
 
 GameManager::GameManager(): updateTerrain(false){
     time = "";
-    startTime = clock();
+    hres_startTime = std::chrono::high_resolution_clock::now();
     totalGameTime = 300.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
@@ -31,8 +33,9 @@ void GameManager::UpdateScore(){
 
 void GameManager::UpdateTime(){
     string finishedTime = "";
-    endTime = clock();
-    float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    hres_endTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> d = hres_endTime - hres_startTime;
+    float duration = totalGameTime - d.count();
     finishedTime = finishedTime + to_string((int)duration/60) + ":" + to_string((int)duration%60);
     if(duration <= 0){
         // Send a signal to announce game ends
@@ -104,13 +107,24 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 }
 
 void GameManager::handle_input(string data, int id){
-    
+    time1 = std::chrono::high_resolution_clock::now();
+    //cout << "Receive input : "<< time1 << endl;
+    cout << data << endl;
     std::string key_op = "";
     std::string mouse_op = "";
     
     std::vector<glm::vec2> editPoints;
     float height = 10;
+
+    time2 = std::chrono::high_resolution_clock::now();
+    cout << "Start decoding : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    time1 = time2;
+
     decode(data, key_op, mouse_op, editPoints);
+
+    time2 = std::chrono::high_resolution_clock::now();
+    cout << "Finish decoding : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    time1 = time2;
     
     if(key_op != ""){
         cout << "id: " << id << ", operation: "<< key_op << endl;
@@ -130,6 +144,10 @@ void GameManager::handle_input(string data, int id){
     checkTerrainCollisions(sphere1);
     checkTerrainCollisions(sphere2);
     checkSphereCollisions();
+
+    time2 = std::chrono::high_resolution_clock::now();
+    cout << "Finish updating : "<< duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
+    time1 = time2;
 }
 
 
