@@ -94,8 +94,8 @@ private:
         }
         cout << "4 players ready" << endl;
          for(int j=0;j<4;j++){
-             boost::thread send_thread(&Server::send_info, this, j, sockets[j]);
-             boost::thread read_thread(&Server::read_info, this, j, sockets[j]);
+             boost::thread send_thread(&Server::send_info, this, j+1, sockets[j]);
+             boost::thread read_thread(&Server::read_info, this, j+1, sockets[j]);
          }
         while(1){}
     }
