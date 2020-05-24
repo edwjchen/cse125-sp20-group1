@@ -98,7 +98,6 @@ void Window::setScore(int s){
 
 void Window::displayCallback()
 {
-    /*
   // feed inputs to dear imgui, start new frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
@@ -139,7 +138,6 @@ void Window::displayCallback()
   
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-     */
   
   // Gets events, including input such as keyboard and mouse or window resizing
   glfwPollEvents();
