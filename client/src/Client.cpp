@@ -23,7 +23,7 @@ Camera* Client::camera;
 glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -119,19 +119,19 @@ bool Client::initializeObjects()
 
     std::vector<glm::vec2> tmp = {
         glm::vec2(0.0f, 0.0f),
-        glm::vec2(16.0f, 16.0f),
-        glm::vec2(20.0f, 16.0f),
-        glm::vec2(32.0f, 32.0f)
+        glm::vec2(125.0f, 125.0f),
+        glm::vec2(135.0f, 125.0f),
+        glm::vec2(250.0f, 250.0f)
     };
     std::vector<glm::vec2> tmp2 = {
-        glm::vec2(0.0f, 32.0f),
-        glm::vec2(16.0f, 16.0f),
-        glm::vec2(20.0f, 16.0f),
-        glm::vec2(32.0f, 0.0f)
+        glm::vec2(0.0f, 250.0f),
+        glm::vec2(125.0f, 125.0f),
+        glm::vec2(135.0f, 125.0f),
+        glm::vec2(250.0f, 0.0f)
     };
     terrain->edit(tmp, 10);
 //
-    terrain->edit(tmp, -10);
+    terrain->edit(tmp2, -10);
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
     //terrain->terrainBuildMesh(heightMap);
