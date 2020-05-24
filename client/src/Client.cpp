@@ -24,7 +24,12 @@ glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
-bool Client::mouseControl = false;
+bool Client::mouseControl = true;
+bool Client::forward = false;
+bool Client::backward = false;
+bool Client::left = false;
+bool Client::right = false;
+
 
 int Client::isMouseButtonDown = 0;
 glm::vec2 Client::clickPos = glm::vec2(INFINITY, INFINITY);
@@ -130,22 +135,46 @@ bool Client::initializeObjects()
         glm::vec2(20.0f, 16.0f),
         glm::vec2(32.0f, 0.0f)
     };
-    terrain->edit(tmp, 10);
+    terrain->edit(tmp, 0);
 //
-    terrain->edit(tmp, -10);
+    //terrain->edit(tmp, -10);
     // NOTE: use this build mesh after connect with backend. Don't call
     // edit anymore, instead put height map as argument.
-    //terrain->terrainBuildMesh(heightMap);
-    // terrain->computeBoundingBoxes();
+    // terrain->terrainBuildMesh(heightMap);
+    terrain->computeBoundingBoxes();
     //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
 
-    // terrain->computeBoundingBoxes();
-    //terrain->setHeightsFromTexture("textures/terrain-heightmap-01.png",0.0f, 12.0f);
     return true;
 }
 
 void Client::idleCallback() {
-
+    // movement update
+    if (forward) {
+        //glm::vec3 f = sphere_player1->moveForce;
+        //f.x += 20.0f;
+        //sphere_player1->moveForce = f;
+        io_handler->SendKeyBoardInput(0);
+    }
+    if (left) {
+        //glm::vec3 f = sphere_player1->moveForce;
+        //f.z += 20.0f;
+        //sphere_player1->moveForce = f;
+        io_handler->SendKeyBoardInput(1);
+    }
+    if (backward) {
+        //glm::vec3 f = sphere_player1->moveForce;
+        //f.x -= 20.0f;
+        //sphere_player1->moveForce = f;
+        io_handler->SendKeyBoardInput(2);
+    }
+    if (right) {
+        //glm::vec3 f = sphere_player1->moveForce;
+        //f.z -= 20.0f;
+        //sphere_player1->moveForce = f;
+        io_handler->SendKeyBoardInput(3);
+    }
+    //sphere_player1->force += glm::vec3(0, -9.8, 0);
+    //checkCollisions(sphere_player1);
 }
 
 void Client::displayCallback() {
@@ -301,19 +330,19 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             }
             // take user's io
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                forward = true;
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                left = true;
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                backward = true;
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                right = true;
                 break;
             }
             case GLFW_KEY_P:{
@@ -336,31 +365,24 @@ void Client::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
             default:
                 break;
         }
-    }
-
-    // Check for holding key
-    else if (action == GLFW_REPEAT)
-    {
-        switch (key)
-        {
-            // Contineous movement
+    } else if (action == GLFW_RELEASE) {
+        switch (key) {
             case GLFW_KEY_W:{
-                io_handler->SendKeyBoardInput(0);
+                forward = false;
                 break;
             }
             case GLFW_KEY_A:{
-                io_handler->SendKeyBoardInput(1);
+                left = false;
                 break;
             }
             case GLFW_KEY_S:{
-                io_handler->SendKeyBoardInput(2);
+                backward = false;
                 break;
             }
             case GLFW_KEY_D:{
-                io_handler->SendKeyBoardInput(3);
+                right = false;
                 break;
             }
-
             default:
                 break;
         }
@@ -598,3 +620,80 @@ void Client::updateFromServer(string msg) {
     }
 
 }
+
+void Client::checkCollisions(Sphere* sphere) {
+    
+    std::vector<unsigned int>* indices = terrain->getIndices();
+    std::vector<glm::vec3>* vertices = terrain->getVertices();
+    std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
+    
+    float elapsedTime = 0.03f / 20;
+    for (int k = 0; k < 20; k++) {
+        for (int j = 0; j < boxes->size(); j++) {
+            
+            TerrainBoundingBox& box = (*boxes)[j];
+            glm::vec2& tminPoint = box.minPoint;
+            glm::vec2& tmaxPoint = box.maxPoint;
+            glm::vec2 sminPoint(sphere->getCenter().x, sphere->getCenter().z);
+            sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
+            glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
+            smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
+            
+            if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
+                continue;
+            }
+            
+            for (int i = 0; i < box.indices2triangles.size(); i++) {
+                int curInd = box.indices2triangles[i];
+                int ai = (*indices)[curInd-2];
+                int bi = (*indices)[curInd-1];
+                int ci = (*indices)[curInd];
+                glm::vec3& a = (*vertices)[ai];
+                glm::vec3& b = (*vertices)[bi];
+                glm::vec3& c = (*vertices)[ci];
+                glm::vec3 n = glm::normalize(glm::cross(c-a, b-a));
+                if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
+                    n = -n;
+                }
+                
+                glm::vec3 offset = sphere->checkCollision(a, b, c, n);
+                if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
+                    offset = glm::vec3(0);
+                    continue;
+                }
+                
+                sphere->move(sphere->getCenter() + offset); // move to right position
+            }
+            sphere->momentum += sphere->force * elapsedTime;
+            glm::vec3 dis = (sphere->momentum/sphere->mass) * elapsedTime;
+            
+            if (glm::length(sphere->moveMomentum) > 0) {
+                glm::vec3 temp = 10.0f * glm::normalize(sphere->moveMomentum) * elapsedTime;
+                if (glm::length(temp) >= glm::length(sphere->moveMomentum)) {
+                    sphere->moveMomentum = glm::vec3(0);
+                } else {
+                    sphere->moveMomentum -= 10.0f * glm::normalize(sphere->moveMomentum) * elapsedTime;
+                }
+            }
+            sphere->moveMomentum += sphere->moveForce * elapsedTime;
+            if (glm::length(sphere->moveMomentum) > 20.0f) {
+                sphere->moveMomentum = 20.0f * glm::normalize(sphere->moveMomentum);
+            }
+            dis += (sphere->moveMomentum/sphere->mass) * elapsedTime;
+            //std::cout << glm::to_string(dis) << std::endl;
+            
+            sphere->move(sphere->getCenter() + dis);
+        }
+    }
+    sphere->force = glm::vec3(0);
+    sphere->moveForce = glm::vec3(0);
+    
+    // if sphere has fallen off, freaking lift it up
+    float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
+    if (height > sphere->getCenter().y + sphere->getRadius()) {
+        glm::vec3 offset(0);
+        offset.y = height - (sphere->getCenter().y - sphere->getRadius());
+        sphere->move(sphere->getCenter() + offset);
+    }
+}
+

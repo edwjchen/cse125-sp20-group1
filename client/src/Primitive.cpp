@@ -8,19 +8,19 @@
 
 #include "Primitive.h"
 
-Primitive::Primitive() : mass (0), position(glm::vec3(0.0f)), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)){
+Primitive::Primitive() : mass (0), position(glm::vec3(0.0f)), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), momentum(glm::vec3(0.0f)){
     model = glm::mat4(1.0f);
 }
 
-Primitive::Primitive(float m) : mass (m), position(glm::vec3(0.0f)), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)){
+Primitive::Primitive(float m) : mass (m), position(glm::vec3(0.0f)), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), momentum(glm::vec3(0.0f)) {
     model = glm::mat4(1.0f);
 }
 
-Primitive::Primitive(float mass, const glm::vec3& pos) : mass (mass), position(pos), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)){
+Primitive::Primitive(float mass, const glm::vec3& pos) : mass (mass), position(pos), velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), momentum(glm::vec3(0.0f)) {
     model = glm::mat4(1.0f);
 }
 
-Primitive::Primitive(float mass, const glm::vec3& pos, const glm::vec3& vel) : mass (mass), position(pos), velocity(vel), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)){
+Primitive::Primitive(float mass, const glm::vec3& pos, const glm::vec3& vel) : mass (mass), position(pos), velocity(vel), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), momentum(glm::vec3(0.0f)) {
     model = glm::mat4(1.0f);
 }
 

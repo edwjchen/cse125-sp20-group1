@@ -178,7 +178,7 @@ void Terrain::terrainBuildMesh(std::vector<float> h)
            unsigned int lowerLeftIdx = (i + 1) * vertices_w + j;
            unsigned int lowerRightIdx = (i + 1) * vertices_w + (j + 1);
 
-           indices.insert(indices.end(), {upperLeftIdx, upperRightIdx, lowerLeftIdx, upperRightIdx, lowerRightIdx, lowerLeftIdx});
+           indices.insert(indices.end(), {lowerLeftIdx, upperRightIdx, upperLeftIdx, lowerLeftIdx, lowerRightIdx, upperRightIdx});
        }
     }
 
@@ -371,7 +371,7 @@ void Terrain::computeBoundingBoxes() {
             box.minPoint = glm::vec2(vx * step, -(vz+BOUNDING_BOX_STEP) * step);
             box.maxPoint = glm::vec2((vx+BOUNDING_BOX_STEP) * step, -vz * step);
             
-            for (int i = 2; i < indices->size(); i++) {
+            for (int i = 2; i < indices->size(); i+=3) {
                 glm::vec3& a = (*vertices)[(*indices)[i-2]];
                 glm::vec3& b = (*vertices)[(*indices)[i-1]];
                 glm::vec3& c = (*vertices)[(*indices)[i]];

@@ -71,7 +71,7 @@ vec4 getFinalColor()
         V = normalize(-vPosition);
     }
 
-    N = normalize(tNormal);
+    N = normalize(-tNormal);
     
     L = normalize(LightPosition - vPosition);
     CamOBJNorm = dot(N,V);
