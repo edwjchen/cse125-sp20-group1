@@ -48,13 +48,9 @@ public:
     void decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints);
 
     Terrain * terrain;
-<<<<<<< HEAD
-    string time;
     
-=======
     string currTime;
     int timeSignal = 0;
->>>>>>> gameplay
     int scoreT1 = -1;
     int scoreT2 = -2;
 

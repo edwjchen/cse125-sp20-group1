@@ -96,7 +96,11 @@ void GameManager::update1(char op, glm::vec3 lookat){
 void GameManager::update2(char op, glm::vec3 lookat){
     glm::vec3 newPos;
     glm::vec3 right = glm::normalize(glm::cross(lookat, glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    lookat = glm::normalize(lookat);
 
+    float speed = 20.0f;
+    
     switch (op) {
         case 'w':{
             glm::vec3 f = sphere2->moveForce;
