@@ -13,6 +13,7 @@ public:
     void setGameStart(bool start);
     void setGameOver(bool over);
     void setId(int player_id);
+    void setPlayerNum(int num);
     void setTime(std::string t);
     void setScore(int s);
   
@@ -26,6 +27,7 @@ private:
     bool game_start;
     bool game_over;
     int user_id;
+    int player_num;
     std::string time;
     int score;
 

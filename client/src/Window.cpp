@@ -98,6 +98,10 @@ void Window::setId(int player_id){
     user_id = player_id;
 }
 
+void Window::setPlayerNum(int num){
+    player_num = num;
+}
+
 void Window::setTime(std::string t){
     time = t;
 }
@@ -147,7 +151,19 @@ void Window::displayCallback()
       ImGui::End();
     }
     else if(game_over){
-        // handle reset and restart
+        ImGui::Begin("Game Over!");
+        ImGui::Text("Thanks for playing!");
+        ImGui::NewLine();
+        ImGui::SetWindowFontScale(1.5);
+        ImGui::Text("Your final score is: %d", score);
+        ImGui::NewLine();
+        if(ImGui::Button("Restart")){
+            std::cout << "Restart" << std::endl;
+        }
+        if(ImGui::Button("Quit")){
+            std::cout << "Quit" << std::endl;
+        }
+        ImGui::End();
     }
     else if(!game_start){
         ImGui::Begin("Welcome to Gaia");
@@ -173,8 +189,13 @@ void Window::displayCallback()
         else{
                 //std::cout << "unrecognized id" << std::endl;
         }
-        ImGui::Text("Player Type: %s", player_type.c_str());
-        ImGui::Text("Player Team: %s", player_team.c_str());
+        if(player_num == 0){
+            player_num = user_id;
+        }
+        ImGui::Text("You are: %s", player_type.c_str());
+        ImGui::Text("Your team: %s", player_team.c_str());
+        ImGui::NewLine();
+        ImGui::Text("Current players joined: %d", player_num);
         ImGui::End();
     }
   

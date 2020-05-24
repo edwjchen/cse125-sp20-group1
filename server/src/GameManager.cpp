@@ -7,7 +7,7 @@ GameManager::GameManager(): updateTerrain(false){
     currTime = "";
     //startTime = clock();
     startTime = time(NULL);
-    totalGameTime = 300.0f;
+    totalGameTime = 100.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
         glm::vec2(1.0f, 1.0f),
@@ -30,7 +30,7 @@ void GameManager::UpdateScore(){
     // Need to determine which team to add score
 }
 
-void GameManager::UpdateTime(){
+int GameManager::UpdateTime(){
     string finishedTime = "";
     endTime = time(NULL);
     //timeSignal = 1;
@@ -47,9 +47,11 @@ void GameManager::UpdateTime(){
         duration = 0;
         //timeSignal = 0;
         finishedTime = "0:00";
+        return 0;
     }
     //cout << finishedTime << endl;
     currTime = finishedTime;
+    return 1;
 }
 
 void GameManager::update1(char op, glm::vec3 lookat){
@@ -240,6 +242,8 @@ string GameManager::encode()
     root.add_child("Score", scoreNode);
     
     root.add_child("Time", timeNode);
+
+    root.put("Header", "update");
 
     stringstream ss;
     write_json(ss, root, false);

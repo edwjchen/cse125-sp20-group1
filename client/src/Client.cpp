@@ -24,7 +24,7 @@ int Client::totalTime = 300;
 bool Client::inGame = false;
 bool Client::game_start = false;
 bool Client::game_over = false;
-
+int Client::player_num = 0;
 
 boost::asio::io_service Client::io_service;
 tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
@@ -176,6 +176,7 @@ void Client::displayCallback() {
     window->setId(player_id);
     window->setTime(currTime);
     window->setScore(score);
+    window->setPlayerNum(player_num);
     window->setGameStart(game_start);
     window->setGameOver(game_over);
 }
@@ -533,128 +534,142 @@ void Client::updateFromServer(string msg) {
 
             pt::ptree tar;
             pt::read_json(ss, tar);
+            string header = tar.get<string>("Header");
+            // waiting room
+            if(header.compare("wait") == 0){
+                string player = tar.get<string>("players");
+                cout << "total players:" <<  player << endl;
+                player_num = stoi(player);
+            }
+            // game ends
+            else if(header.compare("end") == 0){
+                game_over = true;
+                game_start = false;
+                cout << "Game Ends" << endl;
+            }
+            else if(header.compare("update") == 0){
 
-            glm::mat4 matrix1, matrix2;
+                glm::mat4 matrix1, matrix2;
 
-            vector <float> height_map;
-            
-            // TODO:: Need more condition later
-            game_start = true;
-            //cout << player_id << "start!" << endl;
+                vector <float> height_map;
+                
+                // TODO:: Need more condition later
+                game_start = true;
+                //cout << player_id << "start!" << endl;
 
-            int id = 1;
-            BOOST_FOREACH(const pt::ptree::value_type& child,
-                          tar.get_child("Obj")) {
+                int id = 1;
+                BOOST_FOREACH(const pt::ptree::value_type& child,
+                              tar.get_child("Obj")) {
 
-                if (id == 1){
-                    int i=0;
-                    BOOST_FOREACH(const pt::ptree::value_type& m,
-                                  child.second.get_child("transformation")) {
+                    if (id == 1){
+                        int i=0;
+                        BOOST_FOREACH(const pt::ptree::value_type& m,
+                                      child.second.get_child("transformation")) {
 
-                        matrix1[i/4][i%4] = stof(m.second.data());
-                        i++;
-                        //cout << matrix1[i/4][i%4] << endl;
+                            matrix1[i/4][i%4] = stof(m.second.data());
+                            i++;
+                            //cout << matrix1[i/4][i%4] << endl;
+                        }
+                        
+                        //Store the difference for camera
+                        glm::vec3 newPos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                        glm::vec3 diffPos = newPos - sphere1_pos;
+                        
+                        if(player_id == 1){
+                            camera->eyePos += diffPos;
+                        }
+                        // Store the absolute position
+                        sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
+                        //sphere_player1->move(matrix1);
+                        sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
+                        //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
                     }
-                    
-                    //Store the difference for camera
-                    glm::vec3 newPos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
-                    glm::vec3 diffPos = newPos - sphere1_pos;
-                    
-                    if(player_id == 1){
-                        camera->eyePos += diffPos;
+                    else if(id == 2){
+                        int i=0;
+                        BOOST_FOREACH(const pt::ptree::value_type& m,
+                                      child.second.get_child("transformation")) {
+                            matrix2[i/4][i%4] = stof(m.second.data());
+                            i++;
+                        }
+                        
+                        //Store the difference for camera
+                        glm::vec3 newPos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
+                        glm::vec3 diffPos = newPos - sphere2_pos;
+                        
+                        if(player_id == 2){
+                            camera->eyePos += diffPos;
+                        }
+                        
+                        // Store the absolute position
+                        sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
+                        //sphere_player2->move(matrix2);
+                        sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
+    //                    float x2 = stof(child.second.get<std::string>("x"));
+    //                    float y2 = stof(child.second.get<std::string>("y"));
+    //                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
+    //                    sphere_player2->move(pos2);
+
                     }
-                    // Store the absolute position
-                    sphere1_pos = glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]);
-                    //sphere_player1->move(matrix1);
-                    sphere_player1->move(glm::vec3(matrix1[3][0], matrix1[3][1], matrix1[3][2]));
-                    //cout << matrix1[3][0] << " " << matrix1[3][1] << " " << matrix1[3][2] << endl;
-                }
-                else if(id == 2){
-                    int i=0;
-                    BOOST_FOREACH(const pt::ptree::value_type& m,
-                                  child.second.get_child("transformation")) {
-                        matrix2[i/4][i%4] = stof(m.second.data());
-                        i++;
+                    else{
+                        // id 3, 4 for terrian
                     }
-                    
-                    //Store the difference for camera
-                    glm::vec3 newPos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
-                    glm::vec3 diffPos = newPos - sphere2_pos;
-                    
-                    if(player_id == 2){
-                        camera->eyePos += diffPos;
+                    id++;
+                }
+
+                int indexForScore = 0;
+                BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
+                    // Team 1 get their score
+                    if((player_id == 1 || player_id == 3) && indexForScore == 0){
+                        score = stoi(v.second.data());
                     }
-                    
-                    // Store the absolute position
-                    sphere2_pos = glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]);
-                    //sphere_player2->move(matrix2);
-                    sphere_player2->move(glm::vec3(matrix2[3][0], matrix2[3][1], matrix2[3][2]));
-//                    float x2 = stof(child.second.get<std::string>("x"));
-//                    float y2 = stof(child.second.get<std::string>("y"));
-//                    glm::vec3 pos2 = glm::vec3(x2, y2, 0);
-//                    sphere_player2->move(pos2);
-
+                    else if((player_id == 2 || player_id == 4) && indexForScore == 1){
+                        score = stoi(v.second.data());
+                    }
+                    indexForScore++;
                 }
-                else{
-                    // id 3, 4 for terrian
+                //cout << "Score: " << score << endl;
+                
+                //int timeSignal = 0;
+                
+                BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
+                    currTime = v.second.data();
                 }
-                id++;
-            }
-
-            int indexForScore = 0;
-            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Score")){
-                // Team 1 get their score
-                if((player_id == 1 || player_id == 3) && indexForScore == 0){
-                    score = stoi(v.second.data());
+                
+                // Local Timer Logic, save for now
+    //            if(timeSignal == 0 && !inGame){
+    //                inGame = true;
+    //                timeStart = time(NULL);
+    //            }
+    //            else if(timeSignal != 0) {
+    //                inGame = false;
+    //            }
+    //
+    //            if(inGame){
+    //                updateTime();
+    //            } else {
+    //                currTime = "00:00";
+    //            }
+                
+                // DEBUG:: Message for Time
+                //cout << "Time: " << time << endl;
+                
+                
+                int i=0;
+                
+                BOOST_FOREACH(const pt::ptree::value_type& v,
+                tar.get_child("height_map")) {
+                    height_map.push_back(stof(v.second.data()));
+                    i++;
                 }
-                else if((player_id == 2 || player_id == 4) && indexForScore == 1){
-                    score = stoi(v.second.data());
+
+                if(!height_map.empty()){
+                    //std::cout << msg << std::endl;
+                    std::cout << "building..." << std::endl;
+                    //build mesh based on height map from server
+                    terrain->terrainBuildMesh(height_map);
                 }
-                indexForScore++;
-            }
-            //cout << "Score: " << score << endl;
-            
-            //int timeSignal = 0;
-            
-            BOOST_FOREACH(const pt::ptree::value_type& v, tar.get_child("Time")){
-                currTime = v.second.data();
-            }
-            
-            // Local Timer Logic, save for now
-//            if(timeSignal == 0 && !inGame){
-//                inGame = true;
-//                timeStart = time(NULL);
-//            }
-//            else if(timeSignal != 0) {
-//                inGame = false;
-//            }
-//
-//            if(inGame){
-//                updateTime();
-//            } else {
-//                currTime = "00:00";
-//            }
-            
-            // DEBUG:: Message for Time 
-            //cout << "Time: " << time << endl;
-            
-            
-            int i=0;
-            
-            BOOST_FOREACH(const pt::ptree::value_type& v,
-            tar.get_child("height_map")) {
-                height_map.push_back(stof(v.second.data()));
-                i++;
-            }
 
-            if(!height_map.empty()){
-                //std::cout << msg << std::endl;
-                std::cout << "building..." << std::endl;
-                //build mesh based on height map from server
-                terrain->terrainBuildMesh(height_map);
             }
-
-
         }
     } catch (...){
 
