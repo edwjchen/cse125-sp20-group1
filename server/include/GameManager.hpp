@@ -49,6 +49,7 @@ public:
 
     Terrain * terrain;
     string time;
+    
     int scoreT1 = -1;
     int scoreT2 = -2;
 
@@ -64,4 +65,4 @@ public:
     bool updateTerrain;
 };
 
-#endif
+#endif 

@@ -61,9 +61,10 @@ public:
     virtual void computeAreoForce(Wind* wind){}
     
     virtual void move (const glm::vec3& pos);
-    
-protected:
+    glm::vec3 momentum;
     float mass; // constant
+
+protected:
     glm::vec3 position; // evaluate frame by frame
     glm::vec3 velocity; // evaluate frame by frame
     glm::vec3 force;    // reset and recomput each frame

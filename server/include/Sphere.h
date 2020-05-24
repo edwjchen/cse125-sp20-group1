@@ -30,7 +30,10 @@ public:
     void setRadius(float r);
     
     glm::vec3 checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 n); 
-    
+
+    glm::vec3 force = glm::vec3(0);
+    glm::vec3 moveForce = glm::vec3(0);
+    glm::vec3 moveMomentum = glm::vec3(0); 
     
 private:
     float radius;
