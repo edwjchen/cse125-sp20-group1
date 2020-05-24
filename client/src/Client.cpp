@@ -155,7 +155,7 @@ void Client::displayCallback() {
     sphere_player1->draw(camera->getView(), projection, toonProgram);
     sphere_player2->draw(camera->getView(), projection, toonProgram);
 
-    terrain->draw(camera->getView(), projection, terrainProgram);
+    terrain->draw(camera->getView(), projection, toonProgram);
     skybox->draw(camera->getView(), projection, skyboxProgram);
     sphere_mouse->draw(camera->getView(), projection, shaderProgram);
     window->setId(player_id);
