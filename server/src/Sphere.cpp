@@ -65,7 +65,10 @@ glm::vec3 Sphere::checkCollision(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec
     if (glm::dot(n, glm::cross(e1, A)) >= 0 &&
         glm::dot(n, glm::cross(e2, B)) >= 0 &&
         glm::dot(n, glm::cross(e3, C)) >= 0) {
-        if (t > 0) {
+        glm::vec3 result;
+        if (P == position) {
+            return glm::vec3(0, radius, 0); 
+        } else if (t > 0) {
             return P - (position + radius * glm::normalize(P - position));
         } else {
             return P - (position + radius * glm::normalize(position - P));

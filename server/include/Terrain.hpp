@@ -25,7 +25,7 @@ public:
     
     void update (float deltaTime);
     void setHeightsFromTexture(const char *file, float offset, float scale);
-    void terrainBuildMesh();
+    void terrainBuildMesh(std::vector<float> height);
     void computeBoundingBoxes(); // called once after building mesh for the first time
     float getHeightAt(float x, float z);
     
@@ -36,7 +36,7 @@ public:
     
     std::vector<float> getHeightMap();
         
-    std::vector<float> edit(std::vector<glm::vec2> editPoints, float h);
+    void edit(std::vector<glm::vec2> editPoints, float h);
 
     
     SDL_Surface * surface;
@@ -55,6 +55,7 @@ private:
     std::vector<TerrainBoundingBox> boundingBoxes;
     
     std::vector<float> height;
+    std::vector<float> colorMap;
     int width;
     int depth;
     float step;
@@ -65,8 +66,10 @@ private:
     void computeIndicesForClipVolume(ClipVolume *clip);
     
     void setHeightsFromSurface(float offset, float scale);
-    void drawLineOnSurface(glm::vec2 start, glm::vec2 end, int color);
-    void putpixel(int x, int y, int color);
+    void setHeightsFromColorMap(float offset, float scale);
+    void drawLineOnSurface(glm::vec2 start, glm::vec2 end, float color);
+    void putpixel(int x, int y, float color);
+    void putpixel2(int x, int y, float color);
 };
 
 #endif /* Terrain_hpp */
