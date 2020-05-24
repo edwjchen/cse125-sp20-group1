@@ -515,7 +515,7 @@ void Terrain::putpixel2(int x, int y, float color){
                 
                 h = std::min(h + color, 10.f);
                 
-                std::cout << h << std::endl;
+//                std::cout << h << std::endl;
                 
                 colorMap[x_coord * depth + y_coord] = h;
            }
