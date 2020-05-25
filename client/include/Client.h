@@ -56,6 +56,7 @@ private:
     void setupOpenglSettings();
     void printVersions();
     void setupCallbacks();
+    static void checkCollisions(Sphere* sphere);
 
     static void errorCallback(int error, const char* description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -82,7 +83,6 @@ private:
     
     static glm::vec2 mousePos;
     static bool mouseControl;
-    static bool hasCamBeenSet;
 
     // IO Handler
     static IO_handler* io_handler;
@@ -105,10 +105,20 @@ private:
     static AudioManager* audioManager;
     
     // GameManager
+    static bool game_start;
+    static bool game_over;
+    static int player_num;
     static int player_id;
     static string currTime;
     static int score;
     
+
+    // movement
+    static bool forward;
+    static bool backward;
+    static bool left;
+    static bool right;
+
     // Network
     static boost::asio::io_service io_service;
     static tcp::endpoint endpoint;

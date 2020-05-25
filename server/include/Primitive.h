@@ -60,9 +60,10 @@ public:
     virtual void move (const glm::vec3& pos);
     void reset(); 
     void update(float deltaTime);     
+    glm::vec3 momentum; 
+    float mass; // constant
     
 protected:
-    float mass; // constant
     glm::vec3 position; // evaluate frame by frame
     glm::vec3 velocity; // evaluate frame by frame
     glm::vec3 force;    // reset and recomput each frame

@@ -2,8 +2,6 @@
 
 using namespace std;
 namespace pt = boost::property_tree;
-std::chrono::time_point<std::chrono::high_resolution_clock> time1;
-std::chrono::time_point<std::chrono::high_resolution_clock> time2;
 
 GameManager::GameManager(): updateTerrain(false){
     currTime = "";
@@ -17,14 +15,14 @@ GameManager::GameManager(): updateTerrain(false){
         glm::vec2(135.0f, 125.0f),
         glm::vec2(250.0f, 250.0f)
     };
-    terrain->edit(tmp, 10);
-    terrain->terrainBuildMesh();
+    terrain->edit(tmp, 0);
     terrain->computeBoundingBoxes();
-
+    
     sphere1 = new Sphere(5.0f, 2.0f);
-    sphere1->move(glm::vec3(64,0,-65));
+    sphere1->move(glm::vec3(64,2,-65));
+
     sphere2 = new Sphere(5.0f, 2.0f);
-    sphere1->move(glm::vec3(58,0,-54));
+    sphere2->move(glm::vec3(58,2,-54));
 }
 
 void GameManager::UpdateScore(){
@@ -37,7 +35,7 @@ int GameManager::UpdateTime(){
     endTime = time(NULL);
     //timeSignal = 1;
     //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
-    double duration = totalGameTime - difftime(endTime, startTime);
+    double duration = totalGameTime - difftime(endTime, startTime); 
     finishedTime = finishedTime + to_string((int)duration/60);
     if((int)duration % 60 < 10){
         finishedTime += ":0" + to_string((int)duration%60);
@@ -58,57 +56,80 @@ int GameManager::UpdateTime(){
 
 void GameManager::update1(char op, glm::vec3 lookat){
     glm::vec3 newPos;
-    switch (op) {
-        case 'w':
-            newPos = sphere1->getCenter();
-            newPos.z -= 1;
-            //newPos.x += lookat.x/(lookat.x + lookat.z);
-            //newPos.y += lookat.y/(lookat.x + lookat.y + lookat.z);
-            //newPos.z += lookat.z/(lookat.x + lookat.z);
+    glm::vec3 right = glm::normalize(glm::cross(lookat, glm::vec3(0.0f, 1.0f, 0.0f)));
+    lookat = glm::normalize(lookat);
 
-            sphere1->move(newPos);
+    float speed = 20.0f;
+
+    switch (op) {
+        case 'w':{
+            glm::vec3 f = sphere1->moveForce;
+            f.x += lookat.x * speed;
+            f.z += lookat.z * speed;
+            sphere1->moveForce = f;
             break;
-        case 'a':
-            newPos = sphere1->getCenter();
-            newPos.x -= 1;
-            sphere1->move(newPos);
+        }
+        case 'a':{
+            glm::vec3 f = sphere1->moveForce;
+            f.x -= right.x * speed;
+            f.z -= right.z * speed;
+            sphere1->moveForce = f;
             break;
-        case 's':
-            newPos = sphere1->getCenter();
-            newPos.z += 1;
-            sphere1->move(newPos);
+        }
+        case 's':{
+            glm::vec3 f = sphere1->moveForce;
+            f.x -= lookat.x * speed;
+            f.z -= lookat.z * speed;       
+            sphere1->moveForce = f;
             break;
-        case 'd':
-            newPos = sphere1->getCenter();
-            newPos.x += 1;
-            sphere1->move(newPos);
+        }
+        case 'd':{
+            glm::vec3 f = sphere1->moveForce;
+            f.x += right.x * speed;
+            f.z += right.z * speed;
+            sphere1->moveForce = f;
             break;
+        }
     }
 }
 
 void GameManager::update2(char op, glm::vec3 lookat){
     glm::vec3 newPos;
+    glm::vec3 right = glm::normalize(glm::cross(lookat, glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    lookat = glm::normalize(lookat);
+
+    float speed = 20.0f;
+    
     switch (op) {
-        case 'w':
-            newPos = sphere2->getCenter();
-            newPos.z -= 1;
-            sphere2->move(newPos);
+        case 'w':{
+            glm::vec3 f = sphere2->moveForce;
+            f.x += lookat.x * speed;
+            f.z += lookat.z * speed;
+            sphere2->moveForce = f;
             break;
-        case 'a':
-            newPos = sphere2->getCenter();
-            newPos.x -= 1;
-            sphere2->move(newPos);
+        }
+        case 'a':{
+            glm::vec3 f = sphere2->moveForce;
+            f.x -= right.x * speed;
+            f.z -= right.z * speed;
+            sphere2->moveForce = f;
             break;
-        case 's':
-            newPos = sphere2->getCenter();
-            newPos.z += 1;
-            sphere2->move(newPos);
+        }
+        case 's':{
+            glm::vec3 f = sphere2->moveForce;
+            f.x -= lookat.x * speed;
+            f.z -= lookat.z * speed;       
+            sphere2->moveForce = f;
             break;
-        case 'd':
-            newPos = sphere2->getCenter();
-            newPos.x += 1;
-            sphere2->move(newPos);
+        }
+        case 'd':{
+            glm::vec3 f = sphere2->moveForce;
+            f.x += right.x * speed;
+            f.z += right.z * speed;
+            sphere2->moveForce = f;
             break;
+        }
     }
 }
 
@@ -123,19 +144,16 @@ void GameManager::editTerrain(std::vector<glm::vec2> & editPoints, float height)
 
 void GameManager::handle_input(string data, int id){
     //cout << data << endl;
-    time1 = std::chrono::high_resolution_clock::now();
     std::string key_op = "";
     std::string mouse_op = "";
-
+    
     std::vector<glm::vec2> editPoints;
     float height = 10;
     glm::vec3 camLookatFront = glm::vec3(0.0);
     decode(data, key_op, mouse_op, camLookatFront, editPoints);
-
+    
     //cout << camLookatFront.x << " " << camLookatFront.y << " " << camLookatFront.z << " " << endl;
-    time2 = std::chrono::high_resolution_clock::now();
-    cout << "Finish decoding : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
-    time1 = time2;
+
     if(key_op != ""){
         cout << "id: " << id << ", operation: "<< key_op << endl;
         if(id == 1){
@@ -147,26 +165,19 @@ void GameManager::handle_input(string data, int id){
     if(!editPoints.empty()){
         if(mouse_op.compare("l") == 0){
             editTerrain(editPoints, height);
-        }
+        } 
         else if(mouse_op.compare("r") == 0){
             editTerrain(editPoints, height * -1);
         }
         updateTerrain = true;
     }
-    // hardcode to add gravity for now
-    sphere1->move(sphere1->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
-    sphere2->move(sphere2->getCenter() + glm::vec3(0.0f, -0.1f, 0.0f));
-    time2 = std::chrono::high_resolution_clock::now();
-    cout << "Before checking collisions : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
-    time1 = time2;
-    checkTerrainCollisions(sphere1);
-    checkTerrainCollisions(sphere2);
-    checkSphereCollisions();
+    // add gravity for now
+    sphere1->force += glm::vec3(0, -9.8, 0);
+    sphere2->force += glm::vec3(0, -9.8, 0);
 
-    time2 = std::chrono::high_resolution_clock::now();
-    cout << "Finish updating : "<< chrono::duration_cast<chrono::duration<double>>(time2 - time1).count()*1000 << endl;
-    time1 = time2;
-    cout << endl;
+    checkTerrainCollisions(sphere1);
+    //checkTerrainCollisions(sphere2);
+    checkSphereCollisions();
 }
 
 
@@ -213,10 +224,9 @@ string GameManager::encode()
         m2.push_back(std::make_pair("", matrix2[i]));
     }
     obj2.add_child("transformation", m2);
-
     obj.push_back(std::make_pair("", obj1));
     obj.push_back(std::make_pair("", obj2));
-
+    
     if(updateTerrain){
         vector <float> height_map = terrain->getHeightMap();
         // build and add current height map node to root
@@ -227,8 +237,7 @@ string GameManager::encode()
         }
         updateTerrain = false;
     }
-
-
+    
     pt::ptree tempNodeS1;
     pt::ptree tempNodeS2;
     tempNodeS1.put("", scoreT1);
@@ -239,13 +248,13 @@ string GameManager::encode()
     pt::ptree tempNodeT;
     tempNodeT.put("", currTime);
     timeNode.push_back(std::make_pair("",tempNodeT));
-
+    
     root.add_child("Obj", obj);
-
+    
     root.add_child("height_map" ,height_root);
-
+    
     root.add_child("Score", scoreNode);
-
+    
     root.add_child("Time", timeNode);
 
     root.put("Header", "update");
@@ -256,15 +265,11 @@ string GameManager::encode()
 }
 
 void GameManager::checkTerrainCollisions(Sphere* sphere) {
-
     std::vector<unsigned int>* indices = terrain->getIndices();
     std::vector<glm::vec3>* vertices = terrain->getVertices();
     std::vector<TerrainBoundingBox>* boxes = terrain->getBoundingBoxes();
-
-    // resolve force
-    // sphere->move(sphere->getCenter() + sphere->force);
-    // sphere->force = glm::vec3(0);
-
+    
+    float elapsedTime = 0.03f / 20;
     for (int k = 0; k < 20; k++) {
         for (int j = 0; j < boxes->size(); j++) {
             TerrainBoundingBox& box = (*boxes)[j];
@@ -274,11 +279,11 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
             sminPoint += glm::vec2(-sphere->getRadius(), -sphere->getRadius());
             glm::vec2 smaxPoint(sphere->getCenter().x, sphere->getCenter().z);
             smaxPoint += glm::vec2(sphere->getRadius(), sphere->getRadius());
-
+            
             if (sminPoint.x > tmaxPoint.x || tminPoint.x > smaxPoint.x || sminPoint.y > tmaxPoint.y || tminPoint.y > smaxPoint.y) { // not in box
                 continue;
             }
-
+            
             for (int i = 0; i < box.indices2triangles.size(); i++) {
                 int curInd = box.indices2triangles[i];
                 glm::vec3& a = (*vertices)[(*indices)[curInd-2]];
@@ -288,19 +293,51 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
                 if (glm::dot(n, glm::vec3(0, 1, 0)) < 0) { // little hack to make sure normals are upwards
                     n = -n;
                 }
-
+                
                 glm::vec3 offset = sphere->checkCollision(a, b, c, n);
                 if (glm::length(offset) < 0.0001f) { // clamp to avoid bouncing too many times
                     offset = glm::vec3(0);
                     continue;
                 }
+                if (!isnan(offset.x)) {
+                    std::cout << glm::to_string(offset) << std::endl;
+                }
                 sphere->move(sphere->getCenter() + offset); // move to right position
             }
+            sphere->momentum += sphere->force * elapsedTime;
+            glm::vec3 dis = (sphere->momentum/sphere->mass) * elapsedTime;
+            
+            if (glm::length(sphere->moveMomentum) > 0) {
+                glm::vec3 temp = 10.0f * glm::normalize(sphere->moveMomentum) * elapsedTime;
+                if (glm::length(temp) >= glm::length(sphere->moveMomentum)) {
+                    sphere->moveMomentum = glm::vec3(0);
+                } else {
+                    sphere->moveMomentum -= 10.0f * glm::normalize(sphere->moveMomentum) * elapsedTime;
+                }
+            }
+            sphere->moveMomentum += sphere->moveForce * elapsedTime;
+            if (glm::length(sphere->moveMomentum) > 20.0f) {
+                sphere->moveMomentum = 20.0f * glm::normalize(sphere->moveMomentum);
+            }
+            //std::cout << glm::to_string(sphere->moveMomentum) << std::endl;
+            //std::cout << sphere->mass << std::endl;
+            dis += (sphere->moveMomentum/sphere->mass) * elapsedTime;
+            //std::cout << glm::to_string(dis) << std::endl;
+            
+            if (!isnan(sphere->getCenter().x)) {
+                //std::cout << glm::to_string(sphere->getCenter()) << std::endl;
+            }
+            sphere->move(sphere->getCenter() + dis);
+
         }
     }
-
+    sphere->force = glm::vec3(0);
+    sphere->moveForce = glm::vec3(0);
+    
     // if sphere has fallen off, freaking lift it up
     float height = terrain->getHeightAt(sphere->getCenter().x, sphere->getCenter().z);
+    //std::cout << height << std::endl;
+    //std::cout << sphere->getCenter().y + sphere->getRadius() << std::endl;
     if (height > sphere->getCenter().y + sphere->getRadius()) {
         glm::vec3 offset(0);
         offset.y = height - (sphere->getCenter().y - sphere->getRadius());
@@ -310,7 +347,9 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
 
 void GameManager::decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
 {
+    //cout << data << endl;
     float temp[4];
+    //std::cout << data << std::endl;
     // Read JSON from client
     try{
         if(data != ""){

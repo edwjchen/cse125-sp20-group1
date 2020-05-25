@@ -48,6 +48,7 @@ public:
     void decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints);
 
     Terrain * terrain;
+    
     string currTime;
     int timeSignal = 0;
     int scoreT1 = -1;
@@ -68,4 +69,4 @@ public:
     std::chrono::time_point<std::chrono::high_resolution_clock> hres_endTime;
 };
 
-#endif
+#endif 
