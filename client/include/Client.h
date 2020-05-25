@@ -56,6 +56,7 @@ private:
     void setupOpenglSettings();
     void printVersions();
     void setupCallbacks();
+    static void checkCollisions(Sphere* sphere);
 
     static void errorCallback(int error, const char* description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -111,6 +112,13 @@ private:
     static string currTime;
     static int score;
     
+
+    // movement
+    static bool forward;
+    static bool backward;
+    static bool left;
+    static bool right;
+
     // Network
     static boost::asio::io_service io_service;
     static tcp::endpoint endpoint;
