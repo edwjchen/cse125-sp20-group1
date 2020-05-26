@@ -27,6 +27,12 @@
 #include "Terrain.hpp"
 #include "Sphere.h"
 
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
+#include <string>
+#include <vector>
+#include <boost/archive/text_oarchive.hpp>
+
 using namespace std;
 
 class GameManager{
@@ -34,7 +40,8 @@ public:
     GameManager();
 
     int UpdateTime();
-    void UpdateScore();    
+    void UpdateScore();  
+    void updateStatus(string s); 
 
     void update1(char op, glm::vec3 lookat);
     void update2(char op, glm::vec3 lookat);
@@ -65,8 +72,39 @@ public:
 
     bool updateTerrain;
 
-    std::chrono::time_point<std::chrono::high_resolution_clock> hres_startTime;
-    std::chrono::time_point<std::chrono::high_resolution_clock> hres_endTime;
+    string status;
+    int player;
+
+    template <class Archive>
+    void serialize(
+            Archive& ar,
+            unsigned int version
+            )
+    {
+        ar & status;
+        ar & player;
+        ar & scoreT1;
+        ar & scoreT2;
+        ar & currTime;
+        vector<float> height_map;
+        if(updateTerrain){
+            height_map =  terrain->getHeightMap();
+        }
+        ar & height_map;
+
+        int matrix1[16];
+        int matrix2[16];
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                matrix1[4*i+j] = transM1[i][j];
+                matrix2[4*i+j] = transM2[i][j];
+            }
+        }
+
+        ar & matrix1;
+        ar & matrix2;
+        
+    }
 };
 
 #endif 

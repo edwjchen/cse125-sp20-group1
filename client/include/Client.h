@@ -23,6 +23,8 @@
 #include "IO_handler.hpp"
 #include "Camera.hpp"
 #include "AudioManager.hpp"
+#include "Message.hpp"
+#include <boost/archive/text_iarchive.hpp>
 #include <ctime>
 
 class Client {
@@ -86,9 +88,10 @@ private:
 
     // IO Handler
     static IO_handler* io_handler;
+    boost::asio::streambuf read_msg_;
 
     // Decode message from server and update client side graphic
-    static void updateFromServer(std::string msg);
+    static void updateFromServer(Message * msg);
     
     // Timer
     static void updateTime();

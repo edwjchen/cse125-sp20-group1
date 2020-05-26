@@ -5,7 +5,7 @@ INCFLAGS = -I./glm-0.9.7.1 -I/usr/X11/include -I./include/
 LDFLAGS = -framework GLUT -framework OpenGL -L./lib/mac/ \
 		-L"/System/Library/Frameworks/OpenGL.framework/Libraries" \
 		-lGL -lGLU -lm -lstdc++ -lfreeimage \
-		-lboost_system -lboost_thread-mt -lSDL2 -lSDL2_image
+		-lboost_system -lboost_thread-mt -lboost_serialization -lSDL2 -lSDL2_image
 else
 CFLAGS = -g -DGL_GLEXT_PROTOTYPES
 INCFLAGS = -I./glm-0.9.7.1 -I./include/ -I/usr/X11R6/include -I/sw/include \

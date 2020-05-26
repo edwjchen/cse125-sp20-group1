@@ -8,6 +8,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
+#include "Message.hpp"
+#include <boost/archive/text_iarchive.hpp>
 
 using namespace boost::asio;
 using namespace std;
@@ -29,14 +31,14 @@ public:
           boost::asio::placeholders::error, endpoint));
   }
 
-    string getMsg()
+    Message* getMsg()
     {
-        string update = "";
+        Message * m = NULL;
         if(!msg.empty()){
-            update = msg.front();
+            m = & msg.front();
             msg.pop();
         }
-        return update;
+        return m;
     }
 
     void write(const std::string msg)
@@ -91,20 +93,26 @@ private:
   {
       if (!error)
       {
-          int n = read_msg_.size();
-          // std::cout << n << std::endl;
-          std::string target{buffers_begin(read_msg_.data()), buffers_end(read_msg_.data())};
-          // std::cout << target << std::endl;
-          // Add debug msgs
-
-          msg.push(target);
-          read_msg_.consume(bytes_transferred + 1);
-
-          boost::asio::async_read_until(socket_,
-          read_msg_, '\n',
-          boost::bind(&::chat_client::handle_read, this,
-                      boost::asio::placeholders::error,
-                      boost::asio::placeholders::bytes_transferred));
+          try{
+              std::istream is( &read_msg_ );
+              std::cout << "11111111" << std::endl;
+              boost::archive::text_iarchive ar( is );
+              std::cout << "22222222" << std::endl;
+              Message message;
+              ar & message;
+              std::cout << "33333333" << std::endl;
+              int n = read_msg_.size();
+              read_msg_.consume(n);
+              msg.push(message);
+              std::cout << "44444444" << std::endl;
+              std::cout << message.currTime << std::endl;
+              boost::asio::async_read_until(socket_,
+              read_msg_, '\n',
+              boost::bind(&::chat_client::handle_read, this,
+                          boost::asio::placeholders::error,
+                          boost::asio::placeholders::bytes_transferred));
+          }
+          catch(...){std::cout << "error" << std::endl;}
       }
       else
       {
@@ -158,5 +166,5 @@ private:
     boost::asio::streambuf read_msg_;
     chat_message_queue write_msgs_;
     int id;
-    std::queue<string> msg;
+    std::queue<Message> msg;
 };

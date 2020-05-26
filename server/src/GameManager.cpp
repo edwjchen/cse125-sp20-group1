@@ -3,7 +3,7 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
-GameManager::GameManager(): updateTerrain(false){
+GameManager::GameManager(): updateTerrain(false), player(0){
     currTime = "";
     //startTime = clock();
     startTime = time(NULL);
@@ -52,6 +52,10 @@ int GameManager::UpdateTime(){
     //cout << finishedTime << endl;
     currTime = finishedTime;
     return 1;
+}
+
+void GameManager::updateStatus(string s){
+    status = s;
 }
 
 void GameManager::update1(char op, glm::vec3 lookat){
@@ -178,90 +182,6 @@ void GameManager::handle_input(string data, int id){
     checkTerrainCollisions(sphere1);
     //checkTerrainCollisions(sphere2);
     checkSphereCollisions();
-}
-
-
-string GameManager::encode()
-{
-    transM1 = sphere1->getModel();
-    transM2 = sphere2->getModel();
-    pt::ptree root;
-    pt::ptree obj;
-
-    pt::ptree obj1;
-    pt::ptree obj2;
-
-    pt::ptree m1;
-    pt::ptree m2;
-
-    pt::ptree matrix1[16];
-    pt::ptree matrix2[16];
-
-    pt::ptree height_root;
-
-    pt::ptree timeNode;
-    pt::ptree scoreNode;
-
-    obj1.put("id", 1);
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            matrix1[4*i+j].put("", transM1[i][j]);
-        }
-    }
-    for(int i=0;i<16;i++){
-        m1.push_back(std::make_pair("", matrix1[i]));
-    }
-    obj1.add_child("transformation", m1);
-
-    obj2.put("id", 2);
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            matrix2[4*i+j].put("", transM2[i][j]);
-        }
-    }
-
-    for(int i=0;i<16;i++){
-        m2.push_back(std::make_pair("", matrix2[i]));
-    }
-    obj2.add_child("transformation", m2);
-    obj.push_back(std::make_pair("", obj1));
-    obj.push_back(std::make_pair("", obj2));
-    
-    if(updateTerrain){
-        vector <float> height_map = terrain->getHeightMap();
-        // build and add current height map node to root
-        for(int i = 0; i < height_map.size(); i++){
-            pt::ptree node;
-            node.put("", height_map[i]);
-            height_root.push_back(std::make_pair("", node));
-        }
-        updateTerrain = false;
-    }
-    
-    pt::ptree tempNodeS1;
-    pt::ptree tempNodeS2;
-    tempNodeS1.put("", scoreT1);
-    tempNodeS2.put("", scoreT2);
-    scoreNode.push_back(std::make_pair("", tempNodeS1));
-    scoreNode.push_back(std::make_pair("", tempNodeS2));
-    // Add time to root
-    pt::ptree tempNodeT;
-    tempNodeT.put("", currTime);
-    timeNode.push_back(std::make_pair("",tempNodeT));
-    
-    root.add_child("Obj", obj);
-    
-    root.add_child("height_map" ,height_root);
-    
-    root.add_child("Score", scoreNode);
-    
-    root.add_child("Time", timeNode);
-
-    root.put("Header", "update");
-
-    stringstream ss;
-    write_json(ss, root, false);
-    return ss.str() + '\n';
 }
 
 void GameManager::checkTerrainCollisions(Sphere* sphere) {
