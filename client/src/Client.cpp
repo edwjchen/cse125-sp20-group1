@@ -25,6 +25,8 @@ bool Client::inGame = false;
 bool Client::game_start = false;
 bool Client::game_over = false;
 int Client::player_num = 0;
+int packet_num = 0;
+int update = 0;
 
 boost::asio::io_service Client::io_service;
 //tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
@@ -464,6 +466,7 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 
         cout << "finalPos x: " << translatedRPos.x << " finalPos y: " << translatedRPos.y << endl;
+        update++;
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
         releasePos = glm::vec2(INFINITY, INFINITY);
@@ -552,6 +555,8 @@ void Client::updateFromServer(Message * msg) {
                 cout << "Game Ends" << endl;
             }
             else if(header.compare("update") == 0){
+                cout << packet_num << " ";
+                packet_num++;
 
                 glm::mat4 matrix1, matrix2;
 
@@ -565,10 +570,11 @@ void Client::updateFromServer(Message * msg) {
                 vector <float> height_map = msg->height_map;
                 //cout <<"map: " << height_map.size() <<endl;
                 cout <<"update: " << msg->updateTerrain <<endl;
-                if(msg->updateTerrain){
+                if(update>0){
                     std::cout << "building..." << std::endl;
                     //build mesh based on height map from server
                     terrain->terrainBuildMesh(height_map);
+                    update--;
                 }
                 
                 //Store the difference for camera

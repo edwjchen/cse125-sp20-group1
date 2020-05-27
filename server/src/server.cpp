@@ -43,6 +43,7 @@ private:
 
     GameManager gm;
 
+    int packet_num = 0;
     void send_info(int id, std::shared_ptr<tcp::socket> socket){
         while(1){
 
@@ -59,8 +60,16 @@ private:
                 //std::string msg = gm.encode();
                 //boost::asio::write( *socket, boost::asio::buffer(msg) );
                 if(gm.updateTerrain){
-                    cout << "111" << endl;
-                    gm.updateTerrain = false;
+                    if(id == 1){
+                        cout << "update " << packet_num << endl;
+                        packet_num++;
+                    }
+                    //gm.updateTerrain = false;
+                }else{
+                    if(id == 1){
+                        cout << "not update " << packet_num << endl;
+                        packet_num++;
+                    }
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(30));
             }
