@@ -10,6 +10,7 @@
 #include <boost/foreach.hpp>
 #include "Message.hpp"
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/iostreams/stream.hpp>
 
 using namespace boost::asio;
 using namespace std;
@@ -35,7 +36,7 @@ public:
     {
         Message * m = NULL;
         if(!msg.empty()){
-            m = & msg.front();
+            m = msg.front();
             msg.pop();
         }
         return m;
@@ -94,25 +95,24 @@ private:
       if (!error)
       {
           try{
-              std::istream is( &read_msg_ );
-              std::cout << "11111111" << std::endl;
-              boost::archive::text_iarchive ar( is );
-              std::cout << "22222222" << std::endl;
-              Message message;
-              ar & message;
-              std::cout << "33333333" << std::endl;
-              int n = read_msg_.size();
-              read_msg_.consume(n);
-              msg.push(message);
-              std::cout << "44444444" << std::endl;
-              std::cout << message.currTime << std::endl;
+              std::string s{buffers_begin(read_msg_.data()), buffers_end(read_msg_.data())};
+              read_msg_.consume(bytes_transferred);
+              boost::iostreams::stream<boost::iostreams::array_source> is(s.data(), s.length());
+              boost::archive::text_iarchive ia(is);
+              Message * m = new Message();
+              ia >> (*m);
+              //std::cout << s << std::endl;
+              msg.push(m);
+              
               boost::asio::async_read_until(socket_,
               read_msg_, '\n',
               boost::bind(&::chat_client::handle_read, this,
                           boost::asio::placeholders::error,
                           boost::asio::placeholders::bytes_transferred));
           }
-          catch(...){std::cout << "error" << std::endl;}
+          catch(...){
+              std::cout << "read error" << std::endl;
+          }
       }
       else
       {
@@ -166,5 +166,5 @@ private:
     boost::asio::streambuf read_msg_;
     chat_message_queue write_msgs_;
     int id;
-    std::queue<Message> msg;
+    std::queue<Message*> msg;
 };

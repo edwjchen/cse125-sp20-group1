@@ -7,7 +7,7 @@ GameManager::GameManager(): updateTerrain(false), player(0){
     currTime = "";
     //startTime = clock();
     startTime = time(NULL);
-    totalGameTime = 100.0f;
+    totalGameTime = 1000.0f;
     terrain = new Terrain(251, 251, 0.5f);
     std::vector<glm::vec2> tmp = {
         glm::vec2(1.0f, 1.0f),
@@ -169,6 +169,7 @@ void GameManager::handle_input(string data, int id){
     if(!editPoints.empty()){
         if(mouse_op.compare("l") == 0){
             editTerrain(editPoints, height);
+            cout << "edit left" << endl;
         } 
         else if(mouse_op.compare("r") == 0){
             editTerrain(editPoints, height * -1);
@@ -220,7 +221,7 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
                     continue;
                 }
                 if (!isnan(offset.x)) {
-                    std::cout << glm::to_string(offset) << std::endl;
+                    //std::cout << glm::to_string(offset) << std::endl;
                 }
                 sphere->move(sphere->getCenter() + offset); // move to right position
             }

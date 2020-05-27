@@ -86,12 +86,7 @@ public:
         ar & scoreT1;
         ar & scoreT2;
         ar & currTime;
-        vector<float> height_map;
-        if(updateTerrain){
-            height_map =  terrain->getHeightMap();
-        }
-        ar & height_map;
-
+     
         int matrix1[16];
         int matrix2[16];
         for(int i=0;i<4;i++){
@@ -100,9 +95,20 @@ public:
                 matrix2[4*i+j] = transM2[i][j];
             }
         }
-
         ar & matrix1;
         ar & matrix2;
+        ar & updateTerrain;
+
+        vector<float> height_map;
+        vector<float> height = terrain->getHeightMap();
+        for(int i=0;i<height.size();i++){
+            height_map.push_back(height[i]);
+        }
+        ar & height_map;
+        // if(updateTerrain){
+        //     cout << "222" << endl;
+        //     updateTerrain = false;
+        // }
         
     }
 };

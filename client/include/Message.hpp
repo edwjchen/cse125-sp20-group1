@@ -31,6 +31,7 @@ public:
     vector<float> height_map;
     int matrix1[16];
     int matrix2[16];
+    bool updateTerrain;
 
 
     template <class Archive>
@@ -44,9 +45,10 @@ public:
         ar & scoreT1;
         ar & scoreT2;
         ar & currTime;
-        ar & height_map;
         ar & matrix1;
         ar & matrix2;
+        ar & updateTerrain;
+        ar & height_map;
     }
 };
 

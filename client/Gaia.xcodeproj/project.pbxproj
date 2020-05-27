@@ -41,7 +41,6 @@
 		B0C64460245F34F4006BC486 /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0C6445E245F34F4006BC486 /* Skybox.cpp */; };
 		BC759643247CDDFD00599FE0 /* libboost_serialization.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC759642247CDDFD00599FE0 /* libboost_serialization.dylib */; };
 		BC759644247CDDFD00599FE0 /* libboost_serialization.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = BC759642247CDDFD00599FE0 /* libboost_serialization.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		BC759647247CDE0900599FE0 /* libboost_serialization-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC759646247CDE0900599FE0 /* libboost_serialization-mt.dylib */; };
 		BC759648247CDE0900599FE0 /* libboost_serialization-mt.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = BC759646247CDE0900599FE0 /* libboost_serialization-mt.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -151,7 +150,6 @@
 			files = (
 				B07A7F8324558D49004C76D1 /* libSDL2-2.0.0.dylib in Frameworks */,
 				B07A7F8124558D30004C76D1 /* libSDL2_image-2.0.0.dylib in Frameworks */,
-				BC759647247CDE0900599FE0 /* libboost_serialization-mt.dylib in Frameworks */,
 				BC759643247CDDFD00599FE0 /* libboost_serialization.dylib in Frameworks */,
 				B0255A4C2443C994009BFB31 /* libglfw.3.3.dylib in Frameworks */,
 				614B14B6246F515D00688A4A /* libsfml-audio.2.5.1.dylib in Frameworks */,
@@ -434,6 +432,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -487,6 +486,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				SDKROOT = macosx;
 			};
 			name = Release;

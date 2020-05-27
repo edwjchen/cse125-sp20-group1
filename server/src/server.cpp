@@ -58,6 +58,10 @@ private:
                 boost::asio::write( *socket, boost::asio::buffer(buf.data()));
                 //std::string msg = gm.encode();
                 //boost::asio::write( *socket, boost::asio::buffer(msg) );
+                if(gm.updateTerrain){
+                    cout << "111" << endl;
+                    gm.updateTerrain = false;
+                }
                 std::this_thread::sleep_for(std::chrono::milliseconds(30));
             }
             else{
