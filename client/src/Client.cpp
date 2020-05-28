@@ -24,11 +24,12 @@ int Client::totalTime = 300;
 bool Client::inGame = false;
 bool Client::game_start = false;
 bool Client::game_over = false;
+bool Client::game_restart = false;
 int Client::player_num = 0;
 
 boost::asio::io_service Client::io_service;
-//tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
-tcp::endpoint Client::endpoint(ip::address::from_string("99.10.121.88"),8080);
+tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
+//tcp::endpoint Client::endpoint(ip::address::from_string("192.168.1.239"),8888);
 chat_client Client::c(io_service, endpoint);
 boost::thread Client::t(boost::bind(&boost::asio::io_service::run, &io_service));
 std::string Client::msg;
@@ -211,6 +212,11 @@ void Client::displayCallback() {
     window->setId(player_id);
     window->setTime(currTime);
     window->setScore(score);
+    game_restart = window->getRestart();
+    if(game_restart){
+        // Send signal to server
+        io_handler->SendRestart(&c);
+    }
     window->setPlayerNum(player_num);
     window->setGameStart(game_start);
     window->setGameOver(game_over);
@@ -293,6 +299,7 @@ void Client::run() {
             }
             else{
                 // camera for terrian player is fixed
+                mouseControl = false;
             }
             
             displayCallback();
@@ -459,10 +466,10 @@ void Client::setMouseButtonCallback(GLFWwindow* window, int button, int action, 
 
         glm::vec2 translatedCPos = screenPointToWorld(clickPos);
         glm::vec2 translatedRPos = screenPointToWorld(releasePos);
-        io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
-        io_handler -> SendPackage(&c);
-
-
+        if(player_id == 3 || player_id == 4){
+            io_handler->SendMouseInput(isMouseButtonDown, translatedCPos, translatedRPos);
+            io_handler -> SendPackage(&c);
+        }
         cout << "finalPos x: " << translatedRPos.x << " finalPos y: " << translatedRPos.y << endl;
         isMouseButtonDown = 0;
         clickPos = glm::vec2(INFINITY, INFINITY);
@@ -567,6 +574,7 @@ void Client::updateFromServer(string msg) {
                 
                 // TODO:: Need more condition later
                 game_start = true;
+                game_over = false;
                 //cout << player_id << "start!" << endl;
 
                 int id = 1;
@@ -579,8 +587,8 @@ void Client::updateFromServer(string msg) {
                                       child.second.get_child("transformation")) {
 
                             matrix1[i/4][i%4] = stof(m.second.data());
+                            //cout << matrix1[i/4][i%4] << ",";
                             i++;
-                            //cout << matrix1[i/4][i%4] << endl;
                         }
                         
                         //Store the difference for camera

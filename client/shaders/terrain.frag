@@ -3,7 +3,7 @@
 layout(location = 0) out vec4 glFragColor;
 
 //! <group name="Camera Properties"/>
-uniform vec3 CameraPosition = vec3 (0,0, 10.0, 0.0); //!slider[(-100,-100,-100), (0, 0,0), (100,100,100)]
+uniform vec3 CameraPosition = vec3 (0.0, 10.0, 0.0); //!slider[(-100,-100,-100), (0, 0,0), (100,100,100)]
 
 //! <group name="Object Properties"/>
 uniform float SpecularPower = 20.0; //! slider[10, 300, 1000]
