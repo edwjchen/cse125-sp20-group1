@@ -49,9 +49,10 @@ private:
                 return;
             }
             if(gm.UpdateTime()){
-                std::string msg = gm.encode();
+                std::string msg = gm.encode(id);
                 //std::cout << msg ;
                 boost::asio::write( *socket, boost::asio::buffer(msg) );
+                
                 std::this_thread::sleep_for(std::chrono::milliseconds(30));
             }
             else{
@@ -82,6 +83,9 @@ private:
 
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
             gm.handle_input(data, id);
+            if (id == 2){
+                    gm.edited_points.clear();
+                }
         }
     }
 

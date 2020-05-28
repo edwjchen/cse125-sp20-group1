@@ -27,8 +27,8 @@ bool Client::game_over = false;
 int Client::player_num = 0;
 
 boost::asio::io_service Client::io_service;
-//tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
-tcp::endpoint Client::endpoint(ip::address::from_string("99.10.121.88"),8080);
+tcp::endpoint Client::endpoint(ip::address::from_string("127.0.0.1"),8888);
+//tcp::endpoint Client::endpoint(ip::address::from_string("99.10.121.88"),8080);
 chat_client Client::c(io_service, endpoint);
 boost::thread Client::t(boost::bind(&boost::asio::io_service::run, &io_service));
 std::string Client::msg;
@@ -38,7 +38,7 @@ glm::vec3 Client::sphere1_pos = glm::vec3(0.0f);
 glm::vec3 Client::sphere2_pos = glm::vec3(0.0f);
 glm::vec2 Client::mousePos = glm::vec2(INFINITY, INFINITY);
 
-bool Client::mouseControl = true;
+bool Client::mouseControl = false;
 bool Client::forward = false;
 bool Client::backward = false;
 bool Client::left = false;
@@ -668,18 +668,40 @@ void Client::updateFromServer(string msg) {
                 
                 int i=0;
                 
+                
+                std::vector<glm::vec2> edited_points;
+                float height = 0.0f;
                 BOOST_FOREACH(const pt::ptree::value_type& v,
-                tar.get_child("height_map")) {
-                    height_map.push_back(stof(v.second.data()));
+                tar.get_child("edited_points")) {
+                    //cout << v.second.data() << endl;
+                    stringstream ss(v.second.data());
+                    string res;
+                    std::vector<float> res_list;
+                    while(getline(ss, res, ',')){
+                        res_list.push_back(stof(res));
+                    }
+                    cout << res_list[0] << ", ";
+                    cout << res_list[1] << ", ";
+                    cout << res_list[2] << ", ";
+                    cout << res_list[3] << ", ";
+                    cout << res_list[4] << ".";
+                    cout << endl;
                     i++;
+                    edited_points.push_back(glm::vec2(res_list[0], res_list[1]));
+                    edited_points.push_back(glm::vec2(res_list[2], res_list[3]));
+                    height = res_list[4];
                 }
 
-                if(!height_map.empty()){
-                    //std::cout << msg << std::endl;
-                    std::cout << "building..." << std::endl;
-                    //build mesh based on height map from server
-                    terrain->terrainBuildMesh(height_map);
+                if(!edited_points.empty()){
+                    cout << "..." << endl;
+                    terrain->edit(edited_points, height);
                 }
+//                if(!height_map.empty()){
+//                    //std::cout << msg << std::endl;
+//                    std::cout << "building..." << std::endl;
+//                    //build mesh based on height map from server
+//                    terrain->terrainBuildMesh(height_map);
+//                }
 
             }
         }

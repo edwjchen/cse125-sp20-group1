@@ -44,7 +44,7 @@ public:
     void checkTerrainCollisions(Sphere* sphere);
     void checkSphereCollisions();
 
-    string encode();
+    string encode(int id);
     void decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints);
 
     Terrain * terrain;
@@ -64,6 +64,8 @@ public:
     glm::mat4 transM1, transM2; 
 
     bool updateTerrain;
+    std::vector<vector<string>> edited_terrains;
+    std::vector<string> edited_points;
 };
 
 #endif 
