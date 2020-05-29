@@ -25,7 +25,9 @@ GameManager::GameManager(): updateTerrain(false){
     sphere2->move(glm::vec3(58,2,-54));
 
     for (int i = 0; i < 4 ; i++){
+        mutex_arr[i].lock();
         edited_terrains.push_back({});
+        mutex_arr[i].unlock();
     }
 }
 
@@ -255,8 +257,10 @@ string GameManager::encode(int id)
 
     while(!edited_terrains[id - 1].empty()){
         pt::ptree node;
+        mutex_arr[id - 1].lock();
         string res = edited_terrains[id - 1].back();
         edited_terrains[id - 1].pop_back();
+        mutex_arr[id - 1].unlock();
         node.put("", res);
         height_root.push_back(std::make_pair("", node));
     }
@@ -271,7 +275,22 @@ string GameManager::encode(int id)
     scoreNode.push_back(std::make_pair("", tempNodeS2));
     // Add time to root
     pt::ptree tempNodeT;
-    tempNodeT.put("", currTime);
+
+    string finishedTime = "";
+    endTime = time(NULL);
+    //timeSignal = 1;
+    //float duration = totalGameTime - (float)(endTime-startTime) / CLOCKS_PER_SEC;
+    double duration = totalGameTime - difftime(endTime, startTime); 
+    finishedTime = finishedTime + to_string((int)duration/60);
+    if((int)duration % 60 < 10){
+        finishedTime += ":0" + to_string((int)duration%60);
+    } else {
+        finishedTime += ":" + to_string((int)duration%60);
+    }
+    //cout << finishedTime << endl;
+
+
+    tempNodeT.put("", finishedTime);
     timeNode.push_back(std::make_pair("",tempNodeT));
     
     root.add_child("Obj", obj);
