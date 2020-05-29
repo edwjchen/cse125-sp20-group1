@@ -150,7 +150,7 @@ void GameManager::handle_input(string data, int id){
     std::vector<glm::vec2> editPoints;
     float height = 10;
     glm::vec3 camLookatFront = glm::vec3(0.0);
-    decode(data, key_op, mouse_op, camLookatFront, editPoints);
+    decode(id, data, key_op, mouse_op, camLookatFront, editPoints);
 
     //cout << camLookatFront.x << " " << camLookatFront.y << " " << camLookatFront.z << " " << endl;
 
@@ -345,11 +345,9 @@ void GameManager::checkTerrainCollisions(Sphere* sphere) {
     }
 }
 
-void GameManager::decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
+void GameManager::decode(int id, string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints)
 {
-    //cout << data << endl;
     float temp[4];
-    //std::cout << data << std::endl;
     // Read JSON from client
     try{
         if(data != ""){
@@ -359,45 +357,50 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, glm::v
             pt::ptree tar;
             pt::read_json(ss, tar);
 
-            int i = 0;
-            BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
-                if(i == 0){
-                    key_op = child.second.get<std::string>("key");
+            string header = tar.get<string>("Header");
+            if(header.compare("restart") == 0){
+                restartSet.insert(id);
+                if(restartSet.size() == 4){
+                    restartGame();
                 }
-                else if (i == 1){
-                    // Mouse
-                    mouse_op = child.second.get<std::string>("mouse");
+            }else if(header.compare("data") == 0){
+                int i = 0;
+                BOOST_FOREACH(const pt::ptree::value_type& child, tar.get_child("cmd")) {
+                    if(i == 0){
+                        key_op = child.second.get<std::string>("key");
+                    }
+                    else if (i == 1){
+                        // Mouse
+                        mouse_op = child.second.get<std::string>("mouse");
 
-                    if(mouse_op.compare("l") == 0){
-                        int index = 0;
-                        BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_l")){
-                            temp[index] = stof(t.second.data());
-                            index++;
-//                                    if(temp[index]!= 0){
-//                                        cout << temp[index] << " ";
-//                                    }
-                        }
-                    } else if(mouse_op.compare("r") == 0){
-                        int index = 0;
-                        BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_r")){
-                            temp[index] = stof(t.second.data());
-                            index++;
+                        if(mouse_op.compare("l") == 0){
+                            int index = 0;
+                            BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_l")){
+                                temp[index] = stof(t.second.data());
+                                index++;
+                            }
+                        } else if(mouse_op.compare("r") == 0){
+                            int index = 0;
+                            BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("mouse_r")){
+                                temp[index] = stof(t.second.data());
+                                index++;
+                            }
                         }
                     }
+                    else if( i == 2){
+                        // Cam
+                        float temp1[3];
+                        int index = 0;
+                            BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("cam_lookatfront")){
+                                temp1[index] = stof(t.second.data());
+                                index++;
+                            }
+                        camLookatFront.x = temp1[0];
+                        camLookatFront.y = temp1[1];
+                        camLookatFront.z = temp1[2];
+                    }
+                    i++;
                 }
-                else if( i == 2){
-                    // Cam
-                    float temp1[3];
-                    int index = 0;
-                        BOOST_FOREACH(const pt::ptree::value_type& t, child.second.get_child("cam_lookatfront")){
-                            temp1[index] = stof(t.second.data());
-                            index++;
-                        }
-                    camLookatFront.x = temp1[0];
-                    camLookatFront.y = temp1[1];
-                    camLookatFront.z = temp1[2];
-                }
-                i++;
             }
 
         }
@@ -410,6 +413,16 @@ void GameManager::decode(string data, string & key_op, string & mouse_op, glm::v
     }
 }
 
+void GameManager::restartGame(){
+    cout << "restart " << endl;
+    currTime = "";
+    //startTime = clock();
+    startTime = time(NULL);
+    totalGameTime = 100.0f;
+
+    sphere1->move(glm::vec3(64,2,-65));
+    sphere2->move(glm::vec3(30,2,-20));
+}
 void GameManager::checkSphereCollisions() {
     glm::vec3 sphere1Pos = sphere1->getCenter();
     glm::vec3 sphere2Pos = sphere2->getCenter();

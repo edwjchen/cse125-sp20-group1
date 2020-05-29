@@ -50,9 +50,7 @@ private:
             }
             if(gm.UpdateTime()){
                 std::string msg = gm.encode();
-                //std::cout << msg ;
                 boost::asio::write( *socket, boost::asio::buffer(msg) );
-                std::this_thread::sleep_for(std::chrono::milliseconds(30));
             }
             else{
                 pt::ptree root;
@@ -60,8 +58,8 @@ private:
                 stringstream ss;
                 write_json(ss, root, false);
                 boost::asio::write( *socket, boost::asio::buffer(ss.str() + '\n') );
-                std::this_thread::sleep_for(std::chrono::milliseconds(60000));
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(30));
         }
     }
 
@@ -81,7 +79,7 @@ private:
             }
 
             std::string data = boost::asio::buffer_cast<const char*>(buf.data());
-            cout << data << endl;
+            //cout << data << endl;
             gm.handle_input(data, id);
         }
     }

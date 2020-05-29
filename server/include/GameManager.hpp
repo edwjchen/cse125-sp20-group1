@@ -45,7 +45,8 @@ public:
     void checkSphereCollisions();
 
     string encode();
-    void decode(string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints);
+    void decode(int id, string data, string & key_op, string & mouse_op, glm::vec3 & camLookatFront, vector<glm::vec2> & editPoints);
+    void restartGame();
 
     Terrain * terrain;
     
@@ -64,6 +65,7 @@ public:
     glm::mat4 transM1, transM2; 
 
     bool updateTerrain;
+    set<int> restartSet;
 };
 
 #endif 
