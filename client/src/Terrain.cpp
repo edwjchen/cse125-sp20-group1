@@ -45,7 +45,7 @@ Terrain::Terrain(int width, int depth, float step) : width(width), depth(depth),
     setHeightsFromSurface(0.0f, 12.0f);
 
     if (surface == NULL) {
-        SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+        fprintf(stderr, "SDL_CreateRGBSurface() failed: %s", SDL_GetError());
         exit(1);
     }
     colorMap.resize(width * depth, 127.5f);

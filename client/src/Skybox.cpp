@@ -49,7 +49,7 @@ std::vector<glm::ivec3> indices
 static unsigned int loadCubemap(const std::vector<std::string>& faces)
 {
     
-    SDL_Surface *surface;
+    SDL_Surface *surface = nullptr;
     GLenum texture_format;
     GLint  nOfColors;
     
