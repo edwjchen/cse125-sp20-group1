@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include "imgui_impl_glfw.h"
+
 Window::Window(int width, int height, std::string title) {
   this->width = width;
   this->height = height;
